@@ -1,0 +1,68 @@
+# ~/.config/zathura/zathurarc
+
+# Incluir configuración de colores
+include "catppuccin-mocha"
+
+# Backend de la base de datos
+set database-backend sqlite
+
+# Habilitar Synctex para documentos LaTeX
+set synctex true
+
+# Habilitar el desplazamiento con el ratón
+set scroll-hstep 40
+set scroll-step 40
+
+# Ajustar el documento al ancho de la ventana
+set adjust-open "best-fit"
+
+# Ocultar el cursor
+set cursor-hide true
+
+# Habilitar búsqueda incremental
+set incremental-search true
+
+# Nivel de zoom predeterminado
+set zoom 1.2
+
+# Habilitar el desplazamiento suave
+set smooth-scroll true
+
+# Cambiar la fuente y el tamaño del texto en la barra de estado
+set font "CaskaydiaCove Nerd Font Mono 8"
+
+# Atajos de teclado personalizados
+map <C-d> scroll down
+map <C-u> scroll up
+map <C-f> scroll right
+map <C-b> scroll left
+
+# Modos de visualización
+set presentation false
+
+# Desactivar la barra de estado (opcional)
+# set statusbar visible false
+
+# Configuraciones adicionales
+set statusbar-h-padding 0
+set statusbar-v-padding 0
+set page-padding 1
+map u scroll half-up
+map d scroll half-down
+map D toggle_page_mode
+map r reload
+map R rotate
+map K zoom in
+map J zoom out
+map i recolor
+map p print
+
+set pages-per-row 1
+set scroll-page-aware true
+set scroll-full-overlap 0.01
+set zoom-min 10
+unmap f
+map f toggle_fullscreen
+map [fullscreen] f toggle_fullscreen
+
+
