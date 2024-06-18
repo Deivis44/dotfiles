@@ -55,9 +55,18 @@ SKIPPED_LINKS=()
 # Instalación de stow si no está instalado
 if ! command -v stow &> /dev/null; then
     show_info "stow no está instalado. Instalando stow..."
-    sudo pacman -Sy stow --noconfirm
+    sudo apt update
+    sudo apt install -y stow
 else
     show_info "stow ya está instalado."
+fi
+
+# Instalación de tmux si no está instalado
+if ! command -v tmux &> /dev/null; then
+    show_info "tmux no está instalado. Instalando tmux..."
+    sudo apt install -y tmux
+else
+    show_info "tmux ya está instalado."
 fi
 
 # Directorio de dotfiles
@@ -112,6 +121,11 @@ show_section "Instalando Starship"
 show_info "Instalando Starship..."
 curl -sS https://starship.rs/install.sh | sh -s -- --yes
 
+# Recargar la configuración de tmux
+show_section "Recargando configuración de tmux"
+show_info "Recargando configuración de tmux..."
+tmux new-session -d -s temp_session "tmux source-file ~/.config/tmux/tmux.conf && tmux kill-session -t temp_session"
+
 # Instalar tmux plugin manager (tpm)
 show_section "Instalando tmux plugin manager (tpm)"
 show_info "Instalando tmux plugin manager (tpm)..."
@@ -140,5 +154,4 @@ done
 show_section "Información adicional"
 show_info "Instalación y configuración completadas."
 show_info "Por favor, reinicie la terminal para aplicar los cambios."
-show_info "Para tmux, borre todo en la carpeta plugins y use el comando Ctrl + Space + I para reinstalar los plugins."
-
+show_info "Para tmux, borre todo en la carpeta plugins, a excepcion del directorio 'tpm' y use el comando Ctrl + Space + I para reinstalar los plugins."
