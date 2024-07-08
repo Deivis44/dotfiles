@@ -124,16 +124,18 @@ if [ -f "$HOME/.config/nvim/init.lua" ]; then
     backup_file "$HOME/.config/nvim/init.lua"
 fi
 
-# Sobrescribir init.lua con el archivo personalizado
-show_section "Configurando NvChad"
-cp ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
-show_info "Configuración personalizada de NvChad aplicada."
-
-# Configuración personalizada de NvChad
+# Crear carpeta custom si no existe
 mkdir -p ~/.config/nvim/lua/custom
-cp ~/dotfiles/nvim/custom/init.lua ~/.config/nvim/lua/custom/init.lua
-cp ~/dotfiles/nvim/custom/plugins.lua ~/.config/nvim/lua/custom/plugins.lua
-show_info "Configuración personalizada de NvChad aplicada."
+
+# Sobrescribir init.lua con el archivo personalizado utilizando stow
+show_section "Configurando NvChad"
+rm -f "$HOME/.config/nvim/init.lua"
+
+# Crear enlaces simbólicos para los archivos personalizados
+ln -sf ~/dotfiles/nvim/.config/nvim/init.lua ~/.config/nvim/init.lua
+ln -sf ~/dotfiles/nvim/.config/nvim/lua/custom/init.lua ~/.config/nvim/lua/custom/init.lua
+ln -sf ~/dotfiles/nvim/.config/nvim/lua/custom/plugins.lua ~/.config/nvim/lua/custom/plugins.lua
+show_info "Enlaces simbólicos creados para la configuración personalizada de NvChad."
 
 # Instalar Starship sin pedir confirmación
 show_section "Instalando Starship"
