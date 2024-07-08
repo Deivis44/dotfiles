@@ -8,8 +8,8 @@ show_banner() {
     echo "    /::\  \       /::\  \       /:/ _/_   "
     echo "   /:/\:\  \     /::::\  \     /:/ /\__\  "
     echo "  /:/  \:\__\   /::::::\  \   /:/ /:/  /  "
-    echo " /:/__/ \:|__| /:::LS:::\__\ /:/_/:/  /   "
-    echo " \:\  \ /:/  / \::1994::/  / \:\/:/  /    "
+    echo " /:/__/ \:|__| /:::DM:::\__\ /:/_/:/  /   "
+    echo " \:\  \ /:/  / \::2004::/  / \:\/:/  /    "
     echo "  \:\  /:/  /   \::::::/  /   \::/__/     "
     echo "   \:\/:/  /     \::::/  /     \:\  \     "
     echo "    \::/  /       \::/  /       \:\__\    "
@@ -52,30 +52,22 @@ NEW_LINKS=()
 BACKUP_FILES=()
 SKIPPED_LINKS=()
 
-# Instalación de stow si no está instalado
-if ! command -v stow &> /dev/null; then
-    show_info "stow no está instalado. Instalando stow..."
-    sudo apt update
-    sudo apt install -y stow
-else
-    show_info "stow ya está instalado."
-fi
+# Instalación de paquetes necesarios
+show_section "Instalando herramientas necesarias"
+install_packages() {
+    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
+    for pkg in "${packages[@]}"; do
+        if ! pacman -Qs $pkg > /dev/null; then
+            show_info "$pkg no está instalado. Instalando $pkg..."
+            sudo pacman -Sy --noconfirm $pkg
+        else
+            show_info "$pkg ya está instalado."
+        fi
+    done
+}
+install_packages
 
-# Instalación de tmux si no está instalado
-if ! command -v tmux &> /dev/null; then
-    show_info "tmux no está instalado. Instalando tmux..."
-    sudo apt install -y tmux
-else
-    show_info "tmux ya está instalado."
-fi
-
-# Directorio de dotfiles
-DOTFILES_DIR=$(pwd)
-
-# Archivos y carpetas a configurar
-declare -A DOTFILES
-
-# Función para añadir un archivo de configuración
+# Función para gestionar los dotfiles usando stow
 add_dotfile() {
     local name=$1
     local path=$2
@@ -88,7 +80,7 @@ add_dotfile "ranger" ".config/ranger"
 add_dotfile "tmux" ".config/tmux"
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
-# ---- AÑADIR NUEVO ARCHIVO CON LA FUNCION ----
+add_dotfile "nvim" ".config/nvim"
 
 # Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
 show_section "Creando backups si es necesario"
@@ -115,6 +107,33 @@ for key in "${!DOTFILES[@]}"; do
         fi
     fi
 done
+
+# Instalación de NvChad
+show_section "Instalando NvChad"
+if [ ! -d "$HOME/.config/nvim" ]; then
+    show_info "Clonando NvChad en ~/.config/nvim..."
+    git clone https://github.com/NvChad/starter ~/.config/nvim
+    show_info "NvChad clonado con éxito."
+else
+    show_info "NvChad ya está instalado en ~/.config/nvim."
+fi
+
+# Crear backup del archivo init.lua original
+show_section "Creando backup del init.lua original"
+if [ -f "$HOME/.config/nvim/init.lua" ]; then
+    backup_file "$HOME/.config/nvim/init.lua"
+fi
+
+# Sobrescribir init.lua con el archivo personalizado
+show_section "Configurando NvChad"
+cp ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
+show_info "Configuración personalizada de NvChad aplicada."
+
+# Configuración personalizada de NvChad
+mkdir -p ~/.config/nvim/lua/custom
+cp ~/dotfiles/nvim/custom/init.lua ~/.config/nvim/lua/custom/init.lua
+cp ~/dotfiles/nvim/custom/plugins.lua ~/.config/nvim/lua/custom/plugins.lua
+show_info "Configuración personalizada de NvChad aplicada."
 
 # Instalar Starship sin pedir confirmación
 show_section "Instalando Starship"

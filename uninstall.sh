@@ -4,16 +4,16 @@
 show_banner() {
     echo -e "\e[1;34m"
     echo "                    ___           ___     "
-    echo "      ___          /  /\\         /  /\\    "
-    echo "     /  /\\        /  /::\\       /  /::\\   "
-    echo "    /  /::\\      /  /::::\\     /  /:/\\:\\  "
-    echo "   /  /:/\\:\\    /  /::::::\\   /  /:/  \\:\\ "
-    echo "  /  /::\\ \\:\\  /__/:::LS:::\\ /__/:/ \\__\\:|"
-    echo " /__/:/\\:\\ \\:\\ \\  \\::1994::/ \\  \\:\\ /  /:/"
-    echo " \\__\\/  \\:\\_\\/  \\  \\::::::/   \\  \\:\\  /:/ "
-    echo "      \\  \\:\\     \\  \\::::/     \\  \\:\\/:/  "
-    echo "       \\__\\/      \\  \\::/       \\__\\::/   "
-    echo "                   \\__\\/            ~~    "
+    echo "      ___          /  /\         /  /\    "
+    echo "     /  /\        /  /::\       /  /::\   "
+    echo "    /  /::\      /  /::::\     /  /:/\:\  "
+    echo "   /  /:/\:\    /  /::::::\   /  /:/  \:\ "
+    echo "  /  /::\ \:\  /__/:::DM:::\ /__/:/ \__\:|"
+    echo " /__/:/\:\ \:\ \  \::2004::/ \  \:\ /  /:/"
+    echo " \__\/  \:\_\/  \  \::::::/   \  \:\  /:/ "
+    echo "      \  \:\     \  \::::/     \  \:\/:/  "
+    echo "       \__\/      \  \::/       \__\::/   "
+    echo "                   \__\/            ~~    "
     echo -e "\e[0m"
 }
 
@@ -72,7 +72,7 @@ add_dotfile "ranger" ".config/ranger"
 add_dotfile "tmux" ".config/tmux"
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
-# ---- AÑADIR NUEVO ARCHIVO CON LA FUNCION ----
+add_dotfile "nvim" ".config/nvim"
 
 # Eliminar enlaces simbólicos y crear backups de los destinos
 show_section "Eliminando enlaces simbólicos y creando backups si es necesario"
@@ -83,6 +83,47 @@ for key in "${!DOTFILES[@]}"; do
         REMOVED_LINKS+=("$target")
     else
         show_info "No se encontró un enlace simbólico para $key en $target. Omitiendo..."
+    fi
+done
+
+# Eliminar directorios de configuración específicos
+show_section "Eliminando directorios de configuración específicos"
+CONFIG_DIRS=(
+    "$HOME/.config/nvim"
+    "$HOME/.config/tmux/plugins/tpm"
+)
+
+for dir in "${CONFIG_DIRS[@]}"; do
+    if [ -d "$dir" ]; then
+        rm -rf "$dir"
+        show_info "Directorio eliminado: $dir"
+    else
+        show_info "No se encontró el directorio: $dir. Omitiendo..."
+    fi
+done
+
+# Eliminar paquetes instalados
+show_section "Eliminando paquetes instalados"
+PACKAGES=(
+    "stow"
+    "curl"
+    "zathura"
+    "tmux"
+    "neovim"
+    "git"
+    "starship"
+    "python"
+    "python-pynvim"
+    "npm"
+    "zathura-pdf-mupdf"
+)
+
+for pkg in "${PACKAGES[@]}"; do
+    if pacman -Qs $pkg > /dev/null; then
+        sudo pacman -Rns --noconfirm $pkg
+        show_info "Paquete eliminado: $pkg"
+    else
+        show_info "Paquete no encontrado: $pkg. Omitiendo..."
     fi
 done
 
@@ -103,4 +144,3 @@ done
 show_section "Información adicional"
 show_info "Desinstalación completada."
 show_info "Por favor, verifique los backups creados y elimine manualmente cualquier archivo residual si es necesario."
- 
