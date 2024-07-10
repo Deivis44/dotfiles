@@ -1,5 +1,12 @@
 -- ~/.config/nvim/lua/custom/init.lua
 
+-- Mensaje de bienvenida
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.notify("Hola deivi! ;^}", "info", {title = "Bienvenido a Neovim"})
+  end
+})
+
 -- Configuración de Python y vim-slime
 vim.g.python3_host_prog = '/usr/bin/python3'
 vim.g.slime_target = "tmux"
@@ -9,14 +16,15 @@ vim.g.slime_dont_ask_default = 1
 -- LSP Configuración
 require("mason").setup()
 require("mason-lspconfig").setup {
-  ensure_installed = { "pyright", "tsserver", "html", "cssls", "bashls", "jsonls", "yamlls" },
+  ensure_installed = { "pyright", "tsserver", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" },
 }
 
 local lspconfig = require("lspconfig")
 local cmp = require("cmp")
 local luasnip = require("luasnip")
+local notify = require("notify")
 
--- Configurar cmp
+-- Configuración de cmp
 cmp.setup {
   snippet = {
     expand = function(args)
@@ -59,7 +67,7 @@ cmp.setup {
   },
 }
 
--- Configurar LSP
+-- Configuración de LSP
 local on_attach = function(_, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local opts = { noremap = true, silent = true }
@@ -81,8 +89,8 @@ local on_attach = function(_, bufnr)
   buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
--- Configurar el servidor de lenguaje Python (pyright) y otros servidores
-local servers = { "pyright", "tsserver", "html", "cssls", "bashls", "jsonls", "yamlls" }
+-- Configuración de servidores LSP
+local servers = { "pyright", "tsserver", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     on_attach = on_attach,
@@ -91,4 +99,47 @@ for _, lsp in ipairs(servers) do
     }
   }
 end
- 
+
+-- Configuración de DAP
+local dap = require('dap')
+local dapui = require('dapui')
+
+require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
+require('dap-go').setup()
+
+dapui.setup()
+
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+  notify("Debugging started", "info", {title = "DAP"})
+end
+
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+  notify("Debugging terminated", "info", {title = "DAP"})
+end
+
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+  notify("Debugging exited", "info", {title = "DAP"})
+end
+
+dap.listeners.before.event_stopped["dapui_config"] = function()
+  notify("Breakpoint hit", "info", {title = "DAP"})
+end
+
+-- Configuración de notificaciones
+vim.notify = notify
+-- notify("Notificaciones configuradas correctamente!", "info", {title = "Neovim"})
+
+-- Asignación de teclas para DAP
+local dap_opts = { noremap = true, silent = true }
+vim.api.nvim_set_keymap('n', '<F5>', '<Cmd>lua require"dap".continue()<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<F10>', '<Cmd>lua require"dap".step_over()<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<F11>', '<Cmd>lua require"dap".step_into()<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<F12>', '<Cmd>lua require"dap".step_out()<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<Leader>b', '<Cmd>lua require"dap".toggle_breakpoint()<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<Leader>B', '<Cmd>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<Leader>lp', '<Cmd>lua require"dap".set_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<Leader>dr', '<Cmd>lua require"dap".repl.open()<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<Leader>dl', '<Cmd>lua require"dap".run_last()<CR>', dap_opts)
