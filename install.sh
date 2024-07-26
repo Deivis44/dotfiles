@@ -59,7 +59,7 @@ declare -A DOTFILES
 # Instalación de paquetes necesarios
 show_section "Instalando herramientas necesarias"
 install_packages() {
-    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "unzip" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
+    local packages=("stow" "curl" "zathura" "tmux" "neovim" "unzip" "git" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
     for pkg in "${packages[@]}"; do
         if ! pacman -Qs $pkg > /dev/null; then
             show_info "$pkg no está instalado. Instalando $pkg..."
@@ -161,7 +161,7 @@ fi
 show_section "Instalando Starship"
 show_info "Instalando Starship..."
 curl -sS https://starship.rs/install.sh | sh -s -- --yes
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ];then
     show_info "Error al instalar Starship."
     exit 1
 fi
