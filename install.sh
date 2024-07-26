@@ -144,10 +144,18 @@ show_section "Configuración personalizada de NvChad"
 mkdir -p ~/.config/nvim/lua/custom
 
 # Crear enlaces simbólicos para los archivos personalizados
-ln -sf ~/dotfiles/nvim/.config/nvim/init.lua ~/.config/nvim/init.lua
+ln -sf ~/dotfiles/nvim/init.lua ~/.config/nvim/init.lua
 ln -sf ~/dotfiles/nvim/custom/init.lua ~/.config/nvim/lua/custom/init.lua
 ln -sf ~/dotfiles/nvim/custom/plugins.lua ~/.config/nvim/lua/custom/plugins.lua
 show_info "Enlaces simbólicos creados para la configuración personalizada de NvChad."
+
+# Verificar que los enlaces simbólicos se hayan creado correctamente
+if [ -L ~/.config/nvim/init.lua ] && [ -L ~/.config/nvim/lua/custom/init.lua ] && [ -L ~/.config/nvim/lua/custom/plugins.lua ]; then
+    show_info "Enlaces simbólicos verificados correctamente."
+else
+    show_info "Error al crear los enlaces simbólicos. Por favor, verifica manualmente."
+    exit 1
+fi
 
 # Instalar Starship sin pedir confirmación
 show_section "Instalando Starship"
