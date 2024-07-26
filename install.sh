@@ -38,9 +38,10 @@ backup_file() {
     local file=$1
     if [ -e "$file" ] && [ ! -L "$file" ]; then
         show_info "El archivo o directorio $file ya existe y no es un enlace simbólico. Creando backup..."
-        mv "$file" "$file.backup_$(date +%F_%T)"
-        show_info "Backup creado: $file.backup_$(date +%F_%T)"
-        BACKUP_FILES+=("$file.backup_$(date +%F_%T)")
+        local backup_name="$file.backup_$(date +%F_%T)"
+        mv "$file" "$backup_name"
+        show_info "Backup creado: $backup_name"
+        BACKUP_FILES+=("$backup_name")
     fi
 }
 
@@ -48,18 +49,25 @@ backup_file() {
 show_banner
 
 # Inicializar arrays para el resumen
-NEW_LINKS=()
-BACKUP_FILES=()
-SKIPPED_LINKS=()
+declare -a NEW_LINKS
+declare -a BACKUP_FILES
+declare -a SKIPPED_LINKS
+
+# Declarar array asociativo para dotfiles
+declare -A DOTFILES
 
 # Instalación de paquetes necesarios
 show_section "Instalando herramientas necesarias"
 install_packages() {
-    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
+    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "unzip" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
     for pkg in "${packages[@]}"; do
         if ! pacman -Qs $pkg > /dev/null; then
             show_info "$pkg no está instalado. Instalando $pkg..."
-            sudo pacman -Sy --noconfirm $pkg
+            sudo pacman -Syu --noconfirm $pkg
+            if [ $? -ne 0 ]; then
+                show_info "Error al instalar $pkg."
+                exit 1
+            fi
         else
             show_info "$pkg ya está instalado."
         fi
@@ -93,12 +101,13 @@ done
 show_section "Aplicando configuraciones con stow"
 for key in "${!DOTFILES[@]}"; do
     target="${HOME}/${DOTFILES[$key]}"
+    echo "Procesando $key con destino $target"  # Mensaje de depuración
     if [ -L "$target" ]; then
         show_info "Enlace simbólico para $key ya existe en $target. Omitiendo..."
         SKIPPED_LINKS+=("$target")
     else
         show_info "Aplicando configuración para $key..."
-        stow -v "$key"
+        stow -v --target="$HOME" "$key"
         if [ $? -eq 0 ]; then
             show_info "Configuración para $key aplicada con éxito."
             NEW_LINKS+=("$target")
@@ -113,7 +122,12 @@ show_section "Instalando NvChad"
 if [ ! -d "$HOME/.config/nvim" ]; then
     show_info "Clonando NvChad en ~/.config/nvim..."
     git clone https://github.com/NvChad/starter ~/.config/nvim
-    show_info "NvChad clonado con éxito."
+    if [ $? -eq 0 ]; then
+        show_info "NvChad clonado con éxito."
+    else
+        show_info "Error al clonar NvChad."
+        exit 1
+    fi
 else
     show_info "NvChad ya está instalado en ~/.config/nvim."
 fi
@@ -141,16 +155,27 @@ show_info "Enlaces simbólicos creados para la configuración personalizada de N
 show_section "Instalando Starship"
 show_info "Instalando Starship..."
 curl -sS https://starship.rs/install.sh | sh -s -- --yes
+if [ $? -ne 0 ]; then
+    show_info "Error al instalar Starship."
+    exit 1
+fi
 
 # Recargar la configuración de tmux
 show_section "Recargando configuración de tmux"
 show_info "Recargando configuración de tmux..."
 tmux new-session -d -s temp_session "tmux source-file ~/.config/tmux/tmux.conf && tmux kill-session -t temp_session"
+if [ $? -ne 0 ]; then
+    show_info "Error al recargar la configuración de tmux."
+fi
 
 # Instalar tmux plugin manager (tpm)
 show_section "Instalando tmux plugin manager (tpm)"
 show_info "Instalando tmux plugin manager (tpm)..."
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+if [ $? -ne 0 ]; then
+    show_info "Error al instalar tmux plugin manager (tpm)."
+    exit 1
+fi
 
 # Resumen
 show_section "Resumen de la instalación"
@@ -175,4 +200,4 @@ done
 show_section "Información adicional"
 show_info "Instalación y configuración completadas."
 show_info "Por favor, reinicie la terminal para aplicar los cambios."
-show_info "Para tmux, borre todo en la carpeta plugins, a excepcion del directorio 'tpm' y use el comando Ctrl + Space + I para reinstalar los plugins."
+show_info "Para tmux, borre todo en la carpeta plugins, a excepción del directorio 'tpm' y use el comando Ctrl + Space + I para reinstalar los plugins."
