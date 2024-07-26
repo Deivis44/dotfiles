@@ -36,7 +36,7 @@ show_info() {
 # Función para hacer backup de archivos o directorios existentes, excepto enlaces simbólicos
 backup_file() {
     local file=$1
-    if [ -e "$file" ] && [ ! -L "$file" ]; then
+    if [ -e "$file" ] && [ ! -L "$file" ];then
         show_info "El archivo o directorio $file ya existe y no es un enlace simbólico. Creando backup..."
         local backup_name="$file.backup_$(date +%F_%T)"
         mv "$file" "$backup_name"
@@ -59,12 +59,12 @@ declare -A DOTFILES
 # Instalación de paquetes necesarios
 show_section "Instalando herramientas necesarias"
 install_packages() {
-    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
+    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "unzip" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
     for pkg in "${packages[@]}"; do
         if ! pacman -Qs $pkg > /dev/null; then
             show_info "$pkg no está instalado. Instalando $pkg..."
             sudo pacman -Syu --noconfirm $pkg
-            if [ $? -ne 0 ]; then
+            if [ $? -ne 0 ];then
                 show_info "Error al instalar $pkg."
                 exit 1
             fi
@@ -102,13 +102,13 @@ show_section "Aplicando configuraciones con stow"
 for key in "${!DOTFILES[@]}"; do
     target="${HOME}/${DOTFILES[$key]}"
     echo "Procesando $key con destino $target"  # Mensaje de depuración
-    if [ -L "$target" ]; then
+    if [ -L "$target" ];then
         show_info "Enlace simbólico para $key ya existe en $target. Omitiendo..."
         SKIPPED_LINKS+=("$target")
     else
         show_info "Aplicando configuración para $key..."
         stow -v --target="$HOME" "$key"
-        if [ $? -eq 0 ]; then
+        if [ $? -eq 0 ];then
             show_info "Configuración para $key aplicada con éxito."
             NEW_LINKS+=("$target")
         else
@@ -119,22 +119,17 @@ done
 
 # Instalación de NvChad
 show_section "Instalando NvChad"
-if [ ! -d "$HOME/.config/nvim" ]; then
+if [ ! -d "$HOME/.config/nvim" ];then
     show_info "Clonando NvChad en ~/.config/nvim..."
     git clone https://github.com/NvChad/starter ~/.config/nvim
-    if [ $? -eq 0 ]; then
-        show_info "NvChad clonado con éxito."
-    else
-        show_info "Error al clonar NvChad."
-        exit 1
-    fi
+    show_info "NvChad clonado con éxito."
 else
     show_info "NvChad ya está instalado en ~/.config/nvim."
 fi
 
 # Crear backup del archivo init.lua original
 show_section "Creando backup del init.lua original"
-if [ -f "$HOME/.config/nvim/init.lua" ]; then
+if [ -f "$HOME/.config/nvim/init.lua" ];then
     backup_file "$HOME/.config/nvim/init.lua"
 fi
 
@@ -155,7 +150,7 @@ show_info "Enlaces simbólicos creados para la configuración personalizada de N
 show_section "Instalando Starship"
 show_info "Instalando Starship..."
 curl -sS https://starship.rs/install.sh | sh -s -- --yes
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ];then
     show_info "Error al instalar Starship."
     exit 1
 fi
@@ -164,7 +159,7 @@ fi
 show_section "Recargando configuración de tmux"
 show_info "Recargando configuración de tmux..."
 tmux new-session -d -s temp_session "tmux source-file ~/.config/tmux/tmux.conf && tmux kill-session -t temp_session"
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ];then
     show_info "Error al recargar la configuración de tmux."
 fi
 
@@ -172,7 +167,7 @@ fi
 show_section "Instalando tmux plugin manager (tpm)"
 show_info "Instalando tmux plugin manager (tpm)..."
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ];then
     show_info "Error al instalar tmux plugin manager (tpm)."
     exit 1
 fi
