@@ -59,7 +59,7 @@ declare -A DOTFILES
 # Instalación de paquetes necesarios
 show_section "Instalando herramientas necesarias"
 install_packages() {
-    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "unzip" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
+    local packages=("stow" "curl" "zathura" "tmux" "neovim" "git" "starship" "python" "python-pynvim" "npm" "zathura-pdf-mupdf")
     for pkg in "${packages[@]}"; do
         if ! pacman -Qs $pkg > /dev/null; then
             show_info "$pkg no está instalado. Instalando $pkg..."
@@ -138,12 +138,12 @@ if [ -f "$HOME/.config/nvim/init.lua" ]; then
     backup_file "$HOME/.config/nvim/init.lua"
 fi
 
-# Crear carpeta custom si no existe
+# Configuración personalizada de NvChad
+show_section "Configuración personalizada de NvChad"
 mkdir -p ~/.config/nvim/lua/custom
-
-# Sobrescribir init.lua con el archivo personalizado utilizando stow
-show_section "Configurando NvChad"
-rm -f "$HOME/.config/nvim/init.lua"
+cp ~/dotfiles/nvim/custom/init.lua ~/.config/nvim/lua/custom/init.lua
+cp ~/dotfiles/nvim/custom/plugins.lua ~/.config/nvim/lua/custom/plugins.lua
+show_info "Configuración personalizada de NvChad aplicada."
 
 # Crear enlaces simbólicos para los archivos personalizados
 ln -sf ~/dotfiles/nvim/.config/nvim/init.lua ~/.config/nvim/init.lua
