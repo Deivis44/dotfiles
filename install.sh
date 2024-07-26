@@ -88,7 +88,6 @@ add_dotfile "ranger" ".config/ranger"
 add_dotfile "tmux" ".config/tmux"
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
-add_dotfile "nvim" ".config/nvim"
 
 # Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
 show_section "Creando backups si es necesario"
