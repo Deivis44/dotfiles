@@ -69,7 +69,7 @@ add_dotfile() {
 # Añadir configuraciones existentes
 add_dotfile "zsh" ".zshrc"
 add_dotfile "ranger" ".config/ranger"
-add_dotfile "tmux" ".config/tmux"
+add_dotfile "tmux" ".config/tmux/tmux.conf"  # Sólo eliminar el enlace de tmux.conf
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
 add_dotfile "nvim" ".config/nvim"
@@ -77,46 +77,5 @@ add_dotfile "nvim" ".config/nvim"
 # Eliminar enlaces simbólicos y crear backups de los destinos
 show_section "Eliminando enlaces simbólicos y creando backups si es necesario"
 for key in "${!DOTFILES[@]}"; do
-    target="${HOME}/${DOTFILES[$key]}"
-    if [ -L "$target" ]; then
-        backup_file_unlink "$target"
-        REMOVED_LINKS+=("$target")
-    else
-        show_info "No se encontró un enlace simbólico para $key en $target. Omitiendo..."
-    fi
-done
-
-# Eliminar directorios de configuración específicos
-show_section "Eliminando directorios de configuración específicos"
-CONFIG_DIRS=(
-    "$HOME/.config/nvim"
-    "$HOME/.config/tmux/plugins/tpm"
-)
-
-for dir in "${CONFIG_DIRS[@]}"; do
-    if [ -d "$dir" ]; then
-        rm -rf "$dir"
-        show_info "Directorio eliminado: $dir"
-    else
-        show_info "No se encontró el directorio: $dir. Omitiendo..."
-    fi
-done
-
-# Resumen
-show_section "Resumen de la desinstalación"
-echo "Enlaces eliminados y ubicaciones respaldadas:"
-for link in "${REMOVED_LINKS[@]}"; do
-    echo " - $link"
-done
-
-echo "---------------------------"
-echo "Archivos de destino respaldados:"
-for file in "${UNLINKED_FILES[@]}"; do
-    echo " - $file"
-done
-
-# Mensajes de información adicionales
-show_section "Información adicional"
-show_info "Desinstalación completada."
-show_info "Por favor, verifique los backups creados y elimine manualmente cualquier archivo residual si es necesario."
+    target="${HOME}/${DOTFILES[$
 

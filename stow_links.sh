@@ -69,7 +69,7 @@ add_dotfile "ranger" ".config/ranger"
 add_dotfile "tmux" ".config/tmux/tmux.conf"  # Sólo crear enlace para tmux.conf
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
-add_dotfile "nvim" ".config/nvim"  # Añadir Neovim a la lista
+add_dotfile "nvim" ".config/nvim/lua/custom"  # Sólo crear enlace para la carpeta custom en NvChad
 
 # Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
 show_section "Creando backups si es necesario"
@@ -81,13 +81,31 @@ done
 # Aplicar configuraciones con stow
 show_section "Aplicando configuraciones con stow"
 for key in "${!DOTFILES[@]}"; do
-    show_info "Aplicando configuración para $key..."
-    stow -v --target="$HOME" "$key"
-    if [ $? -eq 0 ]; then
-        NEW_LINKS+=("${DOTFILES[$key]}")
-        show_info "Configuración para $key aplicada con éxito."
+    if [ "$key" == "nvim" ]; then
+        # Si es nvim, solo crear el enlace simbólico para la carpeta custom
+        show_info "Enlazando la carpeta 'custom' en NvChad"
+        CUSTOM_SOURCE="$HOME/dotfiles/nvim/.config/nvim/lua/custom"
+        CUSTOM_TARGET="$HOME/.config/nvim/lua/custom"
+        
+        # Verifica si ya existe un enlace simbólico o la carpeta custom
+        if [ -L "$CUSTOM_TARGET" ] || [ -d "$CUSTOM_TARGET" ]; then
+            show_info "El enlace simbólico o carpeta 'custom' ya existe en $CUSTOM_TARGET. Eliminando..."
+            rm -rf "$CUSTOM_TARGET"
+        fi
+        
+        # Crear el enlace simbólico
+        ln -s "$CUSTOM_SOURCE" "$CUSTOM_TARGET"
+        show_info "Enlace simbólico creado desde $CUSTOM_SOURCE hacia $CUSTOM_TARGET"
+        NEW_LINKS+=("$CUSTOM_TARGET")
     else
-        show_info "Error al aplicar la configuración para $key."
+        show_info "Aplicando configuración para $key..."
+        stow -v --target="$HOME" "$key"
+        if [ $? -eq 0 ]; then
+            NEW_LINKS+=("${DOTFILES[$key]}")
+            show_info "Configuración para $key aplicada con éxito."
+        else
+            show_info "Error al aplicar la configuración para $key."
+        fi
     fi
 done
 
@@ -116,4 +134,3 @@ show_info "Instalación y configuración completadas. Recuerda:"
 show_info "- Después de aplicar los enlaces, abre tmux y usa Ctrl + Space + Shift + I para instalar los plugins descritos en el archivo tmux.conf."
 show_info "- Abre Neovim para verificar que las configuraciones personalizadas y plugins se han cargado correctamente."
 show_info "- Reinicia la terminal para aplicar los cambios en Starship."
-

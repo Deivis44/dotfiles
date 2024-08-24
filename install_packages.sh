@@ -26,6 +26,9 @@ install_packages() {
     local system_utilities=(
         "curl"           # Herramienta para transferir datos con URLs
         "unzip"          # Utilidad para descomprimir archivos ZIP
+        "tree"           # Visualizacion del path en la terminal
+        "ranger"
+        "spotify-launcher"
         "starship"       # Prompt de shell personalizable
         "zathura"        # Visor de PDF ligero
         "zathura-pdf-mupdf"  # Motor para visualizar archivos PDF en Zathura
@@ -108,7 +111,7 @@ install_packages() {
     # Instalación de NvChad
     show_info "Instalando NvChad..."
     if [ ! -d "$HOME/.config/nvim" ]; then
-        git clone https://github.com/NvChad/NvChad ~/.config/nvim --branch v2.5
+        git clone https://github.com/NvChad/NvChad ~/.config/nvim
         if [ $? -ne 0 ]; then
             show_error "Error al instalar NvChad."
             errors+=("NvChad: Falló la instalación.")
