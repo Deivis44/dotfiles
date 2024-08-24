@@ -66,7 +66,7 @@ add_dotfile() {
 # Añadir dotfiles
 add_dotfile "zsh" ".zshrc"
 add_dotfile "ranger" ".config/ranger"
-add_dotfile "tmux" ".config/tmux"
+add_dotfile "tmux" ".config/tmux/tmux.conf"  # Sólo crear enlace para tmux.conf
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
 add_dotfile "nvim" ".config/nvim"  # Añadir Neovim a la lista
