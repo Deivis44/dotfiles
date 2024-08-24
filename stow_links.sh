@@ -69,7 +69,8 @@ add_dotfile "ranger" ".config/ranger"
 add_dotfile "tmux" ".config/tmux/tmux.conf"  # Sólo crear enlace para tmux.conf
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
-add_dotfile "nvim" ".config/nvim/lua/custom"  # Sólo crear enlace para la carpeta custom en NvChad
+add_dotfile "nvim_custom" ".config/nvim/lua/custom"  # Crear enlace para la carpeta custom en NvChad
+add_dotfile "nvim_init" ".config/nvim/init.lua"  # Crear enlace para init.lua de NvChad
 
 # Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
 show_section "Creando backups si es necesario"
@@ -78,25 +79,39 @@ for key in "${!DOTFILES[@]}"; do
     backup_file "$target"
 done
 
-# Aplicar configuraciones con stow
+# Aplicar configuraciones con stow y enlaces simbólicos específicos
 show_section "Aplicando configuraciones con stow"
 for key in "${!DOTFILES[@]}"; do
-    if [ "$key" == "nvim" ]; then
-        # Si es nvim, solo crear el enlace simbólico para la carpeta custom
+    if [ "$key" == "nvim_custom" ]; then
+        # Enlazar la carpeta custom
         show_info "Enlazando la carpeta 'custom' en NvChad"
         CUSTOM_SOURCE="$HOME/dotfiles/nvim/.config/nvim/lua/custom"
         CUSTOM_TARGET="$HOME/.config/nvim/lua/custom"
         
-        # Verifica si ya existe un enlace simbólico o la carpeta custom
         if [ -L "$CUSTOM_TARGET" ] || [ -d "$CUSTOM_TARGET" ]; then
             show_info "El enlace simbólico o carpeta 'custom' ya existe en $CUSTOM_TARGET. Eliminando..."
             rm -rf "$CUSTOM_TARGET"
         fi
         
-        # Crear el enlace simbólico
         ln -s "$CUSTOM_SOURCE" "$CUSTOM_TARGET"
         show_info "Enlace simbólico creado desde $CUSTOM_SOURCE hacia $CUSTOM_TARGET"
         NEW_LINKS+=("$CUSTOM_TARGET")
+        
+    elif [ "$key" == "nvim_init" ]; then
+        # Reemplazar init.lua
+        show_info "Reemplazando el archivo 'init.lua' en NvChad"
+        INIT_SOURCE="$HOME/dotfiles/nvim/.config/nvim/init.lua"
+        INIT_TARGET="$HOME/.config/nvim/init.lua"
+        
+        if [ -e "$INIT_TARGET" ] && [ ! -L "$INIT_TARGET" ]; then
+            show_info "El archivo 'init.lua' ya existe en $INIT_TARGET. Creando backup..."
+            backup_file "$INIT_TARGET"
+        fi
+        
+        ln -s "$INIT_SOURCE" "$INIT_TARGET"
+        show_info "Enlace simbólico creado desde $INIT_SOURCE hacia $INIT_TARGET"
+        NEW_LINKS+=("$INIT_TARGET")
+        
     else
         show_info "Aplicando configuración para $key..."
         stow -v --target="$HOME" "$key"
@@ -134,3 +149,5 @@ show_info "Instalación y configuración completadas. Recuerda:"
 show_info "- Después de aplicar los enlaces, abre tmux y usa Ctrl + Space + Shift + I para instalar los plugins descritos en el archivo tmux.conf."
 show_info "- Abre Neovim para verificar que las configuraciones personalizadas y plugins se han cargado correctamente."
 show_info "- Reinicia la terminal para aplicar los cambios en Starship."
+
+
