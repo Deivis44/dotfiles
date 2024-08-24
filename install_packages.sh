@@ -29,6 +29,7 @@ install_packages() {
         "tree"           # Visualizacion del path en la terminal
         "ranger"
         "spotify-launcher"
+        "syncthing"
         "starship"       # Prompt de shell personalizable
         "zathura"        # Visor de PDF ligero
         "zathura-pdf-mupdf"  # Motor para visualizar archivos PDF en Zathura

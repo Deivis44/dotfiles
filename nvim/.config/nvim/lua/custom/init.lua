@@ -1,5 +1,19 @@
 -- ~/.config/nvim/lua/custom/init.lua
 
+-- Sobrecargar plugins y configuraciones personalizadas después de que NvChad se haya inicializado
+vim.api.nvim_create_autocmd("User", {
+  pattern = "NvChadInitDone",
+  callback = function()
+    -- Importar plugins personalizados
+    require("lazy").setup({
+      { import = "custom.plugins" },
+    })
+
+    -- Cargar configuraciones adicionales
+    -- Aquí puedes cargar cualquier otro archivo de configuración que desees
+  end,
+})
+
 -- Mensaje de bienvenida
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
@@ -130,7 +144,6 @@ end
 
 -- Configuración de notificaciones
 vim.notify = notify
--- notify("Notificaciones configuradas correctamente!", "info", {title = "Neovim"})
 
 -- Asignación de teclas para DAP
 local dap_opts = { noremap = true, silent = true }
