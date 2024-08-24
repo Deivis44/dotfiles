@@ -76,7 +76,13 @@ add_dotfile "nvim_init" ".config/nvim/init.lua"  # Crear enlace para init.lua de
 show_section "Creando backups si es necesario"
 for key in "${!DOTFILES[@]}"; do
     target="${HOME}/${DOTFILES[$key]}"
-    backup_file "$target"
+    if [ "$key" == "nvim_init" ]; then
+        if [ -f "$target" ] && [ ! -L "$target" ]; then
+            backup_file "$target"
+        fi
+    else
+        backup_file "$target"
+    fi
 done
 
 # Aplicar configuraciones con stow y enlaces simbólicos específicos
@@ -103,12 +109,12 @@ for key in "${!DOTFILES[@]}"; do
         INIT_SOURCE="$HOME/dotfiles/nvim/.config/nvim/init.lua"
         INIT_TARGET="$HOME/.config/nvim/init.lua"
         
-        if [ -e "$INIT_TARGET" ] && [ ! -L "$INIT_TARGET" ]; then
+        if [ -f "$INIT_TARGET" ] && [ ! -L "$INIT_TARGET" ]; then
             show_info "El archivo 'init.lua' ya existe en $INIT_TARGET. Creando backup..."
             backup_file "$INIT_TARGET"
         fi
         
-        ln -s "$INIT_SOURCE" "$INIT_TARGET"
+        ln -sf "$INIT_SOURCE" "$INIT_TARGET"
         show_info "Enlace simbólico creado desde $INIT_SOURCE hacia $INIT_TARGET"
         NEW_LINKS+=("$INIT_TARGET")
         
@@ -149,5 +155,4 @@ show_info "Instalación y configuración completadas. Recuerda:"
 show_info "- Después de aplicar los enlaces, abre tmux y usa Ctrl + Space + Shift + I para instalar los plugins descritos en el archivo tmux.conf."
 show_info "- Abre Neovim para verificar que las configuraciones personalizadas y plugins se han cargado correctamente."
 show_info "- Reinicia la terminal para aplicar los cambios en Starship."
-
 
