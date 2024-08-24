@@ -102,31 +102,6 @@ for dir in "${CONFIG_DIRS[@]}"; do
     fi
 done
 
-# Eliminar paquetes instalados
-show_section "Eliminando paquetes instalados"
-PACKAGES=(
-    "stow"
-    "curl"
-    "zathura"
-    "tmux"
-    "neovim"
-    "git"
-    "starship"
-    "python"
-    "python-pynvim"
-    "npm"
-    "zathura-pdf-mupdf"
-)
-
-for pkg in "${PACKAGES[@]}"; do
-    if pacman -Qs $pkg > /dev/null; then
-        sudo pacman -Rns --noconfirm $pkg
-        show_info "Paquete eliminado: $pkg"
-    else
-        show_info "Paquete no encontrado: $pkg. Omitiendo..."
-    fi
-done
-
 # Resumen
 show_section "Resumen de la desinstalación"
 echo "Enlaces eliminados y ubicaciones respaldadas:"
@@ -144,3 +119,4 @@ done
 show_section "Información adicional"
 show_info "Desinstalación completada."
 show_info "Por favor, verifique los backups creados y elimine manualmente cualquier archivo residual si es necesario."
+
