@@ -12,9 +12,23 @@ show_error() {
     echo -e "\e[1;31m$message\e[0m"
 }
 
+# Función para preguntar si se desea instalar un paquete
+ask_install() {
+    local pkg=$1
+    while true; do
+        read -p "¿Quieres instalar $pkg? [s/n]: " yn
+        case $yn in
+            [Ss]* ) return 0;;  # Sí
+            [Nn]* ) return 1;;  # No
+            * ) echo "Por favor, responde con s/n.";;
+        esac
+    done
+}
+
 # Función para instalar paquetes
 install_packages() {
     local errors=()
+    local install_all=$1
 
     # Grupo 1: Herramientas de gestión de dotfiles
     local dotfiles_tools=(
@@ -38,6 +52,10 @@ install_packages() {
         "torbrowser-launcher"  # Navegador Tor
         "openvpn"        # Requerido para ProtonVPN
         "protonvpn-cli-ng"  # Cliente CLI de ProtonVPN (AUR)
+        "virtualbox"        # Aplicación de VirtualBox
+        "virtualbox-host-modules-arch"  # Módulos del kernel para VirtualBox
+        "virtualbox-guest-iso"  # Guest Additions ISO para máquinas virtuales
+        "obs-studio"     # Software para grabación y transmisión de video
     )
 
     # Grupo 3: Herramientas de desarrollo y Python
@@ -84,10 +102,14 @@ install_packages() {
         local packages=("${!group}")
         for pkg in "${packages[@]}"; do
             if ! pacman -Qs $pkg > /dev/null; then
-                show_info "$pkg no está instalado. Instalando $pkg..."
-                if ! sudo pacman -Syu --noconfirm $pkg; then
-                    show_error "Error al instalar $pkg."
-                    errors+=("$pkg: Falló la instalación.")
+                if [ "$install_all" = true ] || ask_install "$pkg"; then
+                    show_info "$pkg no está instalado. Instalando $pkg..."
+                    if ! sudo pacman -Syu --noconfirm $pkg; then
+                        show_error "Error al instalar $pkg."
+                        errors+=("$pkg: Falló la instalación.")
+                    fi
+                else
+                    show_info "$pkg omitido por el usuario."
                 fi
             else
                 show_info "$pkg ya está instalado."
@@ -109,24 +131,18 @@ install_packages() {
         show_info "Tmux Plugin Manager ya está instalado."
     fi
 
-    # Instalación de NvChad solo si Neovim ya está instalado
-    if pacman -Qs neovim > /dev/null; then
-        show_info "Neovim ya está instalado. Verificando la instalación de NvChad..."
-        if [ ! -d "$HOME/.config/nvim" ]; then
-            show_info "Instalando NvChad..."
-            git clone https://github.com/NvChad/NvChad ~/.config/nvim
-            if [ $? -ne 0 ]; then
-                show_error "Error al instalar NvChad."
-                errors+=("NvChad: Falló la instalación.")
-            else
-                show_info "NvChad instalado con éxito."
-            fi
+    # Instalación de NvChad
+    show_info "Instalando NvChad..."
+    if [ ! -d "$HOME/.config/nvim" ]; then
+        git clone https://github.com/NvChad/starter ~/.config/nvim
+        if [ $? -ne 0 ]; then
+            show_error "Error al instalar NvChad."
+            errors+=("NvChad: Falló la instalación.")
         else
-            show_info "NvChad ya está instalado."
+            show_info "NvChad instalado con éxito."
         fi
     else
-        show_error "Neovim no está instalado. Instala Neovim primero."
-        errors+=("Neovim: No está instalado.")
+        show_info "NvChad ya está instalado."
     fi
 
     # Instalación de Starship
@@ -143,6 +159,20 @@ install_packages() {
         show_info "Starship ya está instalado."
     fi
 
+    # Instalación de Oh My Zsh
+    show_info "Instalando Oh My Zsh..."
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        if [ $? -ne 0 ]; then
+            show_error "Error al instalar Oh My Zsh."
+            errors+=("Oh My Zsh: Falló la instalación.")
+        else
+            show_info "Oh My Zsh instalado con éxito."
+        fi
+    else
+        show_info "Oh My Zsh ya está instalado."
+    fi
+
     # Resumen de errores
     if [ ${#errors[@]} -ne 0 ]; then
         show_error "Resumen de paquetes con errores:"
@@ -157,6 +187,11 @@ install_packages() {
     show_info "Recuerda: Después de ejecutar el script de enlaces, abre tmux y usa Ctrl + Space + Shift + I para instalar los plugins descritos en el archivo tmux.conf."
 }
 
-# Llamada a la función para instalar paquetes
-install_packages
+# Preguntar si se desea instalar todo de una vez o uno por uno
+read -p "¿Quieres instalar todos los paquetes de corrido? [s/n]: " install_all
+if [[ $install_all =~ ^[Ss]$ ]]; then
+    install_packages true
+else
+    install_packages false
+fi
 
