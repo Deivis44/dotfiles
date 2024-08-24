@@ -1,19 +1,5 @@
 -- ~/.config/nvim/lua/custom/init.lua
 
--- Sobrecargar plugins y configuraciones personalizadas después de que NvChad se haya inicializado
-vim.api.nvim_create_autocmd("User", {
-  pattern = "NvChadInitDone",
-  callback = function()
-    -- Importar plugins personalizados
-    require("lazy").setup({
-      { import = "custom.plugins" },
-    })
-
-    -- Cargar configuraciones adicionales
-    -- Aquí puedes cargar cualquier otro archivo de configuración que desees
-  end,
-})
-
 -- Mensaje de bienvenida
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
@@ -27,7 +13,7 @@ vim.g.slime_target = "tmux"
 vim.g.slime_default_config = { socket_name = "default", target_pane = "{last}" }
 vim.g.slime_dont_ask_default = 1
 
--- LSP Configuración
+-- Configuración de LSP y DAP
 require("mason").setup()
 require("mason-lspconfig").setup {
   ensure_installed = { "pyright", "tsserver", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" },
@@ -90,7 +76,7 @@ local on_attach = function(_, bufnr)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>')
   buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
