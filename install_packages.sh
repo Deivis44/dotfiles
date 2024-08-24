@@ -109,18 +109,24 @@ install_packages() {
         show_info "Tmux Plugin Manager ya está instalado."
     fi
 
-    # Instalación de NvChad
-    show_info "Instalando NvChad..."
-    if [ ! -d "$HOME/.config/nvim" ]; then
-        git clone https://github.com/NvChad/NvChad ~/.config/nvim
-        if [ $? -ne 0 ]; then
-            show_error "Error al instalar NvChad."
-            errors+=("NvChad: Falló la instalación.")
+    # Instalación de NvChad solo si Neovim ya está instalado
+    if pacman -Qs neovim > /dev/null; then
+        show_info "Neovim ya está instalado. Verificando la instalación de NvChad..."
+        if [ ! -d "$HOME/.config/nvim" ]; then
+            show_info "Instalando NvChad..."
+            git clone https://github.com/NvChad/NvChad ~/.config/nvim
+            if [ $? -ne 0 ]; then
+                show_error "Error al instalar NvChad."
+                errors+=("NvChad: Falló la instalación.")
+            else
+                show_info "NvChad instalado con éxito."
+            fi
         else
-            show_info "NvChad instalado con éxito."
+            show_info "NvChad ya está instalado."
         fi
     else
-        show_info "NvChad ya está instalado."
+        show_error "Neovim no está instalado. Instala Neovim primero."
+        errors+=("Neovim: No está instalado.")
     fi
 
     # Instalación de Starship
