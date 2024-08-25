@@ -91,10 +91,10 @@ install_packages() {
     # Grupos de paquetes
     declare -A package_groups=(
         ["Herramientas de Gestión de Dotfiles"]=("stow" "git")
-        ["Utilidades Básicas del Sistema"]=("curl" "unzip" "tree" "ranger" "spotify-launcher" "syncthing" "starship" "zathura" "zathura-pdf-mupdf" "telegram-desktop" "session-desktop" "torbrowser-launcher" "openvpn" "protonvpn-cli-ng" "virtualbox" "virtualbox-host-modules-arch" "virtualbox-guest-iso" "obs-studio")
+        ["Utilidades Básicas del Sistema"]=("curl" "unzip" "tree" "eza" "fzf" "zoxide" "ranger" "spotify-launcher" "syncthing" "starship" "zathura" "zathura-pdf-mupdf" "telegram-desktop" "session-desktop" "torbrowser-launcher" "openvpn" "protonvpn-cli-ng" "virtualbox" "virtualbox-host-modules-arch" "virtualbox-guest-iso" "obs-studio")
         ["Herramientas de Desarrollo y Python"]=("neovim" "python" "python-pynvim" "npm" "python-virtualenv" "pyright" "debugpy" "go" "base-devel" "gcc")
         ["Tmux y Gestores de Plugins"]=("tmux" "bc" "jq" "gh" "glab" "playerctl")
-        ["Terminal y Shell"]=("kitty" "zsh")
+        ["Terminal y Shell"]=("kitty" "zsh" "pokemon-colorscripts-git")
         ["Fuentes y Símbolos"]=("noto-fonts" "noto-fonts-extra" "noto-fonts-emoji" "ttf-nerd-fonts-symbols" "ttf-nerd-fonts-symbols-mono")
     )
 
