@@ -7,16 +7,16 @@ Este repositorio contiene mis archivos de configuración (dotfiles) para diversa
 ## Clonar el Repositorio
 Para comenzar, clona el repositorio en tu directorio home:
 
-\`\`\`bash
+```bash
 cd ~
 git clone https://github.com/tu-usuario/dotfiles.git
 cd dotfiles
-\`\`\`
+```
 
 ## Estructura del Repositorio
 La estructura refleja las ubicaciones deseadas de los archivos de configuración en tu sistema:
 
-\`\`\`plaintext
+```plaintext
 dotfiles/
 ├── zsh/
 │   └── .zshrc
@@ -28,54 +28,54 @@ dotfiles/
     └── .config/
         └── ranger/
             └── rc.conf
-\`\`\`
+```
 
 ## Scripts de Configuración
 
-### 1. \`install_packages.sh\`
+### 1. `install_packages.sh`
 Este script instala los paquetes necesarios para tu entorno de desarrollo.
 
 **Instrucciones:**
 1. Dar permisos de ejecución:
-   \`\`\`bash
+   ```bash
    chmod +x install_packages.sh
-   \`\`\`
+   ```
 2. Ejecutar el script:
-   \`\`\`bash
+   ```bash
    ./install_packages.sh
-   \`\`\`
+   ```
 
 **¿Qué hace?**
 - Instala los paquetes necesarios utilizando el gestor de paquetes adecuado.
 
-### 2. \`stow_links.sh\`
+### 2. `stow_links.sh`
 Este script crea enlaces simbólicos para los dotfiles en las ubicaciones correctas.
 
 **Instrucciones:**
 1. Dar permisos de ejecución:
-   \`\`\`bash
+   ```bash
    chmod +x stow_links.sh
-   \`\`\`
+   ```
 2. Ejecutar el script:
-   \`\`\`bash
+   ```bash
    ./stow_links.sh
-   \`\`\`
+   ```
 
 **¿Qué hace?**
 - Crea enlaces simbólicos usando GNU Stow para gestionar la configuración.
 
-### 3. \`rm_links.sh\`
-Este script elimina los enlaces simbólicos creados por \`stow_links.sh\`.
+### 3. `rm_links.sh`
+Este script elimina los enlaces simbólicos creados por `stow_links.sh`.
 
 **Instrucciones:**
 1. Dar permisos de ejecución:
-   \`\`\`bash
+   ```bash
    chmod +x rm_links.sh
-   \`\`\`
+   ```
 2. Ejecutar el script:
-   \`\`\`bash
+   ```bash
    ./rm_links.sh
-   \`\`\`
+   ```
 
 **¿Qué hace?**
 - Elimina los enlaces simbólicos y opcionalmente restaura los archivos de backup.
@@ -85,45 +85,45 @@ Este script elimina los enlaces simbólicos creados por \`stow_links.sh\`.
 Si ya tienes archivos de configuración en tu máquina, sigue estos pasos para gestionarlos:
 
 1. **Copia el archivo al repositorio:**
-   \`\`\`bash
+   ```bash
    cp ~/.config/tmux/tmux.conf ~/dotfiles/tmux/.config/tmux/
-   \`\`\`
+   ```
 2. **Haz un backup del archivo local:**
-   \`\`\`bash
+   ```bash
    mv ~/.config/tmux/tmux.conf ~/.config/tmux/tmux.conf.backup
-   \`\`\`
-3. **Ejecuta \`stow_links.sh\`** para crear los enlaces simbólicos.
+   ```
+3. **Ejecuta `stow_links.sh`** para crear los enlaces simbólicos.
 
 ## Añadir Más Dotfiles
 1. **Copia el archivo al repositorio:**
-   \`\`\`bash
+   ```bash
    cp ~/.vimrc ~/dotfiles/vim/
-   \`\`\`
+   ```
 2. **Haz un backup del archivo local:**
-   \`\`\`bash
+   ```bash
    mv ~/.vimrc ~/.vimrc.backup
-   \`\`\`
-3. **Ejecuta \`stow_links.sh\`** para crear los enlaces simbólicos.
+   ```
+3. **Ejecuta `stow_links.sh`** para crear los enlaces simbólicos.
 
 ## Resumen de Scripts
 
-### \`install_packages.sh\`
+### `install_packages.sh`
 - Instala paquetes necesarios.
 
-### \`stow_links.sh\`
+### `stow_links.sh`
 - Crea enlaces simbólicos para los dotfiles.
 
-### \`rm_links.sh\`
+### `rm_links.sh`
 - Elimina enlaces simbólicos y restaura backups.
 
 ## Desinstalación de Configuraciones
 
 Para deshacer los cambios realizados por los scripts de instalación:
 
-1. **Ejecuta \`rm_links.sh\`:**
-   \`\`\`bash
+1. **Ejecuta `rm_links.sh`:**
+   ```bash
    ./rm_links.sh
-   \`\`\`
+   ```
 
 **¿Qué hace?**
 - Elimina los enlaces simbólicos y restaura los archivos respaldados.
