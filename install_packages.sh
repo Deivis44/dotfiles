@@ -62,11 +62,79 @@ install_package() {
     fi
 }
 
-# Función para instalar un grupo de paquetes
+# Listas de paquetes, agrupadas por categoría para facilitar su mantenimiento
+declare -a dotfiles_tools=(
+    "stow"
+    "git"
+)
+
+declare -a system_utilities=(
+    "curl"
+    "unzip"
+    "tree"
+    "eza"
+    "fzf"
+    "zoxide"
+    "ranger"
+    "vesktop"
+    "spotify-launcher"
+    "syncthing"
+    "starship"
+    "zathura"
+    "zathura-pdf-mupdf"
+    "telegram-desktop"
+    "session-desktop"
+    "torbrowser-launcher"
+    "openvpn"
+    "protonvpn-cli-ng"
+    "virtualbox"
+    "virtualbox-host-modules-arch"
+    "virtualbox-guest-iso"
+    "obs-studio"
+)
+
+declare -a development_tools=(
+    "neovim"
+    "python"
+    "python-pynvim"
+    "npm"
+    "python-virtualenv"
+    "pyright"
+    "debugpy"
+    "go"
+    "base-devel"
+    "gcc"
+)
+
+declare -a tmux_plugins=(
+    "tmux"
+    "bc"
+    "jq"
+    "gh"
+    "glab"
+    "playerctl"
+)
+
+declare -a terminal_shell=(
+    "kitty"
+    "zsh"
+    "pokemon-colorscripts-git"
+)
+
+declare -a fonts_symbols=(
+    "noto-fonts"
+    "noto-fonts-extra"
+    "noto-fonts-emoji"
+    "ttf-nerd-fonts-symbols"
+    "ttf-nerd-fonts-symbols-mono"
+)
+
+# Función para instalar los paquetes de un grupo
 install_group() {
     local group_name=$1
-    local packages=("${!2}")
-    local install_all=$3
+    shift
+    local packages=("$@")
+    local install_all=$install_all
 
     show_info "Instalando grupo de paquetes: $group_name"
     for pkg in "${packages[@]}"; do
@@ -84,35 +152,23 @@ install_group() {
     done
 }
 
-# Función para instalar todos los paquetes
+# Función para instalar todos los grupos de paquetes
 install_packages() {
     local install_all=$1
 
-    # Grupos de paquetes
-    declare -A package_groups=(
-        ["Herramientas de Gestión de Dotfiles"]=("stow" "git")
-        ["Utilidades Básicas del Sistema"]=("curl" "unzip" "tree" "eza" "fzf" "zoxide" "ranger" "spotify-launcher" "syncthing" "starship" "zathura" "zathura-pdf-mupdf" "telegram-desktop" "session-desktop" "torbrowser-launcher" "openvpn" "protonvpn-cli-ng" "virtualbox" "virtualbox-host-modules-arch" "virtualbox-guest-iso" "obs-studio")
-        ["Herramientas de Desarrollo y Python"]=("neovim" "python" "python-pynvim" "npm" "python-virtualenv" "pyright" "debugpy" "go" "base-devel" "gcc")
-        ["Tmux y Gestores de Plugins"]=("tmux" "bc" "jq" "gh" "glab" "playerctl")
-        ["Terminal y Shell"]=("kitty" "zsh" "pokemon-colorscripts-git")
-        ["Fuentes y Símbolos"]=("noto-fonts" "noto-fonts-extra" "noto-fonts-emoji" "ttf-nerd-fonts-symbols" "ttf-nerd-fonts-symbols-mono")
-    )
-
-    # Inicializar arrays para el resumen
     installed=()
     skipped=()
     user_skipped=()
     errors=()
 
-    # Instalar los paquetes de cada grupo
-    for group in "${!package_groups[@]}"; do
-        install_group "$group" package_groups["$group"][@] "$install_all"
-    done
+    install_group "Herramientas de Gestión de Dotfiles" "${dotfiles_tools[@]}"
+    install_group "Utilidades Básicas del Sistema" "${system_utilities[@]}"
+    install_group "Herramientas de Desarrollo y Python" "${development_tools[@]}"
+    install_group "Tmux y Gestores de Plugins" "${tmux_plugins[@]}"
+    install_group "Terminal y Shell" "${terminal_shell[@]}"
+    install_group "Fuentes y Símbolos" "${fonts_symbols[@]}"
 
-    # Instalación de herramientas adicionales
     install_additional_tools
-
-    # Resumen de la instalación
     show_summary
 }
 
