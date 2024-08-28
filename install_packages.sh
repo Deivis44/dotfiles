@@ -76,6 +76,7 @@ declare -a system_utilities=(
     "fzf"
     "zoxide"
     "ranger"
+    "btop"
     "vesktop"
     "spotify-launcher"
     "syncthing"
