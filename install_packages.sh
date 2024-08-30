@@ -62,6 +62,36 @@ install_package() {
     fi
 }
 
+# Función para verificar si la fuente CaskaydiaCove Nerd Font Mono ya está instalada
+check_and_install_font() {
+    local font_name="CaskaydiaCove Nerd Font Mono"
+    
+    if fc-list | grep -qi "$font_name"; then
+        show_info "La fuente $font_name ya está instalada."
+        return 0
+    fi
+    
+    show_info "La fuente $font_name no está instalada. Intentando instalarla..."
+    
+    # Descargar la fuente
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/CascadiaCode.zip -O /tmp/CascadiaCode.zip
+    if [ $? -ne 0 ]; then
+        show_error "Error al descargar $font_name."
+        return 1
+    fi
+    
+    # Descomprimir y mover la fuente
+    unzip /tmp/CascadiaCode.zip -d ~/.local/share/fonts
+    if [ $? -ne 0 ]; then
+        show_error "Error al descomprimir $font_name."
+        return 1
+    fi
+    
+    # Actualizar la caché de fuentes
+    fc-cache -fv
+    show_success "La fuente $font_name se instaló correctamente."
+}
+
 # Listas de paquetes, agrupadas por categoría para facilitar su mantenimiento
 declare -a dotfiles_tools=(
     "stow"
@@ -79,6 +109,7 @@ declare -a system_utilities=(
     "btop"
     "neofetch"
     "vesktop"
+    "chromium"
     "spotify-launcher"
     "syncthing"
     "starship"
@@ -170,6 +201,7 @@ install_packages() {
     install_group "Terminal y Shell" "${terminal_shell[@]}"
     install_group "Fuentes y Símbolos" "${fonts_symbols[@]}"
 
+    check_and_install_font
     install_additional_tools
     show_summary
 }

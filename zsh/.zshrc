@@ -28,7 +28,7 @@ zinit snippet OMZP::sudo
 zinit snippet OMZP::archlinux
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::kitty
-zinit snippet OMZP::tmux
+#zinit snippet OMZP::tmux
 zinit snippet OMZP::zoxide
 
 # ==========================
