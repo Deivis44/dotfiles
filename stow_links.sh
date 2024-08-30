@@ -71,6 +71,7 @@ add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
 add_dotfile "nvim_custom" ".config/nvim/lua/custom"  # Crear enlace para la carpeta custom en NvChad
 add_dotfile "nvim_init" ".config/nvim/init.lua"  # Crear enlace para init.lua de NvChad
+add_dotfile "git" ".gitconfig"
 
 # Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
 show_section "Creando backups si es necesario"
