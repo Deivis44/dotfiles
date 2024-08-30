@@ -103,6 +103,7 @@ declare -a system_utilities=(
     "unzip"
     "tree"
     "eza"
+    "less"
     "fzf"
     "zoxide"
     "ranger"
