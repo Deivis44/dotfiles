@@ -110,6 +110,7 @@ declare -a system_utilities=(
     "neofetch"
     "vesktop"
     "chromium"
+    "obsidian"
     "spotify-launcher"
     "syncthing"
     "starship"
