@@ -113,6 +113,8 @@ declare -a system_utilities=(
     "chromium"
     "obsidian"
     "foliate"
+    "veracrypt"
+    "keepassxc"
     "spotify-launcher"
     "syncthing"
     "starship"
