@@ -112,6 +112,7 @@ declare -a system_utilities=(
     "vesktop"
     "chromium"
     "obsidian"
+    "foliate"
     "spotify-launcher"
     "syncthing"
     "starship"
