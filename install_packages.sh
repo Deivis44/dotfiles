@@ -103,6 +103,7 @@ declare -a system_utilities=(
     "unzip"
     "tree"
     "eza"
+    "os-prober"
     "less"
     "fzf"
     "zoxide"
