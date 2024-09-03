@@ -121,7 +121,6 @@ declare -a system_utilities=(
     "zathura"
     "zathura-pdf-mupdf"
     "telegram-desktop"
-    "session-desktop"
     "torbrowser-launcher"
     "openvpn"
     "protonvpn-cli-ng"
