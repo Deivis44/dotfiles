@@ -163,6 +163,7 @@ declare -a fonts_symbols=(
     "noto-fonts"
     "noto-fonts-extra"
     "noto-fonts-emoji"
+    "noto-fonts-cjk"
     "ttf-nerd-fonts-symbols"
     "ttf-nerd-fonts-symbols-mono"
 )
