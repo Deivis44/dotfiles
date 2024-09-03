@@ -75,6 +75,11 @@ alias vc='code' # GUI code editor
 alias nvim='nvim'
 alias kth='kitty-theme'
 
+# Clean temp stuff
+alias cl_system='sudo pacman -Scc --noconfirm && yay -Sc --noconfirm && sudo pacman -Rns $(pacman -Qtdq) --noconfirm && sudo rm -rf /tmp/*'
+alias cl_clipboard='rm -rf ~/.cache/cliphist/*'
+
+
 # ==========================
 # Package Management
 # ==========================
