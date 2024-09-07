@@ -99,6 +99,7 @@ declare -a dotfiles_tools=(
 )
 
 declare -a system_utilities=(
+    "linux-headers"
     "curl"
     "unzip"
     "tree"
@@ -118,7 +119,7 @@ declare -a system_utilities=(
     "keepassxc"
     "spotify-launcher"
     "syncthing"
-    "starship"
+    "starship" # delete it
     "zathura"
     "zathura-pdf-mupdf"
     "telegram-desktop"
