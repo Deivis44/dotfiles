@@ -110,7 +110,7 @@ declare -a system_utilities=(
     "zoxide"
     "ranger"
     "btop"
-    "neofetch"
+    "fastfetch"
     "vesktop"
     "chromium"
     "obsidian"
@@ -119,7 +119,6 @@ declare -a system_utilities=(
     "keepassxc"
     "spotify-launcher"
     "syncthing"
-    "starship" # delete it
     "zathura"
     "zathura-pdf-mupdf"
     "telegram-desktop"
