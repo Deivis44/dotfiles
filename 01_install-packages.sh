@@ -161,6 +161,7 @@ declare -a system_utilities=(
     "curl"
     "unzip"
     "tree"
+    "man-db"
     "eza"
     "os-prober"
     "less"
