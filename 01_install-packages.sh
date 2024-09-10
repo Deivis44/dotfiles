@@ -31,35 +31,93 @@ ask_install() {
     done
 }
 
-# Función para instalar un paquete usando pacman o yay
+# Opción 1: dots-hyprland version (tu enfoque con yay-bin)
+install_yay_dots_hyprland() {
+    show_info "Instalando yay (dots-hyprland version)..."
+    sudo pacman -S --needed --noconfirm base-devel
+    git clone https://aur.archlinux.org/yay-bin.git /tmp/buildyay
+    cd /tmp/buildyay && makepkg -o && makepkg -se && makepkg -i --noconfirm
+    if [ $? -eq 0 ]; then
+        show_success "yay-bin instalado correctamente (dots-hyprland version)."
+        rm -rf /tmp/buildyay
+    else
+        show_error "Error al instalar yay-bin (dots-hyprland version)."
+        exit 1
+    fi
+}
+
+# Opción 2: Simple version (mi enfoque)
+install_yay_simple() {
+    show_info "Instalando yay (Simple version)..."
+    git clone https://aur.archlinux.org/yay.git /tmp/yay
+    cd /tmp/yay && makepkg -si --noconfirm
+    if [ $? -eq 0 ]; then
+        show_success "yay instalado correctamente (Simple version)."
+        rm -rf /tmp/yay
+    else
+        show_error "Error al instalar yay (Simple version)."
+        exit 1
+    fi
+}
+
+# Función para seleccionar la versión de instalación de yay
+select_yay_installation() {
+    while true; do
+        echo "Selecciona la versión de instalación de yay:"
+        echo "1) dots-hyprland version (usa yay-bin)"
+        echo "2) Simple version (instalación más automatizada)"
+        read -p "Elige una opción (1 o 2): " option
+        case $option in
+            1 ) install_yay_dots_hyprland; break;;
+            2 ) install_yay_simple; break;;
+            * ) echo "Por favor, selecciona una opción válida (1 o 2).";;
+        esac
+    done
+}
+
+# Función para instalar yay si no está presente
+install_yay() {
+    if ! command -v yay > /dev/null; then
+        select_yay_installation
+    else
+        show_info "yay ya está instalado."
+    fi
+}
+
+# Función para instalar un paquete usando pacman o yay con verificación rigurosa
 install_package() {
     local pkg=$1
     local install_all=$2
+    local retries=3
 
-    if pacman -Qs $pkg > /dev/null; then
-        show_info "$pkg ya está instalado."
-        return 0
-    fi
-
-    if [ "$install_all" = true ] || ask_install "$pkg"; then
-        show_info "Intentando instalar $pkg con pacman..."
-        if sudo pacman -Syu --noconfirm $pkg; then
-            show_success "$pkg instalado con éxito con pacman."
+    for ((i=1; i<=retries; i++)); do
+        if pacman -Qs $pkg > /dev/null; then
+            show_info "$pkg ya está instalado."
             return 0
-        else
-            show_info "No se pudo instalar $pkg con pacman. Intentando con yay..."
-            if yay -Syu --noconfirm $pkg; then
-                show_success "$pkg instalado con éxito con yay."
+        fi
+
+        if [ "$install_all" = true ] || ask_install "$pkg"; then
+            show_info "Intentando instalar $pkg (Intento $i/$retries)..."
+            if sudo pacman -S --noconfirm $pkg; then
+                show_success "$pkg instalado con éxito con pacman."
                 return 0
             else
-                show_error "Error al instalar $pkg."
-                return 1
+                show_info "No se pudo instalar $pkg con pacman. Intentando con yay..."
+                if yay -S --noconfirm $pkg; then
+                    show_success "$pkg instalado con éxito con yay."
+                    return 0
+                fi
             fi
+        else
+            show_info "$pkg omitido por el usuario."
+            return 2
         fi
-    else
-        show_info "$pkg omitido por el usuario."
-        return 2
-    fi
+
+        show_error "Error al instalar $pkg. Reintentando..."
+    done
+
+    show_error "No se pudo instalar $pkg después de $retries intentos."
+    return 1
 }
 
 # Función para verificar si la fuente CaskaydiaCove Nerd Font Mono ya está instalada
@@ -168,7 +226,7 @@ declare -a fonts_symbols=(
     "ttf-nerd-fonts-symbols-mono"
 )
 
-# Función para instalar los paquetes de un grupo
+# Función para instalar los paquetes de un grupo con contador
 install_group() {
     local group_name=$1
     shift
@@ -176,7 +234,10 @@ install_group() {
     local install_all=$install_all
 
     show_info "Instalando grupo de paquetes: $group_name"
-    for pkg in "${packages[@]}"; do
+    local total_packages=${#packages[@]}
+    for i in "${!packages[@]}"; do
+        local pkg=${packages[$i]}
+        show_info "Instalando paquete $((i+1))/$total_packages: $pkg"
         if install_package "$pkg" "$install_all"; then
             if pacman -Qs $pkg > /dev/null; then
                 installed+=("$pkg (pacman)")
@@ -199,6 +260,7 @@ install_packages() {
     skipped=()
     user_skipped=()
     errors=()
+    install_yay # Instalar yay primero
 
     install_group "Herramientas de Gestión de Dotfiles" "${dotfiles_tools[@]}"
     install_group "Utilidades Básicas del Sistema" "${system_utilities[@]}"
@@ -214,6 +276,7 @@ install_packages() {
 
 # Función para instalar herramientas adicionales (Tmux Plugin Manager, NvChad, Starship, Oh My Zsh)
 install_additional_tools() {
+    local tools_installed=0
     # Instalación de Tmux Plugin Manager (tpm)
     show_info "Instalando Tmux Plugin Manager (tpm)..."
     if [ ! -d "$HOME/.config/tmux/plugins/tpm" ]; then
@@ -224,6 +287,7 @@ install_additional_tools() {
         else
             show_success "Tmux Plugin Manager instalado con éxito."
             installed+=("tpm")
+            tools_installed=$((tools_installed+1))
         fi
     else
         show_info "Tmux Plugin Manager ya está instalado."
@@ -240,6 +304,7 @@ install_additional_tools() {
         else
             show_success "NvChad instalado con éxito."
             installed+=("NvChad")
+            tools_installed=$((tools_installed+1))
         fi
     else
         show_info "NvChad ya está instalado."
@@ -256,6 +321,7 @@ install_additional_tools() {
         else
             show_success "Starship instalado con éxito."
             installed+=("Starship")
+            tools_installed=$((tools_installed+1))
         fi
     else
         show_info "Starship ya está instalado."
@@ -272,11 +338,14 @@ install_additional_tools() {
         else
             show_success "Oh My Zsh instalado con éxito."
             installed+=("Oh My Zsh")
+            tools_installed=$((tools_installed+1))
         fi
     else
         show_info "Oh My Zsh ya está instalado."
         skipped+=("Oh My Zsh")
     fi
+
+    show_info "Se han instalado $tools_installed herramientas adicionales."
 }
 
 # Función para mostrar el resumen de la instalación
