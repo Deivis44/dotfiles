@@ -201,6 +201,7 @@ declare -a development_tools=(
     "go"
     "base-devel"
     "gcc"
+    "lazygit"
 )
 
 declare -a tmux_plugins=(

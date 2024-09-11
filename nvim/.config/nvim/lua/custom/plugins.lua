@@ -39,4 +39,7 @@ return {
 
   -- nvim-nio para soporte de nvim-dap-ui
   { 'nvim-neotest/nvim-nio', lazy = false },
+
+  -- Plugin LazyGit para integración con Git
+  { 'kdheepak/lazygit.nvim', lazy = false },
 }

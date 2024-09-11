@@ -16,7 +16,7 @@ vim.g.slime_dont_ask_default = 1
 -- Configuración de LSP y DAP
 require("mason").setup()
 require("mason-lspconfig").setup {
-  ensure_installed = { "pyright", "tsserver", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" },
+  ensure_installed = { "pyright", "ts_ls", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" },
 }
 
 local lspconfig = require("lspconfig")
@@ -76,7 +76,7 @@ local on_attach = function(_, bufnr)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts) -- Corrección aplicada aquí
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
   buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
@@ -86,11 +86,11 @@ local on_attach = function(_, bufnr)
   buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>', opts)
 end
 
 -- Configuración de servidores LSP
-local servers = { "pyright", "tsserver", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" }
+local servers = { "pyright", "ts_ls", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     on_attach = on_attach,
@@ -142,3 +142,7 @@ vim.api.nvim_set_keymap('n', '<Leader>B', '<Cmd>lua require"dap".set_breakpoint(
 vim.api.nvim_set_keymap('n', '<Leader>lp', '<Cmd>lua require"dap".set_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>', dap_opts)
 vim.api.nvim_set_keymap('n', '<Leader>dr', '<Cmd>lua require"dap".repl.open()<CR>', dap_opts)
 vim.api.nvim_set_keymap('n', '<Leader>dl', '<Cmd>lua require"dap".run_last()<CR>', dap_opts)
+
+-- Configuración de LazyGit
+vim.api.nvim_set_keymap('n', '<leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+
