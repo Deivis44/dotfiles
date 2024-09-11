@@ -162,3 +162,4 @@ function command_not_found_handler {
 pokemon-colorscripts --no-title -r 1,3,6
 
 export PATH=$PATH:/home/deivis/.spicetify
+export PATH=$HOME/.local/bin:$PATH
