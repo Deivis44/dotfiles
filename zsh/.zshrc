@@ -161,5 +161,5 @@ function command_not_found_handler {
 # Display Pokemon
 pokemon-colorscripts --no-title -r 1,3,6
 
-export PATH=$PATH:/home/deivis/.spicetify
 export PATH=$HOME/.local/bin:$PATH
+export PATH=$PATH:/home/deivi/.spicetify
