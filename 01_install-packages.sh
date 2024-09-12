@@ -197,7 +197,6 @@ declare -a development_tools=(
     "npm"
     "python-virtualenv"
     "pyright"
-    "debugpy"
     "go"
     "base-devel"
     "gcc"
@@ -208,7 +207,6 @@ declare -a tmux_plugins=(
     "tmux"
     "bc"
     "jq"
-    "gh"
     "glab"
     "playerctl"
 )
