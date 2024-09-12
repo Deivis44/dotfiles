@@ -31,6 +31,16 @@ ask_install() {
     done
 }
 
+# Función para verificar si un paquete está instalado
+is_installed() {
+    local pkg=$1
+    if pacman -Qi "$pkg" > /dev/null 2>&1 || yay -Qi "$pkg" > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Opción 1: dots-hyprland version (tu enfoque con yay-bin)
 install_yay_dots_hyprland() {
     show_info "Instalando yay (dots-hyprland version)..."
@@ -91,7 +101,7 @@ install_package() {
     local retries=3
 
     for ((i=1; i<=retries; i++)); do
-        if pacman -Qs $pkg > /dev/null; then
+        if is_installed $pkg; then
             show_info "$pkg ya está instalado."
             return 0
         fi
@@ -120,34 +130,62 @@ install_package() {
     return 1
 }
 
-# Función para verificar si la fuente CaskaydiaCove Nerd Font Mono ya está instalada
-check_and_install_font() {
-    local font_name="CaskaydiaCove Nerd Font Mono"
-    
-    if fc-list | grep -qi "$font_name"; then
-        show_info "La fuente $font_name ya está instalada."
-        return 0
+# Función para instalar los paquetes adicionales (tmux, NvChad, Starship)
+install_additional_tools() {
+    local tools_installed=0
+
+    # Instalación de Tmux Plugin Manager (tpm)
+    show_info "Instalando Tmux Plugin Manager (tpm)..."
+    if [ ! -d "$HOME/.config/tmux/plugins/tpm" ]; then
+        git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+        if [ $? -ne 0 ]; then
+            show_error "Error al instalar tmux plugin manager (tpm)."
+            errors+=("tpm")
+        else
+            show_success "Tmux Plugin Manager instalado con éxito."
+            installed+=("tpm")
+            tools_installed=$((tools_installed+1))
+        fi
+    else
+        show_info "Tmux Plugin Manager ya está instalado."
+        skipped+=("tpm")
     fi
-    
-    show_info "La fuente $font_name no está instalada. Intentando instalarla..."
-    
-    # Descargar la fuente
-    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/CascadiaCode.zip -O /tmp/CascadiaCode.zip
-    if [ $? -ne 0 ]; then
-        show_error "Error al descargar $font_name."
-        return 1
+
+    # Instalación de NvChad
+    show_info "Instalando NvChad..."
+    if [ ! -d "$HOME/.config/nvim" ]; then
+        git clone https://github.com/NvChad/starter ~/.config/nvim
+        if [ $? -ne 0 ]; then
+            show_error "Error al instalar NvChad."
+            errors+=("NvChad")
+        else
+            show_success "NvChad instalado con éxito."
+            installed+=("NvChad")
+            tools_installed=$((tools_installed+1))
+        fi
+    else
+        show_info "NvChad ya está instalado."
+        skipped+=("NvChad")
     fi
-    
-    # Descomprimir y mover la fuente
-    unzip /tmp/CascadiaCode.zip -d ~/.local/share/fonts
-    if [ $? -ne 0 ]; then
-        show_error "Error al descomprimir $font_name."
-        return 1
+
+    # Instalación de Starship
+    show_info "Instalando Starship..."
+    if ! command -v starship > /dev/null; then
+        curl -sS https://starship.rs/install.sh | sh -s -- --yes
+        if [ $? -ne 0 ]; then
+            show_error "Error al instalar Starship."
+            errors+=("Starship")
+        else
+            show_success "Starship instalado con éxito."
+            installed+=("Starship")
+            tools_installed=$((tools_installed+1))
+        fi
+    else
+        show_info "Starship ya está instalado."
+        skipped+=("Starship")
     fi
-    
-    # Actualizar la caché de fuentes
-    fc-cache -fv
-    show_success "La fuente $font_name se instaló correctamente."
+
+    show_info "Se han instalado $tools_installed herramientas adicionales."
 }
 
 # Listas de paquetes, agrupadas por categoría para facilitar su mantenimiento
@@ -239,7 +277,7 @@ install_group() {
         local pkg=${packages[$i]}
         show_info "Instalando paquete $((i+1))/$total_packages: $pkg"
         if install_package "$pkg" "$install_all"; then
-            if pacman -Qs $pkg > /dev/null; then
+            if pacman -Qi $pkg > /dev/null; then
                 installed+=("$pkg (pacman)")
             else
                 installed+=("$pkg (yay)")
@@ -250,6 +288,36 @@ install_group() {
             errors+=("$pkg")
         fi
     done
+}
+
+# Función para verificar si la fuente CaskaydiaCove Nerd Font Mono ya está instalada
+check_and_install_font() {
+    local font_name="CaskaydiaCove Nerd Font Mono"
+    
+    if fc-list | grep -qi "$font_name"; then
+        show_info "La fuente $font_name ya está instalada."
+        return 0
+    fi
+    
+    show_info "La fuente $font_name no está instalada. Intentando instalarla..."
+    
+    # Descargar la fuente
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/CascadiaCode.zip -O /tmp/CascadiaCode.zip
+    if [ $? -ne 0 ]; then
+        show_error "Error al descargar $font_name."
+        return 1
+    fi
+    
+    # Descomprimir y mover la fuente
+    unzip /tmp/CascadiaCode.zip -d ~/.local/share/fonts
+    if [ $? -ne 0 ]; then
+        show_error "Error al descomprimir $font_name."
+        return 1
+    fi
+    
+    # Actualizar la caché de fuentes
+    fc-cache -fv
+    show_success "La fuente $font_name se instaló correctamente."
 }
 
 # Función para instalar todos los grupos de paquetes
@@ -272,80 +340,16 @@ install_packages() {
     check_and_install_font
     install_additional_tools
     show_summary
-}
 
-# Función para instalar herramientas adicionales (Tmux Plugin Manager, NvChad, Starship, Oh My Zsh)
-install_additional_tools() {
-    local tools_installed=0
-    # Instalación de Tmux Plugin Manager (tpm)
-    show_info "Instalando Tmux Plugin Manager (tpm)..."
-    if [ ! -d "$HOME/.config/tmux/plugins/tpm" ]; then
-        git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-        if [ $? -ne 0 ]; then
-            show_error "Error al instalar tmux plugin manager (tpm)."
-            errors+=("tpm")
-        else
-            show_success "Tmux Plugin Manager instalado con éxito."
-            installed+=("tpm")
-            tools_installed=$((tools_installed+1))
-        fi
-    else
-        show_info "Tmux Plugin Manager ya está instalado."
-        skipped+=("tpm")
-    fi
+    # Cambiar la shell por defecto a zsh
+    show_info "Cambiando la shell por defecto a zsh..."
+    chsh -s $(which zsh)
 
-    # Instalación de NvChad
-    show_info "Instalando NvChad..."
-    if [ ! -d "$HOME/.config/nvim" ]; then
-        git clone https://github.com/NvChad/starter ~/.config/nvim
-        if [ $? -ne 0 ]; then
-            show_error "Error al instalar NvChad."
-            errors+=("NvChad")
-        else
-            show_success "NvChad instalado con éxito."
-            installed+=("NvChad")
-            tools_installed=$((tools_installed+1))
-        fi
-    else
-        show_info "NvChad ya está instalado."
-        skipped+=("NvChad")
-    fi
-
-    # Instalación de Starship
-    show_info "Instalando Starship..."
-    if ! command -v starship > /dev/null; then
-        curl -sS https://starship.rs/install.sh | sh -s -- --yes
-        if [ $? -ne 0 ]; then
-            show_error "Error al instalar Starship."
-            errors+=("Starship")
-        else
-            show_success "Starship instalado con éxito."
-            installed+=("Starship")
-            tools_installed=$((tools_installed+1))
-        fi
-    else
-        show_info "Starship ya está instalado."
-        skipped+=("Starship")
-    fi
-
-    # Instalación de Oh My Zsh
-    show_info "Instalando Oh My Zsh..."
-    if [ ! -d "$HOME/.oh-my-zsh" ]; then
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-        if [ $? -ne 0 ]; then
-            show_error "Error al instalar Oh My Zsh."
-            errors+=("Oh My Zsh")
-        else
-            show_success "Oh My Zsh instalado con éxito."
-            installed+=("Oh My Zsh")
-            tools_installed=$((tools_installed+1))
-        fi
-    else
-        show_info "Oh My Zsh ya está instalado."
-        skipped+=("Oh My Zsh")
-    fi
-
-    show_info "Se han instalado $tools_installed herramientas adicionales."
+    # Abrir y cerrar Kitty para que genere sus archivos de configuración
+    show_info "Abriendo Kitty para generar archivos de configuración..."
+    kitty &
+    sleep 2
+    killall kitty
 }
 
 # Función para mostrar el resumen de la instalación
