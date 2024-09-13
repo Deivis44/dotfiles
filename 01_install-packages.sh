@@ -208,6 +208,8 @@ declare -a system_utilities=(
     "ranger"
     "btop"
     "fastfetch"
+    "tty-clock"
+    "cbonsai"
     "vesktop"
     "chromium"
     "obsidian"
