@@ -74,6 +74,7 @@ alias c='clear' # clear terminal
 alias vc='code' # GUI code editor
 alias nvim='nvim'
 alias kth='kitty-theme'
+alias doom-zig='${HOME}/terminal-doom/zig-out/bin/terminal-doom'
 
 # Clean temp stuff
 alias cl_system='sudo pacman -Scc --noconfirm && yay -Sc --noconfirm && sudo rm -rf /tmp/*'
