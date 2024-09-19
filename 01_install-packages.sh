@@ -330,6 +330,8 @@ declare -a productivity_apps=(
     "virtualbox-host-modules-arch"  # Módulos del kernel para VirtualBox
     "virtualbox-guest-iso"   # ISO de adiciones de huésped para VirtualBox
     "obs-studio"             # Grabación y streaming de video
+    "minecraft-launcher"     # Juego de construcción y aventuras
+    "thunderbird"            # Cliente de correo electrónico
 )
 
 # 4. Herramientas de desarrollo y programación
@@ -345,6 +347,7 @@ declare -a development_tools=(
     "gcc"                    # Compilador de C y C++
     "lazygit"                # Interfaz de Git en terminal
     "zig"                    # Lenguaje de programación Zig (necesario para Doom en la terminal)
+    "jdk21-openjdk"          # Kit de desarrollo de Java
 )
 
 # 5. Terminal y shell
