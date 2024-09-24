@@ -2,17 +2,17 @@
 
 show_banner() {
     echo -e "
-     _____          ___         ___     
-    /  /::\        /  /\       /__/\    
-   /  /:/\:\      /  /::\     |  |::\   
-  /  /:/  \:\    /  /:/\:\    |  |:|:\  
- /__/:/ \__\:|  /  /:/~/:/  __|__|:|\:\ 
+     _____          ___         ___
+    /  /::\        /  /\       /__/\
+   /  /:/\:\      /  /::\     |  |::\
+  /  /:/  \:\    /  /:/\:\    |  |:|:\
+ /__/:/ \__\:|  /  /:/~/:/  __|__|:|\:\
  \  \:\ /  /:/ /__/:/ /:/  /__/::::| \:\
   \  \:\  /:/  \  \:\/:/   \  \:\~~\__\/
-   \  \:\/:/    \  \::/     \  \:\      
-    \  \::/      \  \:\      \  \:\     
-     \__\/        \  \:\      \  \:\    
-                   \__\/       \__\/    
+   \  \:\/:/    \  \::/     \  \:\
+    \  \::/      \  \:\      \  \:\
+     \__\/        \  \:\      \  \:\
+                   \__\/       \__\/
     "
 }
 
@@ -309,6 +309,7 @@ declare -a system_utilities=(
     "tty-clock"              # Reloj en la terminal
     "cbonsai"                # Generador de bonsáis ASCII
     "vesktop"                # Herramienta para gestionar escritorios virtuales
+    "cava"                   # Visualizador de audio en terminal
 )
 
 # 3. Aplicaciones de productividad y multimedia
