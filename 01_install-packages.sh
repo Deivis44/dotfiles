@@ -333,6 +333,7 @@ declare -a productivity_apps=(
     "obs-studio"             # Grabación y streaming de video
     "minecraft-launcher"     # Juego de construcción y aventuras
     "thunderbird"            # Cliente de correo electrónico
+    "onlyoffice-bin"         # Suite de office
 )
 
 # 4. Herramientas de desarrollo y programación
