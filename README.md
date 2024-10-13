@@ -1,10 +1,39 @@
 
 # Dotfiles
 
-## Introducción
+# Introducción
 Este repositorio contiene mis archivos de configuración (dotfiles) para diversas aplicaciones y herramientas en mi entorno de desarrollo. El propósito es facilitar la configuración de nuevas máquinas y mantener un entorno consistente en diferentes dispositivos.
 
-## Clonar el Repositorio
+## Screenshots
+
+![Screenshot 1](./Screenshots/1_main.png)
+![Screenshot 2](./Screenshots/2_windows.png)
+![Screenshot 3](./Screenshots/3_editor.png)
+![Screenshot 4](./Screenshots/4_music.png)
+
+***
+
+# Personal Setup
+
+- **Dotfiles**: [Link to the repo](https://github.com/Deivis44/dotfiles)
+- **Browser**: Zen (Alpha)
+- **Home tab**: mtab
+- **Font**: CaskaydiaCove Nerd Font Mono
+- **Terminal**: Kitty
+- **Editor**: Nvim Chad (+ Tmux)
+- **Music**: Spotify + Spicetify personalization layer
+- **Wallpaper**: [rocket.png](https://github.com/Deivis44/dotfiles/blob/main/Wallpapers/rocket.png)
+- **My wallpaper colelction**: [Wallpapers](https://mega.nz/folder/P5pygYZQ#u-x2WmRNMVpWEt8u2Xo5fQ)
+
+## Stickers
+I made those stickers, so if you wanna check them, here is the link to the file: [Mega Stickers](https://mega.nz/folder/j5IFmTzC#OniMyOtnreRFPnHSHFfdYQ)
+
+## Credits
+Credits to this repo: [https://github.com/end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), I modified it while learning Linux stuff with reverse engineering. (I'm working on my own status bar using that base)
+
+***
+
+# Clonar el Repositorio
 Para comenzar, clona el repositorio en tu directorio home:
 
 ```bash
