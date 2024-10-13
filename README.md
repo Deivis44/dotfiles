@@ -11,6 +11,8 @@ Este repositorio contiene mis archivos de configuración (dotfiles) para diversa
 ![Screenshot 3](./Screenshots/3_editor.png)
 ![Screenshot 4](./Screenshots/4_music.png)
 ![Screenshot 5](./Screenshots/5_browser.png)
+![Screenshot 6](./Screenshots/6_files.png)
+![Screenshot 7](./Screenshots/7_hyprlock.png)
 
 ***
 
@@ -25,7 +27,7 @@ Este repositorio contiene mis archivos de configuración (dotfiles) para diversa
 - **Music**: Spotify + Spicetify personalization layer
 - **Wallpaper**: [Rocket_girl](https://github.com/Deivis44/dotfiles/blob/main/Wallpapers/rocket.png)
 - **My wallpaper collection**: [Wallpapers](https://mega.nz/folder/P5pygYZQ#u-x2WmRNMVpWEt8u2Xo5fQ)
-- **Stickers**: [.png & .ai editable file](https://github.com/Deivis44/dotfiles/tree/main/Stickers)
+- **Stickers**: [.png & .ai files](https://github.com/Deivis44/dotfiles/tree/main/Stickers)
 
 ## Credits
 Credits to this repo: [https://github.com/end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), I modified it while learning Linux stuff with reverse engineering. (I'm working on my own status bar using that base)
