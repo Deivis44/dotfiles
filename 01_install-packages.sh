@@ -310,6 +310,7 @@ declare -a system_utilities=(
     "cbonsai"                # Generador de bonsáis ASCII
     "vesktop"                # Herramienta para gestionar escritorios virtuales
     "cava"                   # Visualizador de audio en terminal
+    "bat"                    # Reemplazo de 'cat' con resaltado de sintaxis
 )
 
 # 3. Aplicaciones de productividad y multimedia
