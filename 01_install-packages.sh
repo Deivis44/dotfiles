@@ -311,6 +311,8 @@ declare -a system_utilities=(
     "vesktop"                # Herramienta para gestionar escritorios virtuales
     "cava"                   # Visualizador de audio en terminal
     "bat"                    # Reemplazo de 'cat' con resaltado de sintaxis
+    "tty-clock"              # Reloj en la terminal-doom
+    "pipes.sh"               # Protector de pantalla en terminal
 )
 
 # 3. Aplicaciones de productividad y multimedia
@@ -335,6 +337,9 @@ declare -a productivity_apps=(
     "minecraft-launcher"     # Juego de construcción y aventuras
     "thunderbird"            # Cliente de correo electrónico
     "onlyoffice-bin"         # Suite de office
+    "zen-browser-bin"        # Navegador web Zen (basado en Firefox)
+    "librewolf-bin"          # Navegador web centrado en la privacidad
+    "mullvad-browser-bin"    # Navegador privado
 )
 
 # 4. Herramientas de desarrollo y programación
