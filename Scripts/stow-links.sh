@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Ruta base para los dotfiles en Config dentro del repositorio de dotfiles
+DOTFILES_DIR="$HOME/dotfiles/Config"
+
 # Función para mostrar un banner bonito
 show_banner() {
     echo -e "\e[1;34m"
@@ -56,23 +59,23 @@ declare -a SKIPPED_LINKS
 # Declarar array asociativo para dotfiles
 declare -A DOTFILES
 
-# Añadir configuraciones existentes en la nueva estructura
+# Añadir configuraciones existentes
 add_dotfile() {
     local name=$1
     local path=$2
     DOTFILES["$name"]="$path"
 }
 
-# Añadir dotfiles según la estructura original, ahora en Config/
-add_dotfile "zsh" "Config/zsh/.zshrc"
-add_dotfile "ranger" "Config/ranger/.config/ranger"
-add_dotfile "tmux" "Config/tmux/.config/tmux/tmux.conf"
-add_dotfile "starship" "Config/starship/.config/starship.toml"
-add_dotfile "zathura" "Config/zathura/.config/zathura"
-add_dotfile "nvim_custom" "Config/nvim/.config/nvim/lua/custom"
-add_dotfile "nvim_init" "Config/nvim/.config/nvim/init.lua"
-add_dotfile "git" "Config/git/.gitconfig"
-add_dotfile "kitty" "Config/kitty/.config/kitty/kitty.conf"
+# Añadir dotfiles
+add_dotfile "zsh" ".zshrc"
+add_dotfile "ranger" ".config/ranger"
+add_dotfile "tmux" ".config/tmux/tmux.conf"
+add_dotfile "starship" ".config/starship.toml"
+add_dotfile "zathura" ".config/zathura"
+add_dotfile "nvim_custom" ".config/nvim/lua/custom"
+add_dotfile "nvim_init" ".config/nvim/init.lua"
+add_dotfile "git" ".gitconfig"
+add_dotfile "kitty" ".config/kitty/kitty.conf"  # Añadir configuración específica para kitty.conf
 
 # Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
 show_section "Creando backups si es necesario"
@@ -88,15 +91,15 @@ for key in "${!DOTFILES[@]}"; do
 done
 
 # Aplicar configuraciones con stow y enlaces simbólicos específicos
-show_section "Aplicando configuraciones con enlaces simbólicos específicos"
+show_section "Aplicando configuraciones con stow"
 for key in "${!DOTFILES[@]}"; do
     if [ "$key" == "nvim_custom" ]; then
-        # Enlazar la carpeta custom de NvChad
+        # Enlazar la carpeta custom
         show_info "Enlazando la carpeta 'custom' en NvChad"
-        CUSTOM_SOURCE="$HOME/dotfiles/Config/nvim/.config/nvim/lua/custom"
+        CUSTOM_SOURCE="$DOTFILES_DIR/nvim/.config/nvim/lua/custom"
         CUSTOM_TARGET="$HOME/.config/nvim/lua/custom"
         
-        if [ -L "$CUSTOM_TARGET" ] || [ -d "$CUSTOM_TARGET" ];then
+        if [ -L "$CUSTOM_TARGET" ] || [ -d "$CUSTOM_TARGET" ]; then
             show_info "El enlace simbólico o carpeta 'custom' ya existe en $CUSTOM_TARGET. Eliminando..."
             rm -rf "$CUSTOM_TARGET"
         fi
@@ -106,12 +109,12 @@ for key in "${!DOTFILES[@]}"; do
         NEW_LINKS+=("$CUSTOM_TARGET")
         
     elif [ "$key" == "nvim_init" ]; then
-        # Reemplazar init.lua de NvChad
+        # Reemplazar init.lua
         show_info "Reemplazando el archivo 'init.lua' en NvChad"
-        INIT_SOURCE="$HOME/dotfiles/Config/nvim/.config/nvim/init.lua"
+        INIT_SOURCE="$DOTFILES_DIR/nvim/.config/nvim/init.lua"
         INIT_TARGET="$HOME/.config/nvim/init.lua"
         
-        if [ -f "$INIT_TARGET" ] && [ ! -L "$INIT_TARGET" ];then
+        if [ -f "$INIT_TARGET" ] && [ ! -L "$INIT_TARGET" ]; then
             show_info "El archivo 'init.lua' ya existe en $INIT_TARGET. Creando backup..."
             backup_file "$INIT_TARGET"
         fi
@@ -123,10 +126,10 @@ for key in "${!DOTFILES[@]}"; do
     elif [ "$key" == "kitty" ]; then
         # Manejo específico para kitty.conf
         show_info "Enlazando solo kitty.conf en .config/kitty"
-        KITTY_SOURCE="$HOME/dotfiles/Config/kitty/.config/kitty/kitty.conf"
+        KITTY_SOURCE="$DOTFILES_DIR/kitty/.config/kitty/kitty.conf"
         KITTY_TARGET="$HOME/.config/kitty/kitty.conf"
         
-        if [ -L "$KITTY_TARGET" ] || [ -f "$KITTY_TARGET" ];then
+        if [ -L "$KITTY_TARGET" ] || [ -f "$KITTY_TARGET" ]; then
             show_info "El archivo kitty.conf ya existe en $KITTY_TARGET. Eliminando..."
             rm -f "$KITTY_TARGET"
         fi
@@ -137,13 +140,16 @@ for key in "${!DOTFILES[@]}"; do
         
     else
         show_info "Aplicando configuración para $key..."
-        stow -v --target="$HOME" "$key"
-        if [ $? -eq 0 ];then
-            NEW_LINKS+=("${DOTFILES[$key]}")
-            show_info "Configuración para $key aplicada con éxito."
-        else
-            show_info "Error al aplicar la configuración para $key."
+        SOURCE_PATH="$DOTFILES_DIR/${DOTFILES[$key]}"
+        TARGET_PATH="${HOME}/${DOTFILES[$key]}"
+        
+        if [ -e "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
+            rm -rf "$TARGET_PATH"
         fi
+        
+        ln -s "$SOURCE_PATH" "$TARGET_PATH"
+        show_info "Enlace simbólico creado desde $SOURCE_PATH hacia $TARGET_PATH"
+        NEW_LINKS+=("$TARGET_PATH")
     fi
 done
 
@@ -169,68 +175,7 @@ done
 # Mensajes de información adicionales
 show_section "Información adicional"
 show_info "Instalación y configuración completadas. Recuerda:"
-show_info "- Abre tmux y usa Ctrl + Space + Shift + I para instalar los plugins descritos en el archivo tmux.conf."
-show_info "- Abre Neovim para verificar que las configuraciones personalizadas y plugins se han cargado correctamente. Además usa ':MasonInstallAll' para instalar los plugins de Neovim."
+show_info "- Después de aplicar los enlaces, abre tmux y usa Ctrl + Space + Shift + I para instalar los plugins descritos en el archivo tmux.conf."
+show_info "- Abre Neovim para verificar que las configuraciones personalizadas y plugins se han cargado correctamente."
 show_info "- Reinicia la terminal para aplicar los cambios en Starship."
 
-echo "---------------------------"
-show_info "Para problemas o preguntas, consulta el README del repositorio. ¡Buena suerte!"
-}
-
-# Añadir dotfiles según la nueva estructura en Config/
-add_dotfile "zsh" "Config/zsh/.zshrc"
-add_dotfile "ranger" "Config/ranger/.config/ranger/rc.conf"
-add_dotfile "tmux" "Config/tmux/.config/tmux/tmux.conf"
-add_dotfile "starship" "Config/starship/.config/starship.toml"
-add_dotfile "zathura" "Config/zathura/.config/zathura/zathurarc"
-add_dotfile "nvim_custom" "Config/nvim/.config/nvim/lua/custom"
-add_dotfile "nvim_init" "Config/nvim/.config/nvim/init.lua"
-add_dotfile "git" "Config/git/.gitconfig"
-add_dotfile "kitty" "Config/kitty/.config/kitty/kitty.conf"
-
-# Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
-show_section "Creando backups si es necesario"
-for key in "${!DOTFILES[@]}"; do
-    target="${HOME}/${DOTFILES[$key]}"
-    backup_file "$target"
-done
-
-# Aplicar configuraciones con enlaces simbólicos específicos
-show_section "Aplicando configuraciones con enlaces simbólicos"
-for key in "${!DOTFILES[@]}"; do
-    source_path="${HOME}/dotfiles/${DOTFILES[$key]}"
-    target_path="${HOME}/${DOTFILES[$key]}"
-    
-    # Si el archivo ya existe, eliminarlo para crear un nuevo enlace simbólico
-    if [ -e "$target_path" ] || [ -L "$target_path" ]; then
-        rm -rf "$target_path"
-    fi
-    
-    # Crear el enlace simbólico
-    ln -s "$source_path" "$target_path"
-    show_info "Enlace simbólico creado desde $source_path hacia $target_path"
-    NEW_LINKS+=("$target_path")
-done
-
-# Resumen
-show_section "Resumen de la instalación"
-echo "Enlaces nuevos creados y ubicaciones:"
-for link in "${NEW_LINKS[@]}"; do
-    echo " - $link"
-done
-
-echo "---------------------------"
-echo "Archivos o carpetas ya existentes que fueron respaldados:"
-for backup in "${BACKUP_FILES[@]}"; do
-    echo " - $backup"
-done
-
-# Mensajes de información adicionales
-show_section "Información adicional"
-show_info "Instalación y configuración completadas. Recuerda:"
-show_info "- Abre tmux y usa Ctrl + Space + Shift + I para instalar los plugins descritos en el archivo tmux.conf."
-show_info "- Abre Neovim para verificar que las configuraciones personalizadas y plugins se han cargado correctamente. Ademas usar ':MasonInstallAll'"
-show_info "- Reinicia la terminal para aplicar los cambios en Starship."
-
-echo "---------------------------"
-show_info "Para problemas o preguntas, consulta el README del repositorio. ¡Buena suerte!"

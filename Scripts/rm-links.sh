@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Ruta base para los dotfiles en Config dentro del repositorio de dotfiles
+DOTFILES_DIR="$HOME/dotfiles/Config"
+
 # Función para mostrar un banner bonito
 show_banner() {
     echo -e "\e[1;34m"
@@ -33,7 +36,7 @@ show_info() {
     echo -e "\e[1;33m$message\e[0m"
 }
 
-# Función para hacer backup de archivos o directorios existentes y eliminar el enlace simbólico
+# Función para hacer backup y eliminar enlace simbólico si existe
 backup_file_unlink() {
     local file=$1
     if [ -L "$file" ]; then
@@ -55,30 +58,27 @@ backup_file_unlink() {
 show_banner
 
 # Inicializar arrays para el resumen
-REMOVED_LINKS=()
-UNLINKED_FILES=()
+declare -a REMOVED_LINKS
+declare -a UNLINKED_FILES
 
-# Directorio base de los dotfiles
-DOTFILES_DIR="$HOME/dotfiles/Config"
-
-# Archivos y carpetas a configurar
+# Declarar array asociativo para dotfiles
 declare -A DOTFILES
 
-# Función para añadir un archivo de configuración
+# Añadir configuraciones de dotfiles
 add_dotfile() {
     local name=$1
     local path=$2
     DOTFILES["$name"]="$path"
 }
 
-# Añadir configuraciones siguiendo la nueva estructura en Config/
+# Añadir dotfiles
 add_dotfile "zsh" ".zshrc"
 add_dotfile "ranger" ".config/ranger"
-add_dotfile "tmux" ".config/tmux/tmux.conf"  # Sólo eliminar el enlace de tmux.conf
+add_dotfile "tmux" ".config/tmux/tmux.conf"
 add_dotfile "starship" ".config/starship.toml"
 add_dotfile "zathura" ".config/zathura"
-add_dotfile "nvim_custom" ".config/nvim/lua/custom"  # Carpeta custom de NvChad
-add_dotfile "nvim_init" ".config/nvim/init.lua"  # Archivo init.lua de NvChad
+add_dotfile "nvim_custom" ".config/nvim/lua/custom"
+add_dotfile "nvim_init" ".config/nvim/init.lua"
 add_dotfile "git" ".gitconfig"
 add_dotfile "kitty" ".config/kitty/kitty.conf"  # Configuración específica para kitty.conf
 
@@ -105,3 +105,4 @@ done
 # Mensaje final
 show_section "Proceso completado"
 show_info "La eliminación de enlaces simbólicos ha sido completada con éxito. Los enlaces y sus destinos han sido respaldados."
+
