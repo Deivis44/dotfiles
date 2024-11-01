@@ -1,0 +1,97 @@
+//   _____ _____ _____ _____ _____ _____ _____ _____ _____ 
+//  |   __|  _  |   __|_   _|   __|   __|_   _|     |  |  |
+//  |   __|     |__   | | | |   __|   __| | | |   --|     |
+//  |__|  |__|__|_____| |_| |__|  |_____| |_| |_____|__|__|  ARCH  
+//
+//  by Bina
+
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "source": "~/.local/share/fastfetch/ascii/arch.txt",
+        "padding": {
+            "top": 2,
+            "right": 4
+        },
+        "width": 25
+    },
+    "display": {
+        "separator": " "
+    },
+    "modules": [
+        "break",
+        {
+            "type": "title",  // Mostrar el título (usuario@host) primero
+            "keyWidth": 10
+        },
+        "break",
+        {
+            "type": "host",  // Información del Host
+            "key": "PC",
+            "keyColor": "33"
+        },
+        {
+            "type": "media",  // Información de la música que estás escuchando actualmente
+            "key": "󰝚 ",
+            "keyColor": "33"
+        },
+        "break",  // Espacio en blanco para separar las secciones
+        {
+            "type": "os",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "kernel",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "packages",
+            "format": "{} (pacman)",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "shell",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "terminal",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "wm",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "uptime",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "cpu",  // Información de la CPU
+            "format": "{1} ({3}) @ {7} GHz",
+            "key": " ",
+            "keyColor": "33"
+        },
+        {
+            "type": "gpu",  // Información de la GPU
+            "format": "{1} {2} @ {12} GHz",
+            "key": "󰢮 ",
+            "keyColor": "33"
+        },
+        {
+            "type": "disk",  // Información del disco
+            "key": "󰋊 ",
+            "keyColor": "33"
+        },
+        "break",
+        "colors",  // Sección de colores de bloques
+        "break",
+        "break"
+    ]
+}
