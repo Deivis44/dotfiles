@@ -48,6 +48,49 @@ backup_file() {
     fi
 }
 
+# Función para verificar y confirmar el destino de cada dotfile
+confirm_dotfile() {
+    local name=$1
+    local source_path=$2
+    local target_path=$3
+    
+    echo "Configuración: $name"
+    echo "   Archivo fuente: $source_path"
+    echo "   Ubicación destino: $target_path"
+
+    # Confirmar con el usuario si desea continuar
+    read -p "¿Desea continuar con esta configuración? (y/n): " confirm
+    if [[ "$confirm" != "y" ]]; then
+        SKIPPED_LINKS+=("$target_path")
+        return 1
+    fi
+    
+    # Crear el directorio destino si no existe
+    local target_dir
+    target_dir=$(dirname "$target_path")
+    if [ ! -d "$target_dir" ]; then
+        show_info "Creando directorio $target_dir..."
+        mkdir -p "$target_dir"
+    fi
+
+    return 0
+}
+
+# Función para crear enlaces simbólicos
+create_symlink() {
+    local source_path="$1"
+    local target_path="$2"
+
+    if [ -e "$target_path" ] || [ -L "$target_path" ]; then
+        backup_file "$target_path"
+        rm -rf "$target_path"
+    fi
+
+    ln -s "$source_path" "$target_path"
+    show_info "Enlace simbólico creado desde $source_path hacia $target_path"
+    NEW_LINKS+=("$target_path")
+}
+
 # Mostrar banner
 show_banner
 
@@ -77,79 +120,18 @@ add_dotfile "nvim_init" ".config/nvim/init.lua"
 add_dotfile "git" ".gitconfig"
 add_dotfile "kitty" ".config/kitty/kitty.conf"  # Añadir configuración específica para kitty.conf
 
-# Crear backups de archivos o directorios existentes, excepto enlaces simbólicos
-show_section "Creando backups si es necesario"
+# Crear enlaces simbólicos para cada archivo de configuración
+show_section "Verificando y creando enlaces simbólicos para archivos de configuración"
 for key in "${!DOTFILES[@]}"; do
-    target="${HOME}/${DOTFILES[$key]}"
-    if [ "$key" == "nvim_init" ]; then
-        if [ -f "$target" ] && [ ! -L "$target" ]; then
-            backup_file "$target"
-        fi
+    source_path="$DOTFILES_DIR/${DOTFILES[$key]}"
+    target_path="${HOME}/${DOTFILES[$key]}"
+    
+    # Confirmar la configuración antes de crear el enlace simbólico
+    confirm_dotfile "$key" "$source_path" "$target_path"
+    if [ $? -eq 0 ]; then
+        create_symlink "$source_path" "$target_path"
     else
-        backup_file "$target"
-    fi
-done
-
-# Aplicar configuraciones con stow y enlaces simbólicos específicos
-show_section "Aplicando configuraciones con stow"
-for key in "${!DOTFILES[@]}"; do
-    if [ "$key" == "nvim_custom" ]; then
-        # Enlazar la carpeta custom
-        show_info "Enlazando la carpeta 'custom' en NvChad"
-        CUSTOM_SOURCE="$DOTFILES_DIR/nvim/.config/nvim/lua/custom"
-        CUSTOM_TARGET="$HOME/.config/nvim/lua/custom"
-        
-        if [ -L "$CUSTOM_TARGET" ] || [ -d "$CUSTOM_TARGET" ]; then
-            show_info "El enlace simbólico o carpeta 'custom' ya existe en $CUSTOM_TARGET. Eliminando..."
-            rm -rf "$CUSTOM_TARGET"
-        fi
-        
-        ln -s "$CUSTOM_SOURCE" "$CUSTOM_TARGET"
-        show_info "Enlace simbólico creado desde $CUSTOM_SOURCE hacia $CUSTOM_TARGET"
-        NEW_LINKS+=("$CUSTOM_TARGET")
-        
-    elif [ "$key" == "nvim_init" ]; then
-        # Reemplazar init.lua
-        show_info "Reemplazando el archivo 'init.lua' en NvChad"
-        INIT_SOURCE="$DOTFILES_DIR/nvim/.config/nvim/init.lua"
-        INIT_TARGET="$HOME/.config/nvim/init.lua"
-        
-        if [ -f "$INIT_TARGET" ] && [ ! -L "$INIT_TARGET" ]; then
-            show_info "El archivo 'init.lua' ya existe en $INIT_TARGET. Creando backup..."
-            backup_file "$INIT_TARGET"
-        fi
-        
-        ln -sf "$INIT_SOURCE" "$INIT_TARGET"
-        show_info "Enlace simbólico creado desde $INIT_SOURCE hacia $INIT_TARGET"
-        NEW_LINKS+=("$INIT_TARGET")
-        
-    elif [ "$key" == "kitty" ]; then
-        # Manejo específico para kitty.conf
-        show_info "Enlazando solo kitty.conf en .config/kitty"
-        KITTY_SOURCE="$DOTFILES_DIR/kitty/.config/kitty/kitty.conf"
-        KITTY_TARGET="$HOME/.config/kitty/kitty.conf"
-        
-        if [ -L "$KITTY_TARGET" ] || [ -f "$KITTY_TARGET" ]; then
-            show_info "El archivo kitty.conf ya existe en $KITTY_TARGET. Eliminando..."
-            rm -f "$KITTY_TARGET"
-        fi
-        
-        ln -s "$KITTY_SOURCE" "$KITTY_TARGET"
-        show_info "Enlace simbólico creado desde $KITTY_SOURCE hacia $KITTY_TARGET"
-        NEW_LINKS+=("$KITTY_TARGET")
-        
-    else
-        show_info "Aplicando configuración para $key..."
-        SOURCE_PATH="$DOTFILES_DIR/${DOTFILES[$key]}"
-        TARGET_PATH="${HOME}/${DOTFILES[$key]}"
-        
-        if [ -e "$TARGET_PATH" ] || [ -L "$TARGET_PATH" ]; then
-            rm -rf "$TARGET_PATH"
-        fi
-        
-        ln -s "$SOURCE_PATH" "$TARGET_PATH"
-        show_info "Enlace simbólico creado desde $SOURCE_PATH hacia $TARGET_PATH"
-        NEW_LINKS+=("$TARGET_PATH")
+        show_info "Omitiendo la configuración de $key"
     fi
 done
 
