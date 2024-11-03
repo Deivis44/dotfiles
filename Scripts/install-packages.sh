@@ -137,52 +137,6 @@ create_required_config_dirs() {
     done
 }
 
-# Función para instalar herramientas adicionales
-install_additional_tools() {
-    show_info "-------------------------------------------"
-    show_info "Instalando herramientas adicionales"
-    show_info "-------------------------------------------"
-
-    # Asegurarse de que tmux está instalado antes de instalar tpm
-    if ! command -v tmux > /dev/null; then
-        show_info "Tmux no está instalado. Instalándolo..."
-        install_package "tmux" true
-    fi
-
-    # Tmux Plugin Manager (tpm)
-    if ask_install "Tmux Plugin Manager (tpm)"; then
-        show_info "Instalando Tmux Plugin Manager (tpm)..."
-        git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
-        show_success "tpm instalado con éxito."
-    fi
-
-    # Asegurarse de que Neovim está instalado antes de instalar NvChad
-    if ! command -v nvim > /dev/null; then
-        show_info "Neovim no está instalado. Instalándolo..."
-        install_package "neovim" true
-    fi
-
-    # NvChad
-    if ask_install "NvChad (configuración de Neovim)"; then
-        show_info "Instalando NvChad..."
-        git clone https://github.com/NvChad/starter "$HOME/.config/nvim"
-        show_success "NvChad instalado con éxito."
-    fi
-
-    # Starship
-    if ask_install "Starship (prompt personalizado)"; then
-        if ! command -v starship > /dev/null; then
-            show_info "Instalando Starship..."
-            curl -sS https://starship.rs/install.sh | sh -s -- --yes
-            show_success "Starship instalado con éxito."
-        else
-            show_info "Starship ya está instalado."
-        fi
-    fi
-}
-
-
-
 # Función para mostrar el resumen de la instalación
 show_summary() {
     show_info "-------------------------------------------"
@@ -332,7 +286,6 @@ install_packages() {
     install_group "Herramientas y Plugins para Tmux" "${tmux_plugins[@]}"
 
     create_required_config_dirs
-    install_additional_tools
     show_summary
 }
 
