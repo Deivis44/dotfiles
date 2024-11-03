@@ -48,7 +48,7 @@ install_nvchad() {
     install_package_if_needed "neovim"
     if command -v nvim > /dev/null && ask_install "NvChad (configuración de Neovim)"; then
         show_info "Instalando NvChad..."
-        git clone https://github.com/NvChad/starter "~/.config/nvim"
+        git clone https://github.com/NvChad/starter ~/.config/nvim
         show_success "NvChad instalado con éxito en ~/.config/nvim"
     fi
 }
