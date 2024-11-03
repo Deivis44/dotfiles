@@ -18,7 +18,7 @@ ask_install() {
     done
 }
 
-# Función para instalar un paquete
+# Función para instalar un paquete si es necesario
 install_package_if_needed() {
     local pkg=$1
     if ! command -v "$pkg" > /dev/null; then
@@ -32,7 +32,7 @@ install_package_if_needed() {
 # Tmux Plugin Manager (TPM) instalación
 install_tpm() {
     install_package_if_needed "tmux"
-    if ask_install "Tmux Plugin Manager (TPM)"; then
+    if command -v tmux > /dev/null && ask_install "Tmux Plugin Manager (TPM)"; then
         show_info "Instalando Tmux Plugin Manager (tpm)..."
         if [ ! -d "$HOME/.config/tmux/plugins/tpm" ]; then
             git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
@@ -43,17 +43,13 @@ install_tpm() {
     fi
 }
 
-# NvChad instalación
+# NvChad instalación con verificación de Neovim
 install_nvchad() {
-    install_package_if_needed "nvim"
-    if ask_install "NvChad (configuración de Neovim)"; then
+    install_package_if_needed "neovim"
+    if command -v nvim > /dev/null && ask_install "NvChad (configuración de Neovim)"; then
         show_info "Instalando NvChad..."
-        if [ ! -d "$HOME/.config/nvim" ]; then
-            git clone https://github.com/NvChad/starter "$HOME/.config/nvim"
-            show_success "NvChad instalado con éxito en ~/.config/nvim"
-        else
-            show_info "NvChad ya está instalado en ~/.config/nvim"
-        fi
+        git clone https://github.com/NvChad/starter "~/.config/nvim"
+        show_success "NvChad instalado con éxito en ~/.config/nvim"
     fi
 }
 
