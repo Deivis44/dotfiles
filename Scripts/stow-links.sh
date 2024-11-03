@@ -102,29 +102,31 @@ declare -a SKIPPED_LINKS
 # Declarar array asociativo para dotfiles
 declare -A DOTFILES
 
-# Añadir configuraciones existentes
+# Añadir configuraciones específicas (archivos individuales o carpetas completas)
 add_dotfile() {
     local name=$1
-    local path=$2
-    DOTFILES["$name"]="$path"
+    local source=$2
+    local destination=$3
+    DOTFILES["$name"]="$source:$destination"
 }
 
-# Añadir dotfiles
-add_dotfile "zsh" ".zshrc"
-add_dotfile "ranger" ".config/ranger"
-add_dotfile "tmux" ".config/tmux/tmux.conf"
-add_dotfile "starship" ".config/starship.toml"
-add_dotfile "zathura" ".config/zathura"
-add_dotfile "nvim_custom" ".config/nvim/lua/custom"
-add_dotfile "nvim_init" ".config/nvim/init.lua"
-add_dotfile "git" ".gitconfig"
-add_dotfile "kitty" ".config/kitty/kitty.conf"  # Añadir configuración específica para kitty.conf
+# Añadir configuraciones
+# Sintaxis: add_dotfile "nombre" "ruta_en_Config" "ruta_en_destino"
+add_dotfile "zsh" "zsh/.zshrc" "$HOME/.zshrc"
+add_dotfile "ranger" "ranger/.config/ranger" "$HOME/.config/ranger"       # Carpeta completa
+add_dotfile "tmux" "tmux/.config/tmux/tmux.conf" "$HOME/.config/tmux/tmux.conf" # Archivo específico
+add_dotfile "starship" "starship/.config/starship.toml" "$HOME/.config/starship.toml"
+add_dotfile "zathura" "zathura/.config/zathura" "$HOME/.config/zathura"   # Carpeta completa
+add_dotfile "nvim_custom" "nvim/.config/nvim/lua/custom" "$HOME/.config/nvim/lua/custom" # Carpeta específica
+add_dotfile "nvim_init" "nvim/.config/nvim/init.lua" "$HOME/.config/nvim/init.lua" # Archivo específico
+add_dotfile "git" "git/.gitconfig" "$HOME/.gitconfig"
+add_dotfile "kitty" "kitty/.config/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf" # Archivo específico
 
-# Crear enlaces simbólicos para cada archivo de configuración
+# Crear enlaces simbólicos para cada configuración
 show_section "Verificando y creando enlaces simbólicos para archivos de configuración"
 for key in "${!DOTFILES[@]}"; do
-    source_path="$DOTFILES_DIR/${DOTFILES[$key]}"
-    target_path="${HOME}/${DOTFILES[$key]}"
+    IFS=':' read -r source_path target_path <<< "${DOTFILES[$key]}"
+    source_path="$DOTFILES_DIR/$source_path"
     
     # Confirmar la configuración antes de crear el enlace simbólico
     confirm_dotfile "$key" "$source_path" "$target_path"
