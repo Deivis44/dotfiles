@@ -107,6 +107,36 @@ install_spicetify() {
     fi
 }
 
+# Función para verificar e instalar la fuente CaskaydiaCove Nerd Font Mono
+check_and_install_font() {
+    local font_name="CaskaydiaCove Nerd Font Mono"
+    
+    if fc-list | grep -qi "$font_name"; then
+        show_info "La fuente $font_name ya está instalada."
+        return 0
+    fi
+    
+    show_info "La fuente $font_name no está instalada. Intentando instalarla..."
+    
+    # Descargar la fuente
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/CascadiaCode.zip -O /tmp/CascadiaCode.zip
+    if [ $? -ne 0 ]; then
+        show_error "Error al descargar $font_name."
+        return 1
+    fi
+    
+    # Descomprimir y mover la fuente
+    unzip /tmp/CascadiaCode.zip -d ~/.local/share/fonts
+    if [ $? -ne 0 ]; then
+        show_error "Error al descomprimir $font_name."
+        return 1
+    fi
+    
+    # Actualizar la caché de fuentes
+    fc-cache -fv
+    show_success "La fuente $font_name se instaló correctamente."
+}
+
 # Ejecutar instalaciones adicionales
 show_info "Instalación de herramientas adicionales..."
 install_tpm
@@ -114,5 +144,6 @@ install_nvchad
 install_starship
 install_doom_terminal
 install_spicetify
+check_and_install_font
 show_success "Instalación de herramientas adicionales completada."
 
