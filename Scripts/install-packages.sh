@@ -201,10 +201,12 @@ declare -a system_utilities=(
     "cava"
     "bat"
     "pipes.sh"
+    "extension-manager"
 )
 
 # Aplicaciones de productividad y multimedia
 declare -a productivity_apps=(
+    "vlc"
     "chromium"
     "obsidian"
     "foliate"
@@ -219,7 +221,7 @@ declare -a productivity_apps=(
     "openvpn"
     "protonvpn-cli-ng"
     "virtualbox"
-    "virtualbox-host-modules-arch"
+    "virtualbox-host-dmks"
     "virtualbox-guest-iso"
     "obs-studio"
     "minecraft-launcher"
