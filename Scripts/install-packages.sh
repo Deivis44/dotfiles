@@ -195,11 +195,12 @@ declare -a system_utilities=(
     "ranger"
     "btop"
     "fastfetch"
+    "onefetch"              # Herramienta para mostrar información de repositorios de Git
     "tty-clock"
     "cbonsai"
     "vesktop"
     "cava"
-    "bat"
+    "bat"                   # Un clon de cat con syntax highlighting y paging
     "pipes.sh"
     "extension-manager"
 )
