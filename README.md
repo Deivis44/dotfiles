@@ -1,159 +1,68 @@
 
 # Dotfiles
 
-# Introducción
-Este repositorio contiene mis archivos de configuración (dotfiles) para diversas aplicaciones y herramientas en mi entorno de desarrollo. El propósito es facilitar la configuración de nuevas máquinas y mantener un entorno consistente en diferentes dispositivos.
+## Introduction
+
+This repository is built upon the excellent work from [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), serving as a foundation for my Hyprland setup. I've added a personalized layer of customization tailored to my workflow, providing a unique look and enhanced functionality for Hyprland.
+
+Once the base configuration is set up, I apply my additional patch of configurations, specifically optimized for machines running Arch Linux. This setup ensures a seamless and consistent environment across devices while maintaining the flexibility to adapt to personal preferences and specific hardware requirements.
 
 ## Screenshots
 
-![Screenshot 1](./Screenshots/1_main.png)
-![Screenshot 2](./Screenshots/2_windows.png)
-![Screenshot 3](./Screenshots/3_editor.png)
-![Screenshot 4](./Screenshots/4_music.png)
-![Screenshot 5](./Screenshots/5_browser.png)
-![Screenshot 6](./Screenshots/6_files.png)
-![Screenshot 7](./Screenshots/7_hyprlock.png)
+![Screenshot 1](./Resources/Screenshots/1_main.png)
+![Screenshot 2](./Resources/Screenshots/2_windows.png)
+![Screenshot 3](./Resources/Screenshots/3_editor.png)
+![Screenshot 4](./Resources/Screenshots/4_music.png)
+![Screenshot 5](./Resources/Screenshots/5_browser.png)
+![Screenshot 6](./Resources/Screenshots/6_files.png)
+![Screenshot 7](./Resources/Screenshots/7_hyprlock.png)
 
-***
+### Personal Setup
 
-# Personal Setup
-
-- **Dotfiles**: [Link to the repo](https://github.com/Deivis44/dotfiles)
-- **Browser**: Zen (Alpha)
-- **Home tab**: mtab
-- **Font**: CaskaydiaCove Nerd Font Mono
+- **Browser**: Zen (Alpha) + Home tab extension (mtab)
+- **Monospace font**: CaskaydiaCove Nerd Font Mono
 - **Terminal**: Kitty
 - **Editor**: Nvim Chad (+ Tmux)
 - **Music**: Spotify + Spicetify personalization layer
-- **Wallpaper**: [Rocket_girl](https://github.com/Deivis44/dotfiles/blob/main/Wallpapers/rocket.png)
+- **Wallpaper**: [Rocket_girl](https://mega.nz/file/3lxDWIrR#Lt53rC6Y52ZjJRAejbyBqpG6eGpu577yPOfovJCAd0o)
 - **My wallpaper collection**: [Wallpapers](https://mega.nz/folder/P5pygYZQ#u-x2WmRNMVpWEt8u2Xo5fQ)
-- **Stickers**: [.png & .ai files](https://github.com/Deivis44/dotfiles/tree/main/Stickers)
-
-## Credits
-Credits to this repo: [https://github.com/end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), I modified it while learning Linux stuff with reverse engineering. (I'm working on my own status bar using that base)
+- **Stickers**: [.png & .ai files](https://github.com/Deivis44/dotfiles/tree/main/Resources/Stickers)
 
 ***
 
-# Clonar el Repositorio
-Para comenzar, clona el repositorio en tu directorio home:
+## Workflow
 
-```bash
-cd ~
-git clone https://github.com/tu-usuario/dotfiles.git
+1. Clone the repository (default: `main`)
+```
+git clone https://github.com/Deivis44/dotfiles.git
 cd dotfiles
 ```
 
-## Estructura del Repositorio
-La estructura refleja las ubicaciones deseadas de los archivos de configuración en tu sistema:
-
-```plaintext
-dotfiles/
-├── zsh/
-│   └── .zshrc
-├── tmux/
-│   └── .config/
-│       └── tmux/
-│           └── tmux.conf
-└── ranger/
-    └── .config/
-        └── ranger/
-            └── rc.conf
+2. Switch to the device specific branch (`desktop`/`laptop`)
+```
+git checkout `branch`
 ```
 
-## Scripts de Configuración
+> If the branch is not locally but exists on the remote:
+```
+git checkout -b desktop origin/desktop
+```
 
-### 1. `install_packages.sh`
-Este script instala los paquetes necesarios para tu entorno de desarrollo.
+3. Work on the specific branch
+```
+nvim `file` # Make changes
+git add .
+git commit -m “Changes specific to desktop”
+git push origin desktop
+```
 
-**Instrucciones:**
-1. Dar permisos de ejecución:
-   ```bash
-   chmod +x install_packages.sh
-   ```
-2. Ejecutar el script:
-   ```bash
-   ./install_packages.sh
-   ```
+4. Merge the changes from the specific branch into main WITHOUT changing branch
+```
+git fetch origin main # Make sure you have the latest changes to main
+git merge desktop main # Merge desktop changes into main
+git push origin main # Upload the merged changes to the remote branch main
+```
 
-**¿Qué hace?**
-- Instala los paquetes necesarios utilizando el gestor de paquetes adecuado.
+> Always merge changes to main from the specific branches.
 
-### 2. `stow_links.sh`
-Este script crea enlaces simbólicos para los dotfiles en las ubicaciones correctas.
-
-**Instrucciones:**
-1. Dar permisos de ejecución:
-   ```bash
-   chmod +x stow_links.sh
-   ```
-2. Ejecutar el script:
-   ```bash
-   ./stow_links.sh
-   ```
-
-**¿Qué hace?**
-- Crea enlaces simbólicos usando GNU Stow para gestionar la configuración.
-
-### 3. `rm_links.sh`
-Este script elimina los enlaces simbólicos creados por `stow_links.sh`.
-
-**Instrucciones:**
-1. Dar permisos de ejecución:
-   ```bash
-   chmod +x rm_links.sh
-   ```
-2. Ejecutar el script:
-   ```bash
-   ./rm_links.sh
-   ```
-
-**¿Qué hace?**
-- Elimina los enlaces simbólicos y opcionalmente restaura los archivos de backup.
-
-## Manejo de Archivos de Configuración Existentes
-
-Si ya tienes archivos de configuración en tu máquina, sigue estos pasos para gestionarlos:
-
-1. **Copia el archivo al repositorio:**
-   ```bash
-   cp ~/.config/tmux/tmux.conf ~/dotfiles/tmux/.config/tmux/
-   ```
-2. **Haz un backup del archivo local:**
-   ```bash
-   mv ~/.config/tmux/tmux.conf ~/.config/tmux/tmux.conf.backup
-   ```
-3. **Ejecuta `stow_links.sh`** para crear los enlaces simbólicos.
-
-## Añadir Más Dotfiles
-1. **Copia el archivo al repositorio:**
-   ```bash
-   cp ~/.vimrc ~/dotfiles/vim/
-   ```
-2. **Haz un backup del archivo local:**
-   ```bash
-   mv ~/.vimrc ~/.vimrc.backup
-   ```
-3. **Ejecuta `stow_links.sh`** para crear los enlaces simbólicos.
-
-## Resumen de Scripts
-
-### `install_packages.sh`
-- Instala paquetes necesarios.
-
-### `stow_links.sh`
-- Crea enlaces simbólicos para los dotfiles.
-
-### `rm_links.sh`
-- Elimina enlaces simbólicos y restaura backups.
-
-## Desinstalación de Configuraciones
-
-Para deshacer los cambios realizados por los scripts de instalación:
-
-1. **Ejecuta `rm_links.sh`:**
-   ```bash
-   ./rm_links.sh
-   ```
-
-**¿Qué hace?**
-- Elimina los enlaces simbólicos y restaura los archivos respaldados.
+***
