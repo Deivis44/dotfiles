@@ -43,11 +43,6 @@ cd dotfiles
 git checkout `branch`
 ```
 
-> If the branch is not locally but exists on the remote:
-```
-git checkout -b desktop `branch`
-```
-
 3. Work on the specific branch
 ```
 nvim `file` # Make changes
@@ -61,7 +56,5 @@ git push origin `branch`
 git fetch origin main # Make sure you have the latest changes to main
 git push origin `branch`:main # Push changes from specific branch to main on the remote
 ```
-
-> Always merge changes to main from the specific branches.
 
 ***
