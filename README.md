@@ -3,9 +3,9 @@
 
 ## Introduction
 
-This repository is built upon the excellent work from [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), serving as a foundation for my Hyprland setup. I've added a personalized layer of customization tailored to my workflow, providing a unique look and enhanced functionality for Hyprland.
+This repository builds upon the outstanding work of [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), providing a solid foundation for my Hyprland configuration. On top of this base, I’ve incorporated a personalized layer of customizations to enhance both functionality and aesthetics, specifically tailored to fit my workflow.
 
-Once the base configuration is set up, I apply my additional patch of configurations, specifically optimized for machines running Arch Linux. This setup ensures a seamless and consistent environment across devices while maintaining the flexibility to adapt to personal preferences and specific hardware requirements.
+Once the base configuration is established, I apply an additional patch optimized for systems running Arch-based distributions. This setup ensures a seamless and consistent environment across multiple devices while maintaining the flexibility to adapt to unique hardware configurations and personal preferences.
 
 ## Screenshots
 
