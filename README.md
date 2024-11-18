@@ -45,22 +45,21 @@ git checkout `branch`
 
 > If the branch is not locally but exists on the remote:
 ```
-git checkout -b desktop origin/desktop
+git checkout -b desktop `branch`
 ```
 
 3. Work on the specific branch
 ```
 nvim `file` # Make changes
 git add .
-git commit -m “Changes specific to desktop”
-git push origin desktop
+git commit -m “Changes specific to branch”
+git push origin `branch`
 ```
 
 4. Merge the changes from the specific branch into main WITHOUT changing branch
 ```
 git fetch origin main # Make sure you have the latest changes to main
-git merge desktop main # Merge desktop changes into main
-git push origin main # Upload the merged changes to the remote branch main
+git push origin `branch`:main # Push changes from specific branch to main on the remote
 ```
 
 > Always merge changes to main from the specific branches.
