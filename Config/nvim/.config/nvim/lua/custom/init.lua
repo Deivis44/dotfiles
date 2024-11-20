@@ -146,3 +146,12 @@ vim.api.nvim_set_keymap('n', '<Leader>dl', '<Cmd>lua require"dap".run_last()<CR>
 -- Configuración de LazyGit
 vim.api.nvim_set_keymap('n', '<leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
 
+-- Configuración para el menú de contexto con el mouse
+vim.keymap.set("n", "<RightMouse>", function()
+  -- Detectar si estamos en NvimTree o en el entorno general
+  local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
+  
+  -- Abrir el menú con soporte para mouse
+  require("menu").open(options, { mouse = true })
+end, { noremap = true, silent = true })
+

@@ -42,4 +42,10 @@ return {
 
   -- Plugin LazyGit para integración con Git
   { 'kdheepak/lazygit.nvim', lazy = false },
+
+  -- Menu Plugin
+  { "nvzone/volt", lazy = true },
+  { "nvzone/menu", lazy = true },
+
+  { "nvzone/timerly", cmd = "TimerlyToggle" }
 }
