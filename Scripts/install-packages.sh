@@ -231,6 +231,7 @@ declare -a productivity_apps=(
     "zen-browser-bin"
     "librewolf-bin"
     "mullvad-browser-bin"
+    "speedtest-cli"
 )
 
 # Herramientas de desarrollo y programación
