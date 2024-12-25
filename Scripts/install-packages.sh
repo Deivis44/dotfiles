@@ -234,6 +234,7 @@ declare -a productivity_apps=(
     "mullvad-browser-bin"
     "speedtest-cli"
     "visual-studio-code-bin"
+    "balena-etcher"
 )
 
 # Herramientas de desarrollo y programación
