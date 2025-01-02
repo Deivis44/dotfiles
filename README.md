@@ -30,31 +30,3 @@ Once the base configuration is established, I apply an additional patch optimize
 
 ***
 
-## Workflow
-
-1. Clone the repository (default: `main`)
-```
-git clone https://github.com/Deivis44/dotfiles.git
-cd dotfiles
-```
-
-2. Switch to the device specific branch (`desktop`/`laptop`)
-```
-git checkout `branch`
-```
-
-3. Work on the specific branch
-```
-nvim `file` # Make changes
-git add .
-git commit -m “Changes specific to branch”
-git push origin `branch`
-```
-
-4. Merge the changes from the specific branch into main WITHOUT changing branch
-```
-git fetch origin main # Make sure you have the latest changes to main
-git push origin `branch`:main # Push changes from specific branch to main on the remote
-```
-
-***
