@@ -4,7 +4,7 @@
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     vim.notify("Hola deivi! ;^}", "info", { title = "Bienvenido a Neovim" })
-  end
+  end,
 })
 
 -- Configuración de Python y vim-slime
@@ -13,7 +13,7 @@ vim.g.slime_target = "tmux"
 vim.g.slime_default_config = { socket_name = "default", target_pane = "{last}" }
 vim.g.slime_dont_ask_default = 1
 
--- Configuración de LSP y DAP
+-- Configuración de Mason y LSP
 require("mason").setup()
 require("mason-lspconfig").setup {
   ensure_installed = { "pyright", "ts_ls", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" },
@@ -26,7 +26,7 @@ local notify = require("notify")
 
 -- Configuración del plugin `notify`
 notify.setup({
-  background_colour = "#000000", -- Cambia el color si lo deseas
+  background_colour = "#000000",
 })
 vim.notify = notify
 
@@ -75,27 +75,35 @@ cmp.setup {
 
 -- Configuración de LSP
 local on_attach = function(_, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local opts = { noremap = true, silent = true }
-  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>', opts)
+  local keymap = vim.api.nvim_buf_set_keymap
+  local mappings = {
+    ['n'] = {
+      ['gd'] = '<cmd>lua vim.lsp.buf.definition()<CR>',
+      ['K'] = '<cmd>lua vim.lsp.buf.hover()<CR>',
+      ['gi'] = '<cmd>lua vim.lsp.buf.implementation()<CR>',
+      ['<C-k>'] = '<cmd>lua vim.lsp.buf.signature_help()<CR>',
+      ['<space>wa'] = '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>',
+      ['<space>wr'] = '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>',
+      ['<space>wl'] = '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>',
+      ['<space>D'] = '<cmd>lua vim.lsp.buf.type_definition()<CR>',
+      ['<space>rn'] = '<cmd>lua vim.lsp.buf.rename()<CR>',
+      ['<space>ca'] = '<cmd>lua vim.lsp.buf.code_action()<CR>',
+      ['gr'] = '<cmd>lua vim.lsp.buf.references()<CR>',
+      ['<space>e'] = '<cmd>lua vim.diagnostic.open_float()<CR>',
+      ['[d'] = '<cmd>lua vim.diagnostic.goto_prev()<CR>',
+      [']d'] = '<cmd>lua vim.diagnostic.goto_next()<CR>',
+      ['<space>q'] = '<cmd>lua vim.diagnostic.setloclist()<CR>',
+      ['<space>f'] = '<cmd>lua vim.lsp.buf.format({ async = true })<CR>',
+    },
+  }
+  for mode, maps in pairs(mappings) do
+    for key, cmd in pairs(maps) do
+      keymap(bufnr, mode, key, cmd, opts)
+    end
+  end
 end
 
--- Configuración de servidores LSP
 local servers = { "pyright", "ts_ls", "html", "cssls", "bashls", "jsonls", "yamlls", "gopls", "clangd", "rust_analyzer", "lua_ls" }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -106,13 +114,12 @@ for _, lsp in ipairs(servers) do
   }
 end
 
--- Configuración de DAP
+-- Configuración de DAP y DAP-UI
 local dap = require('dap')
 local dapui = require('dapui')
 
 require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
 require('dap-go').setup()
-
 dapui.setup()
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
@@ -135,26 +142,21 @@ dap.listeners.before.event_stopped["dapui_config"] = function()
 end
 
 -- Asignación de teclas para DAP
-local dap_opts = { noremap = true, silent = true }
-vim.api.nvim_set_keymap('n', '<F5>', '<Cmd>lua require"dap".continue()<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<F10>', '<Cmd>lua require"dap".step_over()<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<F11>', '<Cmd>lua require"dap".step_into()<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<F12>', '<Cmd>lua require"dap".step_out()<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<Leader>b', '<Cmd>lua require"dap".toggle_breakpoint()<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<Leader>B', '<Cmd>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<Leader>lp', '<Cmd>lua require"dap".set_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<Leader>dr', '<Cmd>lua require"dap".repl.open()<CR>', dap_opts)
-vim.api.nvim_set_keymap('n', '<Leader>dl', '<Cmd>lua require"dap".run_last()<CR>', dap_opts)
+vim.api.nvim_set_keymap('n', '<F5>', '<Cmd>lua require"dap".continue()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F10>', '<Cmd>lua require"dap".step_over()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F11>', '<Cmd>lua require"dap".step_into()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F12>', '<Cmd>lua require"dap".step_out()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>b', '<Cmd>lua require"dap".toggle_breakpoint()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>B', '<Cmd>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>lp', '<Cmd>lua require"dap".set_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>dr', '<Cmd>lua require"dap".repl.open()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>dl', '<Cmd>lua require"dap".run_last()<CR>', { noremap = true, silent = true })
 
 -- Configuración de LazyGit
 vim.api.nvim_set_keymap('n', '<leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
 
--- Configuración para el menú de contexto con el mouse
+-- Configuración del menú de contexto con el mouse
 vim.keymap.set("n", "<RightMouse>", function()
-  -- Detectar si estamos en NvimTree o en el entorno general
   local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
-  
-  -- Abrir el menú con soporte para mouse
   require("menu").open(options, { mouse = true })
 end, { noremap = true, silent = true })
-

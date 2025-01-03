@@ -28,7 +28,7 @@ zinit snippet OMZP::sudo
 zinit snippet OMZP::archlinux
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::kitty
-#zinit snippet OMZP::tmux
+# zinit snippet OMZP::tmux
 zinit snippet OMZP::zoxide
 
 # ==========================
@@ -51,6 +51,20 @@ eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(starship init zsh)"
 
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git "
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+export FZF_DEFAULT_OPTS="--height 50% --layout=default --border --color=hl:#2dd4bf"
+
+# fzf preview settings
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always -n --line-range :500 {}'"
+export FZF_ALT_C_OPTS="--preview 'eza --icons=always --tree --color=always {} | head -200'"
+export FZF_TMUX_OPTS=" -p90%,70% "
+
+# Alias for fman
+alias fman="print -rl -- ${(k)commands} | fzf | xargs man"
+
 # ==========================
 # Handy Aliases
 # ==========================
@@ -62,16 +76,28 @@ alias .4='cd ../../../..'
 alias .5='cd ../../../../..'
 
 # Directory listing with eza
-alias l='eza -lh  --icons=auto' # long list
-alias ls='eza -1   --icons=auto' # short list
-alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # long list all
-alias ld='eza -lhD --icons=auto' # long list dirs
-alias lt='eza --icons=auto --tree' # list folder as tree
+alias l='eza -lh  --icons=auto' # Long list
+alias ls='eza -1   --icons=auto' # Short list
+# alias ls='eza -la --no-filesize --grid --color=always --icons=always --no-user'
+alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # Long list all
+alias ld='eza -lhD --icons=auto' # Long list dirs
+alias lt='eza --icons=auto --tree' # Tree view
+
+# Tree command aliases
+alias tree="tree -L 3 -a -I '.git' --charset X "
+alias dtree="tree -L 3 -a -d -I '.git' --charset X "
+
+# Git aliases
+alias gt="git"
+alias ga="git add ."
+alias gs="git status -s"
+alias gc='git commit -m'
+alias glog='git log --oneline --graph --all'
 
 # Other handy aliases
 alias mkdir='mkdir -p'
-alias c='clear' # clear terminal
-alias vc='code' # GUI code editor
+alias c='clear'
+alias vc='code'
 alias nvim='nvim'
 alias kth='kitty-theme'
 alias doom-zig='cd terminal-doom/ && zig-out/bin/terminal-doom'
@@ -81,7 +107,6 @@ alias fast='fastfetch'
 alias cl_system='sudo pacman -Scc --noconfirm && yay -Sc --noconfirm && sudo rm -rf /tmp/*'
 alias cl_packages='sudo pacman -Rns $(pacman -Qtdq) --noconfirm'
 alias cl_clipboard='rm -rf ~/.cache/cliphist/*'
-
 
 # ==========================
 # Package Management
@@ -93,6 +118,7 @@ elif pacman -Qi paru &>/dev/null ; then
    aurhelper="paru"
 fi
 
+# Install packages (Arch and AUR)
 function in {
     local -a inPkg=("$@")
     local -a arch=()
@@ -115,12 +141,12 @@ function in {
     fi
 }
 
-alias un='$aurhelper -Rns' # uninstall package
-alias up='$aurhelper -Syu' # update system/package/aur
-alias pl='$aurhelper -Qs' # list installed package
-alias pa='$aurhelper -Ss' # list available package
-alias pc='$aurhelper -Sc' # remove unused cache
-alias po='$aurhelper -Qtdq | $aurhelper -Rns -' # remove unused packages
+alias un='$aurhelper -Rns' # Uninstall package
+alias up='$aurhelper -Syu' # Update system/packages
+alias pl='$aurhelper -Qs' # List installed packages
+alias pa='$aurhelper -Ss' # Search for packages
+alias pc='$aurhelper -Sc' # Clear cache
+alias po='$aurhelper -Qtdq | $aurhelper -Rns -' # Remove unused packages
 
 # ==========================
 # History Management
@@ -165,3 +191,4 @@ pokemon-colorscripts --no-title -r 1,3,6
 
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$PATH:/home/deivi/.spicetify
+

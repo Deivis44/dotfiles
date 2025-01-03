@@ -4,7 +4,18 @@ return {
 
   -- LSP Configuración
   { 'neovim/nvim-lspconfig', lazy = false },
-  { 'williamboman/mason.nvim', lazy = false },
+  {
+    'williamboman/mason.nvim',
+    opts = {
+      ensure_installed = {
+        "black",
+        "debugpy",
+        "mypy",
+        "ruff-lsp",
+      },
+    },
+    lazy = false
+  },
   { 'williamboman/mason-lspconfig.nvim', lazy = false },
 
   -- Autocompletado
@@ -28,12 +39,56 @@ return {
   { 'numToStr/Comment.nvim', lazy = false },
 
   -- Compilación, Ejecución y Depuración
-  { 'mfussenegger/nvim-dap', lazy = false },
-  { 'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}, lazy = false },
+  {
+    "mfussenegger/nvim-dap",
+    config = function()
+      local mappings = require("custom.mappings")
+      for key, mapping in pairs(mappings.dap.n) do
+        vim.keymap.set("n", key, mapping[1], { noremap = true, silent = true })
+      end
+    end,
+  },
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = "mfussenegger/nvim-dap",
+    config = function()
+      local dap = require("dap")
+      local dapui = require("dapui")
+      dapui.setup()
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+    end
+  },
   { 'nvim-telescope/telescope-dap.nvim', requires = {'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap'}, lazy = false },
   { 'leoluz/nvim-dap-go', requires = {'mfussenegger/nvim-dap'}, lazy = false },
-  { 'mfussenegger/nvim-dap-python', requires = {'mfussenegger/nvim-dap'}, lazy = false },
+  {
+    "mfussenegger/nvim-dap-python",
+    ft = "python",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "rcarriga/nvim-dap-ui",
+    },
+    config = function()
+      local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
+      require("dap-python").setup(path)
 
+      local mappings = require("custom.mappings")
+      for key, mapping in pairs(mappings.dap_python.n) do
+        if type(mapping[1]) == "function" then
+          vim.keymap.set("n", key, mapping[1], { noremap = true, silent = true })
+        else
+          vim.keymap.set("n", key, mapping[1], { noremap = true, silent = true })
+        end
+      end
+    end,
+},
   -- Notificaciones
   { 'rcarriga/nvim-notify', lazy = false },
 
@@ -47,5 +102,14 @@ return {
   { "nvzone/volt", lazy = true },
   { "nvzone/menu", lazy = true },
 
-  { "nvzone/timerly", cmd = "TimerlyToggle" }
+  { "nvzone/timerly", cmd = "TimerlyToggle" },
+
+  -- null-ls.nvim (Configuración de LSP para linters y formatters)
+  {
+    "nvimtools/none-ls.nvim",
+    ft = {"python"},
+    opts = function()
+      return require "custom.configs.null-ls"
+    end,
+  },
 }
