@@ -3,7 +3,7 @@
 -- Mensaje de bienvenida
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
-    vim.notify("Hola deivi! ;^}", "info", {title = "Bienvenido a Neovim"})
+    vim.notify("Hola deivi! ;^}", "info", { title = "Bienvenido a Neovim" })
   end
 })
 
@@ -23,6 +23,12 @@ local lspconfig = require("lspconfig")
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 local notify = require("notify")
+
+-- Configuración del plugin `notify`
+notify.setup({
+  background_colour = "#000000", -- Cambia el color si lo deseas
+})
+vim.notify = notify
 
 -- Configuración de cmp
 cmp.setup {
@@ -111,25 +117,22 @@ dapui.setup()
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
   dapui.open()
-  notify("Debugging started", "info", {title = "DAP"})
+  notify("Debugging started", "info", { title = "DAP" })
 end
 
 dap.listeners.before.event_terminated["dapui_config"] = function()
   dapui.close()
-  notify("Debugging terminated", "info", {title = "DAP"})
+  notify("Debugging terminated", "info", { title = "DAP" })
 end
 
 dap.listeners.before.event_exited["dapui_config"] = function()
   dapui.close()
-  notify("Debugging exited", "info", {title = "DAP"})
+  notify("Debugging exited", "info", { title = "DAP" })
 end
 
 dap.listeners.before.event_stopped["dapui_config"] = function()
-  notify("Breakpoint hit", "info", {title = "DAP"})
+  notify("Breakpoint hit", "info", { title = "DAP" })
 end
-
--- Configuración de notificaciones
-vim.notify = notify
 
 -- Asignación de teclas para DAP
 local dap_opts = { noremap = true, silent = true }
