@@ -23,13 +23,16 @@ zinit light zsh-users/zsh-completions
 zinit light Aloxaf/fzf-tab
 
 # Oh My Zsh Snippets
-zinit snippet OMZP::git
-zinit snippet OMZP::sudo
-zinit snippet OMZP::archlinux
-zinit snippet OMZP::command-not-found
-zinit snippet OMZP::kitty
+zinit snippet OMZP::git # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git
+zinit snippet OMZP::sudo # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/sudo
+zinit snippet OMZP::archlinux # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/archlinux
+zinit snippet OMZP::command-not-found # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/command-not-found
+zinit snippet OMZP::kitty # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/kitty
 # zinit snippet OMZP::tmux
-zinit snippet OMZP::zoxide
+zinit snippet OMZP::zoxide # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/zoxide
+#zinit snippet OMZP::web-search
+zinit snippet OMZP::python
+
 
 # ==========================
 # Completion System
@@ -93,6 +96,9 @@ alias ga="git add ."
 alias gs="git status -s"
 alias gc='git commit -m'
 alias glog='git log --oneline --graph --all'
+
+# lazygit
+alias lg="lazygit"
 
 # Other handy aliases
 alias mkdir='mkdir -p'

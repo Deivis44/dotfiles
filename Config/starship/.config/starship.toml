@@ -80,11 +80,11 @@ format = "[ $path ]($style)"
 #truncation_symbol = "…/"
 
 [directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = "󰝚 "
-"Pictures" = " "
-"Developer" = "󰲋 "
+"Documents" = " 󰈙 "
+"Downloads" = "  "
+"Music" = " 󰝚 "
+"Pictures" = "  "
+"Developer" = " 󰲋 "
 
 [os]
 disabled = true

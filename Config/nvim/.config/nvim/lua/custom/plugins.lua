@@ -88,13 +88,13 @@ return {
         end
       end
     end,
-},
+  },
   -- Notificaciones
   { 'rcarriga/nvim-notify', lazy = false },
 
   -- nvim-nio para soporte de nvim-dap-ui
   { 'nvim-neotest/nvim-nio', lazy = false },
-
+  
   -- Plugin LazyGit para integración con Git
   { 'kdheepak/lazygit.nvim', lazy = false },
 
@@ -112,4 +112,14 @@ return {
       return require "custom.configs.null-ls"
     end,
   },
+  {
+    "gelguy/wilder.nvim",
+    lay = false,
+
+    requires = { "romgrk/fzy-lua-native" },
+    config = function()
+      local ok, _ = pcall(require, "custom.configs.wilder")
+    end,
+  },
 }
+

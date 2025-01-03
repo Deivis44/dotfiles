@@ -160,3 +160,6 @@ vim.keymap.set("n", "<RightMouse>", function()
   local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
   require("menu").open(options, { mouse = true })
 end, { noremap = true, silent = true })
+
+require("custom.configs.wilder")
+
