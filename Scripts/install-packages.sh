@@ -215,6 +215,7 @@ declare -a productivity_apps=(
     "veracrypt"
     "keepassxc"
     "spotify-launcher"
+    "youtube-music-bin"    # Cliente de YouTube Music
     "syncthing"
     "zathura"
     "zathura-pdf-mupdf"
@@ -272,6 +273,7 @@ declare -a fonts_symbols=(
     "noto-fonts-cjk"
     "ttf-nerd-fonts-symbols"
     "ttf-nerd-fonts-symbols-mono"
+    "ttf-ms-fonts"
 )
 
 # Herramientas y plugins para Tmux
