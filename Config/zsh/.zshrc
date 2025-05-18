@@ -113,16 +113,32 @@ eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(starship init zsh)"
 
-export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git "
+# ==========================
+# FZF Configuration
+# ==========================
+
+# Comando base para FZF (archivos ocultos, sin .git)
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 
+# Estilo visual de FZF
 export FZF_DEFAULT_OPTS="--height 50% --layout=default --border --color=hl:#2dd4bf"
 
-# fzf preview settings
+# Preview interactivo para archivos y carpetas
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always -n --line-range :500 {}'"
 export FZF_ALT_C_OPTS="--preview 'eza --icons=always --tree --color=always {} | head -200'"
-export FZF_TMUX_OPTS=" -p90%,70% "
+export FZF_TMUX_OPTS="-p90%,70%"
+
+# ==========================
+# FZF Keybinding Overrides
+# ==========================
+# Reasignación de atajos:
+# Ctrl+F → buscar archivos (antes: Ctrl+T)
+# Alt+D  → navegar directorios (antes: Alt+C)
+bindkey '^F' fzf-file-widget   # Ctrl+F
+bindkey '^[d' fzf-cd-widget    # Alt+D
+
 
 # Alias for fman
 alias fman="print -rl -- ${(k)commands} | fzf | xargs man"
