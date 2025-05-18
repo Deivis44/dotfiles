@@ -13,6 +13,30 @@ fi
 source "$ZINIT_HOME/zinit.zsh"
 
 # ==========================
+# Zsh Basic Options
+# ==========================
+setopt autocd                # cd automático al escribir nombre de directorio
+setopt interactivecomments   # permite usar comentarios con # en la línea de comandos
+setopt magicequalsubst       # expande rutas en argumentos como var=~/carpeta
+setopt nonomatch             # no lanza error si un glob no tiene coincidencias
+setopt numericglobsort       # ordena numéricamente: 1 2 10 20 en lugar de 1 10 2 20
+setopt promptsubst           # permite usar $(...) en PROMPT
+# setopt correct             # (opcional) autocorrección de comandos mal escritos
+setopt notify              # (opcional) muestra cuándo termina un job en background
+
+
+# ==========================
+# Environment Variables
+# ==========================
+export EDITOR=nvim              # Editor por defecto para consola
+export VISUAL=nvim              # Editor visual (para visudo, git, etc)
+export SUDO_EDITOR=nvim         # Editor cuando usas sudoedit o visudo
+export FCEDIT=nvim              # Editor para 'fc' y otros
+export TERMINAL=kitty           # Terminal por defecto
+export BROWSER=zen.desktop      # Navegador por defecto
+
+
+# ==========================
 # Plugin Management
 # ==========================
 
@@ -32,6 +56,41 @@ zinit snippet OMZP::kitty # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugi
 zinit snippet OMZP::zoxide # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/zoxide
 #zinit snippet OMZP::web-search
 zinit snippet OMZP::python
+
+# Define clipcopy como función global (para plugins)
+function clipcopy() {
+  command wl-copy "$@"
+}
+
+zinit snippet OMZP::copybuffer
+zinit snippet OMZP::vi-mode
+
+
+# ==========================
+# vi-mode configuration
+# ==========================
+# Indicadores visuales de modo (usados en el prompt)
+export VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
+export VI_MODE_SET_CURSOR=true
+
+# Personalización del cursor según el modo
+export VI_MODE_CURSOR_NORMAL=2     # Bloque sólido
+export VI_MODE_CURSOR_INSERT=6     # Línea sólida
+export VI_MODE_CURSOR_VISUAL=6     # Línea sólida
+export VI_MODE_CURSOR_OPPEND=0     # Bloque parpadeante
+
+# Indicadores en el prompt
+export MODE_INDICATOR="%F{red}<<<%f"          # Modo normal
+export INSERT_MODE_INDICATOR="%F{green}>>>%f" # Modo inserción
+
+# Timeout para teclas como `vv`
+export KEYTIMEOUT=20
+
+# Mostrar indicador en el prompt izquierdo
+PROMPT="$PROMPT\$(vi_mode_prompt_info)"
+
+# Alternativa: indicador en el prompt derecho
+# RPROMPT="\$(vi_mode_prompt_info)$RPROMPT"
 
 
 # ==========================
@@ -103,11 +162,14 @@ alias lg="lazygit"
 # Other handy aliases
 alias mkdir='mkdir -p'
 alias c='clear'
+alias q='exit'
 alias vc='code'
 alias nvim='nvim'
 alias kth='kitty-theme'
 alias doom-zig='cd terminal-doom/ && zig-out/bin/terminal-doom'
 alias fast='fastfetch'
+alias synct='systemctl --user start syncthing.service'
+alias uptgrub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 
 # Clean temp stuff
 alias cl_system='sudo pacman -Scc --noconfirm && yay -Sc --noconfirm && sudo rm -rf /tmp/*'

@@ -68,10 +68,10 @@ Redhat = "󱄛"
 RedHatEnterprise = "󱄛"
 
 [username]
-#show_always = true
+show_always = true
 #style_user = "bg:surface0 fg:text"
 #style_root = "bg:surface0 fg:text"
-#format = '[ $user ]($style)'
+format = '[ $user ]($style)'
 
 [directory]
 style = "sapphire"
@@ -165,7 +165,7 @@ format = '[ $symbol$context ]($style)'
 disabled = false
 time_format = "%R"
 style = "bg:peach"
-format = '[  $time ](fg:mantle bg:foam)'
+format = '[  $time ](fg:rosewater bg:foam)'
 
 [line_break]
 disabled = true

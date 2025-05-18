@@ -204,6 +204,8 @@ declare -a system_utilities=(
     "bat"                   # Un clon de cat con syntax highlighting y paging
     "pipes.sh"
     "extension-manager"
+    "apple_cursor"
+    "wl-clipboard"
 )
 
 # Aplicaciones de productividad y multimedia
@@ -218,7 +220,7 @@ declare -a productivity_apps=(
     "youtube-music-bin"    # Cliente de YouTube Music
     "syncthing"
     "zathura"
-    "zathura-pdf-mupdf"
+    "zathura-pdf-poppler"
     "telegram-desktop"
     "torbrowser-launcher"
     "openvpn"
@@ -231,6 +233,8 @@ declare -a productivity_apps=(
     "thunderbird"
     "onlyoffice-bin"
     "zen-browser-bin"
+    "libreoffice-fresh"
+    "brave-bin"
     "librewolf-bin"
     "mullvad-browser-bin"
     "speedtest-cli"
@@ -256,6 +260,7 @@ declare -a development_tools=(
     "lazygit"
     "zig"
     "jdk21-openjdk"
+    "nautilus-megasync"
 )
 
 # Terminal y shell
@@ -274,6 +279,7 @@ declare -a fonts_symbols=(
     "ttf-nerd-fonts-symbols"
     "ttf-nerd-fonts-symbols-mono"
     "ttf-ms-fonts"
+    "apple-fonts"
 )
 
 # Herramientas y plugins para Tmux
