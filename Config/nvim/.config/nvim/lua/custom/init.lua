@@ -162,4 +162,3 @@ vim.keymap.set("n", "<RightMouse>", function()
 end, { noremap = true, silent = true })
 
 require("custom.configs.wilder")
-

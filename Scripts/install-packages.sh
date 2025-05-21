@@ -200,12 +200,19 @@ declare -a system_utilities=(
     "tty-clock"
     "cbonsai"
     "vesktop"
+    "discord"
     "cava"
     "bat"                   # Un clon de cat con syntax highlighting y paging
     "pipes.sh"
     "extension-manager"
     "apple_cursor"
     "wl-clipboard"
+    "duf"
+    "asciiquarium"
+    "cowsai"
+    "cmatrix"
+    "glow"
+    "superfile"
 )
 
 # Aplicaciones de productividad y multimedia
@@ -251,6 +258,7 @@ declare -a development_tools=(
     "python-mypy"
     "python-black"
     "pyhon-debugpy"
+    "python-pylatexenc"
     "npm"
     "python-virtualenv"
     "pyright"
@@ -258,9 +266,12 @@ declare -a development_tools=(
     "base-devel"
     "gcc"
     "lazygit"
+    "lazydocker"
     "zig"
     "jdk21-openjdk"
     "nautilus-megasync"
+    "nodejs"
+    "npm"
 )
 
 # Terminal y shell
@@ -280,6 +291,10 @@ declare -a fonts_symbols=(
     "ttf-nerd-fonts-symbols-mono"
     "ttf-ms-fonts"
     "apple-fonts"
+    "ttf-jetbrains-mono"
+    "ttf-jetbrains-mono-nerd"
+    "ttf-cascadia-code"
+    "ttf-cascadia-code-nerd"
 )
 
 # Herramientas y plugins para Tmux
