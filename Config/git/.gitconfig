@@ -2,3 +2,22 @@
 	email = deivis_working.delta571@slmail.me
 	name = Deivis44
 
+# ============================================
+# 🚀 Enlazar este repo con mi clave SSH de GitHub:
+# (usar si se clonó con HTTPS o si se está configurando desde cero)
+#
+# Paso 1: Ir al directorio del repo
+#   cd /ruta/del/repo
+#
+# Paso 2: Establecer URL remota por SSH (solo una vez)
+#   git remote set-url origin git@github.com:Deivis44/nombre-del-repo.git
+#
+# Verificar:
+#   git remote -v
+#   # Debe mostrar: git@github.com...
+#
+# Luego ya puedes hacer:
+#   git push / git pull / git clone
+# sin tokens ni contraseñas, gracias a la clave SSH + ssh-agent
+# ============================================
+

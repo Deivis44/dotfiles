@@ -274,5 +274,14 @@ function command_not_found_handler {
 pokemon-colorscripts --no-title -r 1,3,6
 
 export PATH=$HOME/.local/bin:$PATH
-export PATH=$PATH:/home/deivi/.spicetify
+#export PATH=$PATH:/home/deivi/.spicetify
+
+# ==========================
+# SSH Agent Setup (robusto)
+# ==========================
+if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
+    eval "$(ssh-agent -s)" > /dev/null
+    ssh-add ~/.ssh/id_ed25519 2>/dev/null
+fi
+
 
