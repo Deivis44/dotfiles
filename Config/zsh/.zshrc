@@ -186,6 +186,8 @@ alias doom-zig='cd terminal-doom/ && zig-out/bin/terminal-doom'
 alias fast='fastfetch'
 alias synct='systemctl --user start syncthing.service'
 alias uptgrub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
+alias icat='kitty +kitten icat'
+
 
 # Clean temp stuff
 alias cl_system='sudo pacman -Scc --noconfirm && yay -Sc --noconfirm && sudo rm -rf /tmp/*'
@@ -284,4 +286,8 @@ if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
     ssh-add ~/.ssh/id_ed25519 2>/dev/null
 fi
 
+export GEMINI_API_KEY="AIzaSyBTP-C9MeMhCulDMuH3BfaEwpMGLDuix_U"
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

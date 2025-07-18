@@ -213,6 +213,13 @@ declare -a system_utilities=(
     "cmatrix"
     "glow"
     "superfile"
+    "mpd"
+    "mpc"
+    "mpv"
+    "rmpc-bin"
+    "picard"
+    "nicotine+"
+    "amberol"
 )
 
 # Aplicaciones de productividad y multimedia
@@ -271,7 +278,14 @@ declare -a development_tools=(
     "jdk21-openjdk"
     "nautilus-megasync"
     "nodejs"
-    "npm"
+    "python-ijson"
+    "python-numpy"
+    "python-pillow"
+    "python-psutil"
+    "python-requests"
+    "python-setproctitle"
+    "python-toml"
+    "python-watchdog"
 )
 
 # Terminal y shell
