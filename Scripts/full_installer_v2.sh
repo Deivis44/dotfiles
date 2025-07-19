@@ -69,14 +69,16 @@ ask_yes_no() {
     local prompt="$1"
     local default="${2:-n}"
     local response
-    
+
+    # Forzar entrada y salida desde el terminal real
     while true; do
-        read -p "$prompt [y/N]: " response
+        echo -n "$prompt [y/N]: " > /dev/tty
+        read -r response < /dev/tty
         response="${response:-$default}"
         case "${response,,}" in
             y|yes|s|si) return 0 ;;
-            n|no) return 1 ;;
-            *) echo "Por favor, responde con y/n (yes/no)" ;;
+            n|no)       return 1 ;;
+            *)          echo "Por favor, responde con y/n (yes/no)" >&2 ;;
         esac
     done
 }
