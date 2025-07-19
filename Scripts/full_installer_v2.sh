@@ -275,12 +275,12 @@ install_category() {
 }
 
 select_installation_mode() {
-    echo "🔧 Modos de instalación disponibles:"
-    echo "1) Instalación completa (todos los paquetes)"
-    echo "2) Instalación por categorías"
-    echo "3) Instalación selectiva (paquete por paquete)"
-    echo "4) Solo paquetes obligatorios"
-    echo
+    echo "🔧 Modos de instalación disponibles:" >&2
+    echo "1) Instalación completa (todos los paquetes)" >&2
+    echo "2) Instalación por categorías" >&2
+    echo "3) Instalación selectiva (paquete por paquete)" >&2
+    echo "4) Solo paquetes obligatorios" >&2
+    echo >&2
     
     while true; do
         read -p "Selecciona un modo [1-4]: " mode
@@ -289,15 +289,15 @@ select_installation_mode() {
             2) echo "categories"; return ;;
             3) echo "selective"; return ;;
             4) echo "required_only"; return ;;
-            *) echo "Por favor, selecciona una opción válida (1-4)" ;;
+            *) echo "Por favor, selecciona una opción válida (1-4)" >&2 ;;
         esac
     done
 }
 
 select_categories() {
-    echo
-    info "📦 Categorías disponibles:"
-    echo
+    echo >&2
+    info "📦 Categorías disponibles:" >&2
+    echo >&2
     
     local categories=()
     local i=1
@@ -308,17 +308,17 @@ select_categories() {
         emoji=$(echo "$category_line" | jq -r '.emoji')
         desc=$(echo "$category_line" | jq -r '.description')
         
-        printf "%2d) %s %s\n" "$i" "$emoji" "$id"
-        printf "     └─ %s\n" "$desc"
-        echo
+        printf "%2d) %s %s\n" "$i" "$emoji" "$id" >&2
+        printf "     └─ %s\n" "$desc" >&2
+        echo >&2
         
         categories+=("$id")
         ((i++))
     done < <(jq -c '.categories[]' "$PACKAGES_JSON")
     
-    echo "────────────────────────────────────────────────────────────────────────"
-    echo "💡 Opciones: números separados por comas (1,3,5), rangos (1-5), o 'all'"
-    echo "────────────────────────────────────────────────────────────────────────"
+    echo "────────────────────────────────────────────────────────────────────────" >&2
+    echo "💡 Opciones: números separados por comas (1,3,5), rangos (1-5), o 'all'" >&2
+    echo "────────────────────────────────────────────────────────────────────────" >&2
     
     while true; do
         read -p "🎯 Selecciona categorías: " selection
@@ -339,7 +339,7 @@ select_categories() {
                 if (( part >= 1 && part <= ${#categories[@]} )); then
                     selected+=("${categories[$((part-1))]}")
                 else
-                    error "Número fuera de rango: $part"
+                    error "Número fuera de rango: $part" >&2
                     valid=false
                     break
                 fi
@@ -353,12 +353,12 @@ select_categories() {
                         selected+=("${categories[$((j-1))]}")
                     done
                 else
-                    error "Rango inválido: $part"
+                    error "Rango inválido: $part" >&2
                     valid=false
                     break
                 fi
             else
-                error "Formato inválido: $part"
+                error "Formato inválido: $part" >&2
                 valid=false
                 break
             fi
@@ -376,8 +376,8 @@ select_categories() {
             printf '%s\n' "${unique_selected[@]}"
             return 0
         else
-            warning "Selección inválida. Intenta de nuevo."
-            echo
+            warning "Selección inválida. Intenta de nuevo." >&2
+            echo >&2
         fi
     done
 }
@@ -585,7 +585,6 @@ main() {
         exit 1
     else
         success "✅ Se encontraron ${#categories[@]} categorías: ${categories[*]}"
-    fi
         echo
         info "Se instalarán las siguientes categorías: ${categories[*]}"
         if ask_yes_no "¿Continuar con la instalación de paquetes?"; then
