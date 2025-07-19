@@ -58,10 +58,11 @@ test_file_structure() {
     
     local required_files=(
         "packages.json"
-        "package_installer.sh"
-        "json_manager.sh"
         "full_installer_v2.sh"
-        "migrate_to_json.sh"
+        "json_manager.sh"
+        "system_diagnostic.sh"
+        "stow-links.sh"
+        "install_extra_packs.sh"
     )
     
     for file in "${required_files[@]}"; do
@@ -70,10 +71,10 @@ test_file_structure() {
     
     # Verificar permisos ejecutables
     local executable_files=(
-        "package_installer.sh"
-        "json_manager.sh"
         "full_installer_v2.sh"
-        "migrate_to_json.sh"
+        "json_manager.sh"
+        "system_diagnostic.sh"
+        "stow-links.sh"
     )
     
     for file in "${executable_files[@]}"; do
@@ -120,13 +121,13 @@ test_json_manager() {
     run_test "json_manager.sh muestra ayuda" "bash '$json_manager' help"
 }
 
-test_package_installer_dry_run() {
-    test_info "📦 Probando package_installer.sh (modo seco)..."
+test_installer_structure() {
+    test_info "📦 Probando structure del instalador principal..."
     
-    local installer="$SCRIPT_DIR/package_installer.sh"
+    local installer="$SCRIPT_DIR/full_installer_v2.sh"
     
     if [[ ! -f "$installer" ]]; then
-        test_fail "package_installer.sh no encontrado"
+        test_fail "full_installer_v2.sh no encontrado"
         return 1
     fi
     
@@ -135,6 +136,7 @@ test_package_installer_dry_run() {
     run_test "Script contiene función show_banner" "grep -q 'show_banner()' '$installer'"
     run_test "Script contiene función check_dependencies" "grep -q 'check_dependencies()' '$installer'"
     run_test "Script contiene función install_package" "grep -q 'install_package()' '$installer'"
+    run_test "Script contiene diagnóstico automático" "grep -q 'system_diagnostic.sh' '$installer'"
 }
 
 # ==============================================================================
@@ -373,7 +375,7 @@ main() {
     
     case "$run_mode" in
         "installer"|"all")
-            test_package_installer_dry_run
+            test_installer_structure
             ;;
     esac
     

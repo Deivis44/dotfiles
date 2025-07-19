@@ -547,9 +547,9 @@ main() {
     # Ejecutar diagnóstico rápido
     local diagnostic_script="$SCRIPT_DIR/system_diagnostic.sh"
     if [[ -f "$diagnostic_script" ]]; then
-        info "🔍 Ejecutando diagnóstico del sistema..."
-        if bash "$diagnostic_script"; then
-            success "✅ Sistema verificado correctamente"
+        info "🔍 Ejecutando diagnóstico automático del sistema..."
+        if bash "$diagnostic_script" auto; then
+            success "✅ Sistema verificado y preparado correctamente"
         else
             error "❌ Se encontraron problemas en el sistema"
             warning "Revisa el output anterior antes de continuar"
@@ -627,12 +627,56 @@ main() {
     else
         success "✅ Se encontraron ${#categories[@]} categorías: ${categories[*]}"
         echo
-        info "Se instalarán las siguientes categorías: ${categories[*]}"
-        if ask_yes_no "¿Continuar con la instalación de paquetes?"; then
-            install_packages "$install_mode" "${categories[@]}"
-        else
-            info "Instalación de paquetes cancelada"
-        fi
+        
+        # Mostrar mensaje diferente según el modo de instalación
+        case "$install_mode" in
+            "full")
+                info "🚀 MODO COMPLETO: Se instalarán TODOS los paquetes de todas las categorías automáticamente"
+                info "📊 Total estimado: $(jq '[.categories[].packages | length] | add' "$PACKAGES_JSON") paquetes"
+                if ask_yes_no "⚠️  ¿Continuar con la instalación completa automática?"; then
+                    install_packages "$install_mode" "${categories[@]}"
+                else
+                    info "Instalación cancelada"
+                fi
+                ;;
+            "selective")
+                info "🎯 MODO SELECTIVO: Se mostrarán todos los paquetes para selección individual"
+                info "📋 Categorías a procesar: ${categories[*]}"
+                info "💡 Para cada paquete se preguntará: '¿Instalar [paquete]? [y/N]'"
+                if ask_yes_no "¿Continuar con la selección individual de paquetes?"; then
+                    install_packages "$install_mode" "${categories[@]}"
+                else
+                    info "Selección cancelada"
+                fi
+                ;;
+            "required_only")
+                local required_count=$(jq '[.categories[].packages[] | select(.optional == false or .optional == null)] | length' "$PACKAGES_JSON")
+                local optional_count=$(jq '[.categories[].packages[] | select(.optional == true)] | length' "$PACKAGES_JSON")
+                info "📦 MODO REQUERIDOS: Se instalarán solo los paquetes marcados como obligatorios"
+                info "✅ Paquetes obligatorios: $required_count"
+                info "⏭️  Paquetes opcionales (omitidos): $optional_count"
+                if ask_yes_no "¿Continuar con la instalación de paquetes obligatorios?"; then
+                    install_packages "$install_mode" "${categories[@]}"
+                else
+                    info "Instalación cancelada"
+                fi
+                ;;
+            "categories")
+                info "📁 MODO CATEGORÍAS: Se instalarán TODOS los paquetes de las categorías seleccionadas"
+                info "🎯 Categorías seleccionadas: ${categories[*]}"
+                local selected_count=0
+                for cat in "${categories[@]}"; do
+                    local cat_count=$(jq --arg cat "$cat" '.categories[] | select(.id == $cat) | .packages | length' "$PACKAGES_JSON")
+                    selected_count=$((selected_count + cat_count))
+                done
+                info "📊 Total de paquetes en categorías seleccionadas: $selected_count"
+                if ask_yes_no "¿Continuar con la instalación de las categorías seleccionadas?"; then
+                    install_packages "$install_mode" "${categories[@]}"
+                else
+                    info "Instalación cancelada"
+                fi
+                ;;
+        esac
     fi
     
     # === FASE 2: CONFIGURACIONES ADICIONALES ===

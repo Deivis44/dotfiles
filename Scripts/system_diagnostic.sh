@@ -22,6 +22,22 @@ success() { echo -e "${GREEN}[✓]${NC} $*"; }
 warning() { echo -e "${YELLOW}[!]${NC} $*"; }
 error() { echo -e "${RED}[✗]${NC} $*"; }
 
+ask_yes_no() {
+    local prompt="$1"
+    local default="${2:-n}"
+    local response
+    
+    while true; do
+        read -p "$prompt [y/N]: " response
+        response="${response:-$default}"
+        case "${response,,}" in
+            y|yes|s|si) return 0 ;;
+            n|no) return 1 ;;
+            *) echo "Por favor, responde con y/n (yes/no)" ;;
+        esac
+    done
+}
+
 show_banner() {
     cat << 'EOF'
 ╔══════════════════════════════════════════════════════════════════════╗
@@ -49,6 +65,7 @@ check_package_managers() {
     
     local managers=("pacman" "yay" "paru")
     local found=0
+    local missing_aur_helpers=()
     
     for manager in "${managers[@]}"; do
         if command -v "$manager" >/dev/null 2>&1; then
@@ -56,6 +73,9 @@ check_package_managers() {
             ((found++))
         else
             warning "$manager no encontrado"
+            if [[ "$manager" != "pacman" ]]; then
+                missing_aur_helpers+=("$manager")
+            fi
         fi
     done
     
@@ -64,7 +84,138 @@ check_package_managers() {
         return 1
     fi
     
+    # Si pacman está pero no hay AUR helpers, instalar yay
+    if command -v pacman >/dev/null 2>&1 && ! command -v yay >/dev/null 2>&1 && ! command -v paru >/dev/null 2>&1; then
+        warning "No se encontró AUR helper"
+        if ask_yes_no "¿Instalar yay (AUR helper) automáticamente?" "y"; then
+            log "🔄 Instalando yay..."
+            if install_yay_helper; then
+                success "✅ yay instalado correctamente"
+            else
+                warning "⚠️  No se pudo instalar yay automáticamente"
+                log "💡 Para instalar manualmente:"
+                log "   git clone https://aur.archlinux.org/yay.git"
+                log "   cd yay && makepkg -si"
+            fi
+        else
+            log "💡 Para instalar yay manualmente:"
+            log "   git clone https://aur.archlinux.org/yay.git"
+            log "   cd yay && makepkg -si"
+        fi
+    fi
+    
     echo
+}
+
+install_yay_helper() {
+    log "🔄 Instalando yay (AUR helper)..."
+    
+    # Verificar dependencias para compilar yay
+    local build_deps=("base-devel" "git")
+    local missing_build_deps=()
+    
+    for dep in "${build_deps[@]}"; do
+        if ! pacman -Qq "$dep" >/dev/null 2>&1; then
+            missing_build_deps+=("$dep")
+        fi
+    done
+    
+    # Instalar dependencias de compilación si faltan
+    if [[ ${#missing_build_deps[@]} -gt 0 ]]; then
+        log "📦 Instalando dependencias de compilación: ${missing_build_deps[*]}"
+        if ! sudo pacman -S --needed --noconfirm "${missing_build_deps[@]}" >/dev/null 2>&1; then
+            error "No se pudieron instalar las dependencias de compilación"
+            return 1
+        fi
+    fi
+    
+    # Crear directorio temporal
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    local original_dir=$(pwd)
+    
+    # Instalar yay
+    {
+        cd "$temp_dir"
+        if git clone https://aur.archlinux.org/yay.git >/dev/null 2>&1; then
+            cd yay
+            if makepkg -si --noconfirm >/dev/null 2>&1; then
+                cd "$original_dir"
+                rm -rf "$temp_dir"
+                return 0
+            fi
+        fi
+    }
+    
+    # Limpiar en caso de error
+    cd "$original_dir"
+    rm -rf "$temp_dir"
+    return 1
+}
+
+install_missing_tools() {
+    local tools_to_install=("$@")
+    local installation_failed=()
+    local installation_success=()
+    
+    log "🔄 Instalando herramientas faltantes: ${tools_to_install[*]}"
+    
+    # Verificar que tenemos un gestor de paquetes disponible
+    if ! command -v pacman >/dev/null 2>&1; then
+        error "pacman no disponible - no se pueden instalar herramientas automáticamente"
+        return 1
+    fi
+    
+    # Verificar acceso sudo
+    if ! sudo -n true 2>/dev/null; then
+        warning "Se requiere contraseña sudo para instalar herramientas"
+        if ! sudo -v; then
+            error "No se pudo obtener acceso sudo"
+            return 1
+        fi
+    fi
+    
+    # Actualizar base de datos de paquetes
+    log "🔄 Actualizando base de datos de paquetes..."
+    if ! sudo pacman -Sy --noconfirm >/dev/null 2>&1; then
+        warning "No se pudo actualizar la base de datos de pacman"
+    fi
+    
+    # Instalar cada herramienta
+    for tool in "${tools_to_install[@]}"; do
+        log "📦 Instalando $tool..."
+        
+        if sudo pacman -S --needed --noconfirm "$tool" >/dev/null 2>&1; then
+            success "✅ $tool instalado correctamente"
+            installation_success+=("$tool")
+            
+            # Verificar que ahora está disponible
+            if command -v "$tool" >/dev/null 2>&1; then
+                success "✅ $tool verificado y funcionando"
+            else
+                warning "⚠️  $tool instalado pero no disponible en PATH"
+            fi
+        else
+            error "❌ Error al instalar $tool"
+            installation_failed+=("$tool")
+        fi
+    done
+    
+    # Mostrar resumen
+    if [[ ${#installation_success[@]} -gt 0 ]]; then
+        success "✅ Instaladas exitosamente: ${installation_success[*]}"
+    fi
+    
+    if [[ ${#installation_failed[@]} -gt 0 ]]; then
+        error "❌ No se pudieron instalar: ${installation_failed[*]}"
+        log "💡 Intenta instalar manualmente:"
+        for tool in "${installation_failed[@]}"; do
+            log "   sudo pacman -S $tool"
+        done
+        return 1
+    fi
+    
+    return 0
 }
 
 check_critical_tools() {
@@ -99,8 +250,23 @@ check_critical_tools() {
     echo
     if [[ ${#missing[@]} -gt 0 ]]; then
         warning "⚠️  Herramientas faltantes: ${missing[*]}"
-        log "💡 Para instalar: sudo pacman -S ${missing[*]}"
-        return 1
+        
+        if ask_yes_no "¿Instalar automáticamente las herramientas faltantes?" "y"; then
+            log "🔄 Instalando herramientas automáticamente..."
+            
+            # Intentar instalar herramientas faltantes
+            if install_missing_tools "${missing[@]}"; then
+                success "✅ Herramientas instaladas correctamente"
+                return 0
+            else
+                warning "❌ No se pudieron instalar algunas herramientas automáticamente"
+                log "💡 Para instalar manualmente: sudo pacman -S ${missing[*]}"
+                return 1
+            fi
+        else
+            log "💡 Para instalar manualmente: sudo pacman -S ${missing[*]}"
+            return 1
+        fi
     else
         success "✅ Todas las herramientas críticas están disponibles"
     fi
@@ -311,7 +477,16 @@ show_recommendations() {
 }
 
 main() {
+    local run_mode="${1:-interactive}"
+    
     show_banner
+    
+    # Configurar modo automático si se solicita
+    if [[ "$run_mode" == "auto" ]]; then
+        log "🤖 Modo automático: instalando herramientas faltantes sin preguntar"
+        # Redefinir ask_yes_no para que siempre devuelva sí en modo auto
+        ask_yes_no() { return 0; }
+    fi
     
     local exit_code=0
     
@@ -337,5 +512,22 @@ main() {
 
 # Ejecutar si es llamado directamente
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    # Mostrar ayuda si se solicita
+    if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+        echo "🔍 System Diagnostic v2.0"
+        echo
+        echo "USAGE: $0 [mode]"
+        echo
+        echo "MODES:"
+        echo "  interactive  Preguntar antes de instalar (default)"
+        echo "  auto         Instalar automáticamente sin preguntar"
+        echo
+        echo "EXAMPLES:"
+        echo "  $0               # Modo interactivo"
+        echo "  $0 interactive   # Modo interactivo explícito"
+        echo "  $0 auto          # Instalación automática"
+        exit 0
+    fi
+    
     main "$@"
 fi
