@@ -170,7 +170,7 @@ categories:
         url: https://aur.archlinux.org/packages/extension-manager
       - name: balena-etcher
         description: USB image burner
-        optional: false
+        optional: true
         repo: pacman
         url: https://wiki.archlinux.org/title/Electron#balenaEtcher
       - name: minecraft-launcher

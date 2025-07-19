@@ -671,7 +671,7 @@ show_required_packages_preview() {
     for cat in "${categories[@]}"; do
         # Obtener paquetes con optional=false o sin campo optional
         mapfile -t pkgs < <(
-            yq -r ".categories[] | select(.id == \"${cat}\") | .packages[] | select(.optional == false or .optional == null) | .name" "$PACKAGES_YAML"
+            yq -r ".categories[] | select(.id==\"${cat}\") | .packages[] | select(.optional == false or .optional == null) | .name" "$PACKAGES_YAML"
         )
         if [[ ${#pkgs[@]} -gt 0 ]]; then
             echo
@@ -806,7 +806,7 @@ main() {
                     categories+=("$category_id")
                     info "  ✓ Encontrada categoría: $category_id"
                 fi
-            done < <(yq -r '.categories[].id' "$PACKAGES_YAML" 2>/dev/null)
+            done < <(yq '.categories[].id' "$PACKAGES_YAML" 2>/dev/null)
             
             if [[ ${#categories[@]} -eq 0 ]]; then
                 error "No se pudieron leer las categorías del YAML"
