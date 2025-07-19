@@ -539,9 +539,26 @@ main() {
     local categories=()
     case "$install_mode" in
         "full"|"selective"|"required_only")
+            info "🔍 Leyendo categorías del JSON..."
             while IFS= read -r category_id; do
-                categories+=("$category_id")
-            done < <(jq -r '.categories[].id' "$PACKAGES_JSON")
+                if [[ -n "$category_id" ]] && [[ "$category_id" != "null" ]]; then
+                    categories+=("$category_id")
+                    info "  ✓ Encontrada categoría: $category_id"
+                fi
+            done < <(jq -r '.categories[].id' "$PACKAGES_JSON" 2>/dev/null)
+            
+            if [[ ${#categories[@]} -eq 0 ]]; then
+                error "No se pudieron leer las categorías del JSON"
+                info "Verificando archivo JSON..."
+                if [[ -f "$PACKAGES_JSON" ]]; then
+                    info "📄 Archivo JSON existe: $PACKAGES_JSON"
+                    info "🔍 Primeras líneas del JSON:"
+                    head -10 "$PACKAGES_JSON"
+                else
+                    error "❌ Archivo JSON no encontrado: $PACKAGES_JSON"
+                fi
+                exit 1
+            fi
             ;;
         "categories")
             while IFS= read -r category_id; do
@@ -554,7 +571,21 @@ main() {
     
     if [[ ${#categories[@]} -eq 0 ]]; then
         warning "No se seleccionaron categorías para instalar"
+        error "🔍 Debug: Modo seleccionado: $install_mode"
+        error "📄 JSON utilizado: $PACKAGES_JSON"
+        error "📊 Verificando contenido del JSON..."
+        
+        # Verificar si jq puede leer el archivo
+        if jq -r '.categories[].id' "$PACKAGES_JSON" 2>/dev/null | head -5; then
+            error "jq puede leer el archivo, pero algo más está mal"
+        else
+            error "jq no puede leer el archivo JSON correctamente"
+        fi
+        
+        exit 1
     else
+        success "✅ Se encontraron ${#categories[@]} categorías: ${categories[*]}"
+    fi
         echo
         info "Se instalarán las siguientes categorías: ${categories[*]}"
         if ask_yes_no "¿Continuar con la instalación de paquetes?"; then
