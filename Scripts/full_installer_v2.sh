@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ==============================================================================
-# DOTFILES FULL INSTALLER v2.0 - JSON NATIVE
-# Sistema completo unificado - Base de datos JSON única
+# DOTFILES FULL INSTALLER v2.0 - YAML NATIVE
+# Sistema completo unificado - Base de datos YAML única
 # ==============================================================================
 
 set -euo pipefail
@@ -10,7 +10,7 @@ set -euo pipefail
 # Configuraciones globales
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
-readonly PACKAGES_JSON="$SCRIPT_DIR/packages.json"
+readonly PACKAGES_YAML="$SCRIPT_DIR/packages.yaml"
 readonly ADDITIONAL_DIR="$SCRIPT_DIR/Additional"
 readonly LOG_DIR="$HOME/.local/share/dotfiles/logs"
 readonly CONFIG_DIR="$HOME/.config/dotfiles"
@@ -48,10 +48,10 @@ show_banner() {
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                                                                      ║
 ║                 🚀 DOTFILES FULL INSTALLER v2.0                     ║
-║                     JSON-Native • Arch Linux                         ║
+║                     YAML-Native • Arch Linux                         ║
 ║                                                                      ║
 ║   ┌────────────────┬─────────────────────────────────────────────┐   ║
-║   │ 📦 Packages    │ JSON-based package management               │   ║
+║   │ 📦 Packages    │ YAML-based package management               │   ║
 ║   │ 🔧 Tweaks      │ System optimizations & configurations      │   ║
 ║   │ 🔗 Symlinks    │ Configuration file linking                 │   ║
 ║   │ 📄 Logs        │ Complete installation tracking             │   ║
@@ -113,7 +113,7 @@ check_dependencies() {
     }
     success "✅ Sistema actualizado correctamente."
 
-    local deps=("jq" "curl" "git" "stow")
+    local deps=("yq" "curl" "git" "stow")
     local missing=()
 
     for dep in "${deps[@]}"; do
@@ -143,16 +143,16 @@ check_dependencies() {
         success "✅ Dependencias instaladas correctamente: ${missing[*]}"
     fi
 
-    # Verificar JSON (ahora que sabemos que jq está disponible)
-    if [[ ! -f "$PACKAGES_JSON" ]]; then
-        error "Archivo packages.json no encontrado en: $PACKAGES_JSON"
+    # Verificar YAML (ahora que sabemos que yq está disponible)
+    if [[ ! -f "$PACKAGES_YAML" ]]; then
+        error "Archivo packages.yaml no encontrado en: $PACKAGES_YAML"
         exit 1
     fi
 
-    if ! jq empty "$PACKAGES_JSON" 2>/dev/null; then
-        error "El archivo packages.json no es válido"
-        info "Verificando sintaxis JSON..."
-        jq . "$PACKAGES_JSON" 2>&1 | head -10 || true
+    if ! yq '.' "$PACKAGES_YAML" >/dev/null 2>&1; then
+        error "El archivo packages.yaml no es válido"
+        info "Verificando sintaxis YAML..."
+        yq '.' "$PACKAGES_YAML" 2>&1 | head -10 || true
         exit 1
     fi
 
@@ -192,7 +192,7 @@ install_aur_helper() {
 }
 
 # ==============================================================================
-# INSTALACIÓN DE PAQUETES JSON-NATIVE
+# INSTALACIÓN DE PAQUETES YAML-NATIVE
 # ==============================================================================
 
 install_package() {
@@ -213,7 +213,7 @@ install_package() {
     if [[ "$optional" == "true" ]] && [[ "$install_mode" == "required_only" ]]; then
         info "   ⏭️  Omitiendo $package (paquete opcional)"
         ((TOTAL_SKIPPED++))
-        return 2
+        return 0
     fi
 
     # Preguntar al usuario en modo selectivo (SOLO EN MODO INTERACTIVO)
@@ -279,19 +279,16 @@ install_category() {
     local category_id="$1"
     local install_mode="$2"
 
-    # Obtener información de la categoría desde JSON
-    local category_info
-    category_info=$(jq --arg cat "$category_id" '.categories[] | select(.id == $cat)' "$PACKAGES_JSON")
-
-    if [[ -z "$category_info" ]] || [[ "$category_info" == "null" ]]; then
-        error "Categoría '$category_id' no encontrada en packages.json"
+    # Obtener emoji, descripción y conteo directamente desde YAML
+    local emoji desc packages_count
+    emoji=$(yq -r ".categories[] | select(.id == \"${category_id}\") | .emoji // \"📦\"" "$PACKAGES_YAML")
+    # Verificar existencia de la categoría
+    if [[ -z "$emoji" ]] || [[ "$emoji" == "null" ]]; then
+        error "Categoría '$category_id' no encontrada en packages.yaml"
         return 1
     fi
-
-    local emoji desc packages_count
-    emoji=$(echo "$category_info" | jq -r '.emoji // "📦"')
-    desc=$(echo "$category_info" | jq -r '.description // "Sin descripción"')
-    packages_count=$(echo "$category_info" | jq '.packages | length')
+    desc=$(yq -r ".categories[] | select(.id == \"${category_id}\") | .description // \"Sin descripción\"" "$PACKAGES_YAML")
+    packages_count=$(yq -r ".categories[] | select(.id == \"${category_id}\") | .packages | length" "$PACKAGES_YAML")
 
     echo
     info "🎯 Instalando: $emoji $category_id"
@@ -299,15 +296,19 @@ install_category() {
     echo "   📊 $packages_count paquetes en esta categoría"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-    # Pre-cargar paquetes en un arreglo Bash
-    mapfile -t pkg_infos < <(
-        echo "$category_info" | jq -c '.packages[]'
+    # Pre-cargar nombres y descripciones desde el bloque de la categoría
+    local -a pkg_names pkg_descs
+    mapfile -t pkg_names < <(
+        printf '%s\n' "$category_info" | yq -r '.packages[].name' -
+    )
+    mapfile -t pkg_descs < <(
+        printf '%s\n' "$category_info" | yq -r '.packages[].description // ""' -
     )
 
-    for pkg_json in "${pkg_infos[@]}"; do
+    for i in "${!pkg_names[@]}"; do
         local name desc_pkg
-        name=$(jq -r '.name' <<<"$pkg_json")
-        desc_pkg=$(jq -r '.description // ""' <<<"$pkg_json")
+        name="${pkg_names[$i]}"
+        desc_pkg="${pkg_descs[$i]}"
 
         echo
         echo "📦 $name — $desc_pkg"
@@ -354,20 +355,14 @@ select_categories() {
     
     local categories=()
     local i=1
-    
-    while IFS= read -r category_line; do
-        local id emoji desc
-        id=$(echo "$category_line" | jq -r '.id')
-        emoji=$(echo "$category_line" | jq -r '.emoji')
-        desc=$(echo "$category_line" | jq -r '.description')
-        
+    # Listar id, emoji y descripción en un solo flujo
+    while IFS='|' read -r id emoji desc; do
         printf "%2d) %s %s\n" "$i" "$emoji" "$id" >&2
         printf "     └─ %s\n" "$desc" >&2
         echo >&2
-        
         categories+=("$id")
         ((i++))
-    done < <(jq -c '.categories[]' "$PACKAGES_JSON")
+    done < <(yq -r '.categories[] | .id + "|" + (.emoji // "📦") + "|" + (.description // "Sin descripción")' "$PACKAGES_YAML")
     
     echo "────────────────────────────────────────────────────────────────────────" >&2
     echo "💡 Opciones: números separados por comas (1,3,5), rangos (1-5), o 'all'" >&2
@@ -435,16 +430,132 @@ select_categories() {
     done
 }
 
+install_package_simple() {
+    local pkg="$1"
+    local install_mode="$2"
+    
+    # Verificar si ya está instalado
+    if pacman -Qi "$pkg" &>/dev/null; then
+        success "   ✅ $pkg ya está instalado (omitiendo)"
+        ((TOTAL_SKIPPED++))
+        return 0
+    fi
+
+    # Preguntar al usuario en modo selectivo
+    if [[ "$install_mode" == "selective" ]]; then
+        while true; do
+            read -rp "   🤔 ¿Quieres instalar $pkg? [s/n]: " yn < /dev/tty
+            case "${yn,,}" in
+                s|si|y|yes) break ;;  # confirmar instalación
+                n|no)
+                    info "   ⏭️  Usuario omitió $pkg"
+                    ((TOTAL_SKIPPED++))
+                    return 0    # no abortar al omitir
+                    ;;
+                *)
+                    echo -n "   ❓ Por favor, responde con s/n: " > /dev/tty
+                    ;;
+            esac
+        done
+    fi
+
+    info "   🔄 Instalando $pkg..."
+
+    local success_flag=false
+    local install_method=""
+    local error_log=""
+
+    # Intentar con pacman primero
+    if sudo pacman -S --needed --noconfirm "$pkg" &>/dev/null; then
+        success_flag=true
+        install_method="pacman (repositorios oficiales)"
+    else
+        error_log="pacman falló"
+
+        # Intentar con yay si está disponible
+        if command -v yay >/dev/null 2>&1; then
+            if yay -S --needed --noconfirm "$pkg" &>/dev/null; then
+                success_flag=true
+                install_method="yay (AUR)"
+            else
+                error_log="$error_log; yay también falló"
+            fi
+        else
+            error_log="$error_log; yay no disponible"
+        fi
+    fi
+
+    if [[ "$success_flag" == "true" ]]; then
+        success "   ✅ $pkg instalado correctamente con $install_method"
+        ((TOTAL_INSTALLED++))
+        return 0
+    else
+        error "   ❌ Error al instalar $pkg: $error_log"
+        ((TOTAL_FAILED++))
+        return 1
+    fi
+}
+
+install_packages_yaml() {
+    local install_mode="$1"
+    info "🚀 Iniciando instalación de paquetes en modo: $install_mode"
+    echo
+
+    # 1) Pre-cargar todas las entradas CATEGORY|DESCRIPTION|PKG en un array
+    mapfile -t pkg_entries < <(
+        yq -r '.categories[] | .id as $cat | .description as $desc | .packages[].name as $pkg | "\($cat)|\($desc)|\($pkg)"' "$PACKAGES_YAML"
+    )
+
+    # 2) Iterar en el shell principal para mantener stdin intacto
+    local prev_cat=""
+    for entry in "${pkg_entries[@]}"; do
+        IFS='|' read -r cat_id cat_desc pkg_name <<<"$entry"
+        # Mostrar header solo una vez por categoría
+        if [[ "$cat_id" != "$prev_cat" ]]; then
+            echo
+            info "🎯 Categoría: $cat_id"
+            echo "   📋 $cat_desc"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            prev_cat="$cat_id"
+        fi
+        # Instalar cada paquete individualmente
+        echo "📦 $pkg_name"
+        install_package_simple "$pkg_name" "$install_mode" || true  # no abort on skip or error
+    done
+}
+
 install_packages() {
     local install_mode="$1"
     shift
+    local categories=("${@}")
+    
+    # Usar la nueva función YAML directamente
+    install_packages_yaml "$install_mode"
+}
+
+# Instalar paquetes solo de categorías seleccionadas usando lógica de full-mode (por categorías)
+install_selected_categories() {
+    local install_mode="$1"
+    shift
     local categories=("$@")
-    
-    info "🚀 Iniciando instalación de paquetes en modo: $install_mode"
-    
-    # Instalar categorías
-    for category in "${categories[@]}"; do
-        install_category "$category" "$install_mode"
+    info "🚀 Iniciando instalación por categorías seleccionadas: ${categories[*]}"
+    echo
+    for cat in "${categories[@]}"; do
+        # Obtener descripción de la categoría
+        local desc
+        desc=$(yq -r ".categories[] | select(.id == \"${cat}\") | .description // \"Sin descripción\"" "$PACKAGES_YAML")
+        # Cargar lista de paquetes
+        mapfile -t pkgs < <(
+            yq -r ".categories[] | select(.id == \"${cat}\") | .packages[].name" "$PACKAGES_YAML"
+        )
+        echo
+        info "🎯 Categoría: $cat"
+        echo "   📋 $desc"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        for pkg in "${pkgs[@]}"; do
+            echo "📦 $pkg"
+            install_package_simple "$pkg" "$install_mode" || true
+        done
     done
 }
 
@@ -538,15 +649,16 @@ show_packages_preview() {
     echo
     info "🔍 Vista previa de paquetes por categoría:"  
     for cat in "${categories[@]}"; do
-        # Obtener lista de nombres de paquetes
-        local pkgs
-        pkgs=$(jq --arg cat "$cat" -r '.categories[] | select(.id == $cat) | .packages[].name' "$PACKAGES_JSON")
         echo
-        info "📁 $cat"  
+        info "📁 $cat"
+        # Cargar nombres de paquetes en array
+        mapfile -t pkgs < <(
+            yq -r ".categories[] | select(.id == \"$cat\") | .packages[].name" "$PACKAGES_YAML"
+        )
         echo "   Paquetes (${#pkgs[@]}):"
-        while IFS= read -r pkg; do
+        for pkg in "${pkgs[@]}"; do
             echo "     - $pkg"
-        done <<< "$pkgs"
+        done
     done
     echo
 }
@@ -633,23 +745,23 @@ main() {
     local categories=()
     case "$install_mode" in
         "full"|"selective"|"required_only")
-            info "🔍 Leyendo categorías del JSON..."
+            info "🔍 Leyendo categorías del YAML..."
             while IFS= read -r category_id; do
                 if [[ -n "$category_id" ]] && [[ "$category_id" != "null" ]]; then
                     categories+=("$category_id")
                     info "  ✓ Encontrada categoría: $category_id"
                 fi
-            done < <(jq -r '.categories[].id' "$PACKAGES_JSON" 2>/dev/null)
+            done < <(yq '.categories[].id' "$PACKAGES_YAML" 2>/dev/null)
             
             if [[ ${#categories[@]} -eq 0 ]]; then
-                error "No se pudieron leer las categorías del JSON"
-                info "Verificando archivo JSON..."
-                if [[ -f "$PACKAGES_JSON" ]]; then
-                    info "📄 Archivo JSON existe: $PACKAGES_JSON"
-                    info "🔍 Primeras líneas del JSON:"
-                    head -10 "$PACKAGES_JSON"
+                error "No se pudieron leer las categorías del YAML"
+                info "Verificando archivo YAML..."
+                if [[ -f "$PACKAGES_YAML" ]]; then
+                    info "📄 Archivo YAML existe: $PACKAGES_YAML"
+                    info "🔍 Primeras líneas del YAML:"
+                    head -10 "$PACKAGES_YAML"
                 else
-                    error "❌ Archivo JSON no encontrado: $PACKAGES_JSON"
+                    error "❌ Archivo YAML no encontrado: $PACKAGES_YAML"
                 fi
                 exit 1
             fi
@@ -666,14 +778,13 @@ main() {
     if [[ ${#categories[@]} -eq 0 ]]; then
         warning "No se seleccionaron categorías para instalar"
         error "🔍 Debug: Modo seleccionado: $install_mode"
-        error "📄 JSON utilizado: $PACKAGES_JSON"
-        error "📊 Verificando contenido del JSON..."
-        
-        # Verificar si jq puede leer el archivo
-        if jq -r '.categories[].id' "$PACKAGES_JSON" 2>/dev/null | head -5; then
-            error "jq puede leer el archivo, pero algo más está mal"
+        error "📄 YAML utilizado: $PACKAGES_YAML"
+        error "📊 Verificando contenido del YAML..."
+        # Verificar si yq puede leer las categorías
+        if yq -r '.categories[].id' "$PACKAGES_YAML" 2>/dev/null | head -5; then
+            error "yq puede leer el archivo, pero algo más está mal"
         else
-            error "jq no puede leer el archivo JSON correctamente"
+            error "yq no puede leer el archivo YAML correctamente"
         fi
         
         exit 1
@@ -685,7 +796,10 @@ main() {
         case "$install_mode" in
             "full")
                 info "🚀 MODO COMPLETO: Se instalarán TODOS los paquetes de todas las categorías automáticamente"
-                info "📊 Total estimado: $(jq '[.categories[].packages | length] | add' "$PACKAGES_JSON") paquetes"
+                # Contar paquetes desde YAML
+                local total_packages
+                total_packages=$(yq -r '[.categories[].packages | length] | add' "$PACKAGES_YAML")
+                info "📊 Total estimado: $total_packages paquetes"
                 if ask_yes_no "⚠️  ¿Continuar con la instalación completa automática?"; then
                     install_packages "$install_mode" "${categories[@]}"
                 else
@@ -714,18 +828,14 @@ main() {
             "categories")
                 info "📁 MODO CATEGORÍAS: Se instalarán TODOS los paquetes de las categorías seleccionadas"
                 info "🎯 Categorías seleccionadas: ${categories[*]}"
-                local selected_count=0
-                for cat in "${categories[@]}"; do
-                    local cat_count=$(jq --arg cat "$cat" '.categories[] | select(.id == $cat) | .packages | length' "$PACKAGES_JSON")
-                    selected_count=$((selected_count + cat_count))
-                done
-                info "📊 Total de paquetes en categorías seleccionadas: $selected_count"
+                # Mostrar vista previa de paquetes
+                show_packages_preview "${categories[@]}"
                 if ask_yes_no "¿Continuar con la instalación de las categorías seleccionadas?"; then
-                    install_packages "$install_mode" "${categories[@]}"
+                    install_selected_categories "$install_mode" "${categories[@]}"
                 else
                     info "Instalación cancelada"
                 fi
-                ;;
+                ;;    
         esac
     fi
     

@@ -8,7 +8,7 @@
 set -euo pipefail
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly PACKAGES_JSON="$SCRIPT_DIR/packages.json"
+readonly PACKAGES_YAML="$SCRIPT_DIR/packages.yaml"
 
 # Colores
 readonly RED='\033[0;31m'
@@ -222,7 +222,7 @@ check_critical_tools() {
     log "🔧 Herramientas críticas"
     
     local tools=(
-        "jq:JSON processor"
+        "yq:YAML processor"
         "curl:HTTP client"
         "git:Version control"
         "stow:Symlink manager"
@@ -279,9 +279,8 @@ check_dotfiles_structure() {
     
     local required_paths=(
         "$SCRIPT_DIR:Scripts directory"
-        "$PACKAGES_JSON:Main packages file"
+        "$PACKAGES_YAML:Main packages file"
         "$SCRIPT_DIR/full_installer_v2.sh:Main installer"
-        "$SCRIPT_DIR/json_manager.sh:JSON manager"
         "$SCRIPT_DIR/stow-links.sh:Symlink manager"
         "$SCRIPT_DIR/install_extra_packs.sh:Extra packages"
         "$SCRIPT_DIR/Additional:Additional scripts"
@@ -317,33 +316,33 @@ check_dotfiles_structure() {
     echo
 }
 
-check_json_integrity() {
-    log "📄 Integridad del JSON"
+check_yaml_integrity() {
+    log "📄 Integridad del YAML"
     
-    if [[ ! -f "$PACKAGES_JSON" ]]; then
-        error "packages.json no encontrado"
+    if [[ ! -f "$PACKAGES_YAML" ]]; then
+        error "packages.yaml no encontrado"
         return 1
     fi
     
     # Verificar sintaxis
-    if ! jq empty "$PACKAGES_JSON" 2>/dev/null; then
-        error "JSON con sintaxis inválida"
+    if ! yq '.' "$PACKAGES_YAML" >/dev/null 2>&1; then
+        error "YAML con sintaxis inválida"
         echo "   🔍 Error:"
-        jq . "$PACKAGES_JSON" 2>&1 | head -5
+        yq '.' "$PACKAGES_YAML" 2>&1 | head -5
         return 1
     fi
     
-    success "Sintaxis JSON válida"
+    success "Sintaxis YAML válida"
     
     # Verificar estructura
-    local categories_count=$(jq '.categories | length' "$PACKAGES_JSON" 2>/dev/null || echo "0")
-    local total_packages=$(jq '[.categories[].packages | length] | add' "$PACKAGES_JSON" 2>/dev/null || echo "0")
+    local categories_count=$(yq '.categories | length' "$PACKAGES_YAML" 2>/dev/null || echo "0")
+    local total_packages=$(yq '[.categories[].packages | length] | add' "$PACKAGES_YAML" 2>/dev/null || echo "0")
     
     success "Categorías: $categories_count"
     success "Paquetes totales: $total_packages"
     
     # Verificar que podemos leer categorías
-    if jq -r '.categories[].id' "$PACKAGES_JSON" 2>/dev/null | head -3 >/dev/null; then
+    if yq '.categories[].id' "$PACKAGES_YAML" 2>/dev/null | head -3 >/dev/null; then
         success "Lectura de categorías funcional"
     else
         error "No se pueden leer las categorías"
@@ -357,7 +356,7 @@ check_permissions() {
     log "🔐 Permisos y accesos"
     
     # Verificar permisos de scripts
-    local scripts=("full_installer_v2.sh" "json_manager.sh" "stow-links.sh")
+    local scripts=("full_installer_v2.sh" "stow-links.sh")
     
     for script in "${scripts[@]}"; do
         local script_path="$SCRIPT_DIR/$script"
@@ -384,11 +383,11 @@ check_permissions() {
 run_functional_tests() {
     log "🧪 Tests funcionales"
     
-    # Test 1: jq parsing
-    if jq -r '.categories[0].id' "$PACKAGES_JSON" >/dev/null 2>&1; then
-        success "jq parsing - OK"
+    # Test 1: yq parsing
+    if yq '.categories[0].id' "$PACKAGES_YAML" >/dev/null 2>&1; then
+        success "yq parsing - OK"
     else
-        error "jq parsing - FAIL"
+        error "yq parsing - FAIL"
     fi
     
     # Test 2: Array capture simulation
@@ -397,7 +396,7 @@ run_functional_tests() {
         if [[ -n "$category_id" ]] && [[ "$category_id" != "null" ]]; then
             test_categories+=("$category_id")
         fi
-    done < <(jq -r '.categories[].id' "$PACKAGES_JSON" 2>/dev/null | head -3)
+    done < <(yq '.categories[].id' "$PACKAGES_YAML" 2>/dev/null | head -3)
     
     if [[ ${#test_categories[@]} -gt 0 ]]; then
         success "Array capture - OK (${#test_categories[@]} items)"
@@ -430,7 +429,7 @@ generate_report() {
         echo
         
         echo "CRITICAL TOOLS:"
-        for tool in jq curl git stow; do
+        for tool in yq curl git stow; do
             if command -v "$tool" >/dev/null 2>&1; then
                 echo "  ✓ $tool: $(which "$tool")"
             else
@@ -439,15 +438,15 @@ generate_report() {
         done
         
         echo
-        echo "JSON STATUS:"
-        if [[ -f "$PACKAGES_JSON" ]]; then
-            echo "  ✓ File exists: $PACKAGES_JSON"
-            if jq empty "$PACKAGES_JSON" 2>/dev/null; then
-                echo "  ✓ Valid JSON syntax"
-                echo "  Categories: $(jq '.categories | length' "$PACKAGES_JSON")"
-                echo "  Packages: $(jq '[.categories[].packages | length] | add' "$PACKAGES_JSON")"
+        echo "YAML STATUS:"
+        if [[ -f "$PACKAGES_YAML" ]]; then
+            echo "  ✓ File exists: $PACKAGES_YAML"
+            if yq '.' "$PACKAGES_YAML" >/dev/null 2>&1; then
+                echo "  ✓ Valid YAML syntax"
+                echo "  Categories: $(yq '.categories | length' "$PACKAGES_YAML")"
+                echo "  Packages: $(yq '[.categories[].packages | length] | add' "$PACKAGES_YAML")"
             else
-                echo "  ✗ Invalid JSON syntax"
+                echo "  ✗ Invalid YAML syntax"
             fi
         else
             echo "  ✗ File not found"
@@ -465,14 +464,12 @@ show_recommendations() {
     echo "   🚀 Para instalación completa:"
     echo "      ./full_installer_v2.sh"
     echo
-    echo "   🔍 Para validar JSON:"
-    echo "      ./json_manager.sh validate"
+    echo "   🔍 Para validar YAML:"
+    echo "      yq '.' packages.yaml"
     echo
-    echo "   🧪 Para tests adicionales:"
-    echo "      ./test_system.sh"
-    echo
-    echo "   📋 Para ver estadísticas:"
-    echo "      ./json_manager.sh stats"
+    echo "   📦 Para ver estadísticas:"
+    echo "      yq '.categories | length' packages.yaml"
+    echo "      yq '[.categories[].packages | length] | add' packages.yaml"
     echo
 }
 
@@ -494,7 +491,7 @@ main() {
     check_package_managers || exit_code=1
     check_critical_tools || exit_code=1
     check_dotfiles_structure || exit_code=1
-    check_json_integrity || exit_code=1
+    check_yaml_integrity || exit_code=1
     check_permissions
     run_functional_tests
     
