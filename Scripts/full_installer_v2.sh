@@ -172,13 +172,13 @@ install_aur_helper() {
 
 install_package() {
     local package="$1"
-    local repo="$2"
+    local repo_hint="$2"      # Solo informativo, NO determinante
     local optional="$3"
     local category="$4"
     local install_mode="$5"
     
     # Verificar si ya está instalado
-    if pacman -Qi "$package" >/dev/null 2>&1 || yay -Qi "$package" >/dev/null 2>&1; then
+    if pacman -Qi "$package" >/dev/null 2>&1; then
         info "📦 $package ya está instalado"
         ((TOTAL_SKIPPED++))
         return 0
@@ -200,33 +200,45 @@ install_package() {
         fi
     fi
     
-    info "🔄 Instalando $package desde $repo..."
+    info "🔄 Instalando $package (hint: $repo_hint)..."
     
-    # Lógica de instalación: primero pacman, luego yay
+    # ============================================================================
+    # LÓGICA INTELIGENTE: SIEMPRE PROBAR PACMAN PRIMERO, LUEGO YAY
+    # El campo "repo" del JSON es solo informativo, no determinante
+    # ============================================================================
+    
     local success=false
-    if [[ "$repo" == "pacman" ]]; then
-        if sudo pacman -S --noconfirm "$package" 2>/dev/null; then
-            success=true
-        else
-            info "No se pudo instalar $package con pacman. Intentando con yay..."
-            if command -v yay >/dev/null 2>&1 && yay -S --noconfirm "$package"; then
+    local install_method=""
+    local error_log=""
+    
+    # PASO 1: Intentar con pacman (repositorios oficiales)
+    info "   🔍 Intentando con pacman..."
+    if sudo pacman -S --needed --noconfirm "$package" 2>/dev/null; then
+        success=true
+        install_method="pacman (repositorios oficiales)"
+    else
+        error_log="pacman falló"
+        
+        # PASO 2: Si pacman falla, intentar con yay (AUR)
+        if command -v yay >/dev/null 2>&1; then
+            info "   🔍 Pacman falló, intentando con yay..."
+            if yay -S --needed --noconfirm "$package" 2>/dev/null; then
                 success=true
+                install_method="yay (AUR)"
+            else
+                error_log="$error_log; yay también falló"
             fi
-        fi
-    elif [[ "$repo" == "aur" ]]; then
-        if command -v yay >/dev/null 2>&1 && yay -S --noconfirm "$package"; then
-            success=true
         else
-            error "yay no está disponible para instalar paquetes AUR"
+            error_log="$error_log; yay no disponible"
         fi
     fi
     
     if [[ "$success" == "true" ]]; then
-        success "✅ $package instalado correctamente"
+        success "✅ $package instalado correctamente con $install_method"
         ((TOTAL_INSTALLED++))
         return 0
     else
-        error "❌ Error al instalar $package"
+        error "❌ Error al instalar $package: $error_log"
         ((TOTAL_FAILED++))
         return 1
     fi
