@@ -195,11 +195,14 @@ install_package() {
     
     # Preguntar al usuario en modo selectivo
     if [[ "$install_mode" == "selective" ]]; then
+        info "   🔍 DEBUG: Preguntando al usuario si desea instalar $package..."
         if ! ask_yes_no "   🤔 ¿Quieres instalar $package?"; then
             info "   ⏭️  Usuario omitió $package"
             ((TOTAL_SKIPPED++))
+            info "   🔍 DEBUG: Usuario decidió no instalar $package."
             return 2
         fi
+        info "   🔍 DEBUG: Usuario decidió instalar $package."
     fi
     
     info "   🔄 Instalando $package (hint: $repo_hint)..."
@@ -295,35 +298,35 @@ install_category() {
     # Usar un file descriptor diferente para evitar conflictos con stdin del pipe
     while IFS= read -r package_info <&3; do
         info "   🔍 DEBUG: Leyendo package_info: $(echo "$package_info" | jq -c '.')"
-        
+
         if [[ -n "$package_info" ]] && [[ "$package_info" != "null" ]]; then
             ((current++))
             info "   🔍 Procesando paquete $current de $packages_count..."
-            
+
             local name repo optional desc_pkg
             name=$(echo "$package_info" | jq -r '.name // ""')
             repo=$(echo "$package_info" | jq -r '.repo // "pacman"')
             optional=$(echo "$package_info" | jq -r '.optional // false')
             desc_pkg=$(echo "$package_info" | jq -r '.description // ""')
-            
+
             if [[ -z "$name" ]]; then
                 warning "Paquete sin nombre encontrado, omitiendo..."
                 continue
             fi
-            
+
             # Mostrar progreso mejorado
             echo
-            printf "📦 [%d/%d] %s" "$current" "$packages_count" "$name"
+            printf "📦 [%d/%d] %s" "$current" "$packages_count" "$name" > /dev/tty
             if [[ -n "$desc_pkg" ]]; then
-                printf " - %s" "$desc_pkg"
+                printf " - %s" "$desc_pkg" > /dev/tty
             fi
-            echo
-            
+            echo > /dev/tty
+
             # Resultado de la instalación con contadores locales
             # Usar || para capturar el código de retorno sin activar set -e
             local install_result=0
             install_package "$name" "$repo" "$optional" "$category_id" "$install_mode" || install_result=$?
-            
+
             case $install_result in
                 0) ((category_installed++)) ;;
                 1) ((category_failed++)) ;;
@@ -333,7 +336,8 @@ install_category() {
             warning "   ⚠️  Paquete vacío o nulo encontrado, omitiendo..."
             info "   🔍 DEBUG: package_info vacío: '$package_info'"
         fi
-    done 3< <(echo "$category_info" | jq -c '.packages[]?')
+    done 3< <(echo "$category_info" | jq -c '.packages[]')
+    info "   🔍 DEBUG: Procesando paquetes sin operador '?' en jq."
     
     info "   🔍 DEBUG: Terminó el loop while. Paquetes procesados: $current"
     info "   ✅ Procesamiento de paquetes completado. Procesados: $current"
@@ -459,16 +463,44 @@ select_categories() {
     done
 }
 
+generate_package_list() {
+    local package_list
+    package_list=$(jq -c '[.categories[] | {category: .id, packages: .packages}]' "$PACKAGES_JSON")
+    echo "$package_list"
+}
+
 install_packages() {
     local install_mode="$1"
     shift
-    local categories=("$@")
-    
+    local categories=($(generate_package_list))
+
     info "🚀 Iniciando instalación de paquetes en modo: $install_mode"
-    
-    # Instalar categorías (la actualización ya se hizo al inicio)
-    for category in "${categories[@]}"; do
-        install_category "$category" "$install_mode"
+
+    for category_info in "${categories[@]}"; do
+        local category_name
+        local packages
+        category_name=$(echo "$category_info" | jq -r '.category')
+        packages=$(echo "$category_info" | jq -c '.packages')
+
+        info "🎯 Instalando categoría: $category_name"
+        for package_info in $(echo "$packages" | jq -c '.[]'); do
+            local name repo optional desc_pkg
+            name=$(echo "$package_info" | jq -r '.name')
+            repo=$(echo "$package_info" | jq -r '.repo')
+            optional=$(echo "$package_info" | jq -r '.optional')
+            desc_pkg=$(echo "$package_info" | jq -r '.description')
+
+            if [[ "$install_mode" == "selective" ]]; then
+                info "   🔍 Preguntando al usuario si desea instalar $name..."
+                if ! ask_yes_no "   🤔 ¿Quieres instalar $name?"; then
+                    info "   ⏭️  Usuario omitió $name"
+                    continue
+                fi
+            fi
+
+            info "   🔄 Instalando $name (repo: $repo)..."
+            install_package "$name" "$repo" "$optional" "$category_name" "$install_mode"
+        done
     done
 }
 
@@ -543,7 +575,7 @@ setup_symlinks() {
         info "🔗 Configuración de enlaces simbólicos disponible"
         if ask_yes_no "¿Configurar enlaces simbólicos de dotfiles?"; then
             info "Ejecutando stow-links.sh..."
-            if bash "$stow_script"; then
+            if bash "$stow_script" ]; then
                 success "✅ Enlaces simbólicos configurados"
             else
                 error "❌ Error en enlaces simbólicos"
@@ -582,7 +614,7 @@ show_packages_preview() {
 show_final_summary() {
     echo
     echo "╔══════════════════════════════════════════════════════════════════════╗"
-    echo "║                    🎉 INSTALACIÓN COMPLETADA                        ║"
+    echo "║                    🎉 INSTALACIÓN COMPLETADA                         ║"
     echo "╚══════════════════════════════════════════════════════════════════════╝"
     echo
     echo "📊 Resumen de paquetes:"
@@ -791,3 +823,17 @@ trap 'error "Instalación interrumpida"; exit 130' INT TERM
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi
+
+generate_debug_dictionary() {
+    local debug_dict
+    debug_dict=$(jq -c '[.categories[] | {category: .id, packages: [.packages[] | {name: .name, repo: .repo, optional: .optional, description: .description}]}]' "$PACKAGES_JSON")
+
+    if [[ -z "$debug_dict" ]]; then
+        error "No se pudo generar el diccionario desde el JSON"
+        return 1
+    fi
+
+    info "📋 Diccionario generado desde el JSON:"
+    echo "$debug_dict" | jq '.'
+    return 0
+}
