@@ -101,9 +101,24 @@ check_dependencies() {
         warning "Dependencias faltantes: ${missing[*]}"
         info "Instalando dependencias..."
         sudo pacman -S --needed --noconfirm "${missing[@]}"
+        
+        # Verificar que se instalaron correctamente
+        local still_missing=()
+        for dep in "${missing[@]}"; do
+            if ! command -v "$dep" >/dev/null 2>&1; then
+                still_missing+=("$dep")
+            fi
+        done
+        
+        if [[ ${#still_missing[@]} -gt 0 ]]; then
+            error "❌ No se pudieron instalar: ${still_missing[*]}"
+            exit 1
+        fi
+        
+        success "✅ Dependencias instaladas correctamente: ${missing[*]}"
     fi
     
-    # Verificar JSON
+    # Verificar JSON (ahora que sabemos que jq está disponible)
     if [[ ! -f "$PACKAGES_JSON" ]]; then
         error "Archivo packages.json no encontrado en: $PACKAGES_JSON"
         exit 1
@@ -111,6 +126,8 @@ check_dependencies() {
     
     if ! jq empty "$PACKAGES_JSON" 2>/dev/null; then
         error "El archivo packages.json no es válido"
+        info "Verificando sintaxis JSON..."
+        jq . "$PACKAGES_JSON" 2>&1 | head -10 || true
         exit 1
     fi
     
@@ -521,7 +538,31 @@ show_final_summary() {
 main() {
     show_banner
     
-    # Verificaciones iniciales
+    # === PRE-VERIFICACIÓN: DIAGNÓSTICO DEL SISTEMA ===
+    echo
+    info "═══════════════════════════════════════════════════════════════"
+    info "              🔍 PRE-VERIFICACIÓN DEL SISTEMA                   "
+    info "═══════════════════════════════════════════════════════════════"
+    
+    # Ejecutar diagnóstico rápido
+    local diagnostic_script="$SCRIPT_DIR/system_diagnostic.sh"
+    if [[ -f "$diagnostic_script" ]]; then
+        info "🔍 Ejecutando diagnóstico del sistema..."
+        if bash "$diagnostic_script"; then
+            success "✅ Sistema verificado correctamente"
+        else
+            error "❌ Se encontraron problemas en el sistema"
+            warning "Revisa el output anterior antes de continuar"
+            if ! ask_yes_no "¿Continuar de todas formas?"; then
+                info "Instalación cancelada por el usuario"
+                exit 1
+            fi
+        fi
+    else
+        warning "Script de diagnóstico no encontrado, continuando sin verificación previa"
+    fi
+    
+    # Verificaciones iniciales (ahora mejoradas)
     check_dependencies
     install_aur_helper
     
