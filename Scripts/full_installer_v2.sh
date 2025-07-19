@@ -295,8 +295,25 @@ install_category() {
     # Debug: verificar que el comando jq funciona
     info "   🔍 Debug: Iniciando loop de procesamiento..."
     
+    # Validar que category_info contiene datos válidos
+    if [[ -z "$category_info" ]] || [[ "$category_info" == "null" ]]; then
+        error "Categoría '$category_id' no encontrada o inválida en packages.json"
+        return 1
+    fi
+
+    # Validar que jq puede procesar los paquetes
+    if ! echo "$category_info" | jq -e '.packages[]' >/dev/null 2>&1; then
+        error "Error al procesar paquetes en la categoría '$category_id'"
+        return 1
+    fi
+
     # Usar un file descriptor diferente para evitar conflictos con stdin del pipe
     while IFS= read -r package_info <&3; do
+        if [[ -z "$package_info" ]] || [[ "$package_info" == "null" ]]; then
+            warning "   ⚠️  Paquete vacío o nulo encontrado, omitiendo..."
+            continue
+        fi
+
         info "   🔍 DEBUG: Leyendo package_info: $(echo "$package_info" | jq -c '.')"
 
         if [[ -n "$package_info" ]] && [[ "$package_info" != "null" ]]; then
@@ -646,13 +663,13 @@ show_final_summary() {
 
 main() {
     show_banner
-    
+
     # === PRE-VERIFICACIÓN: DIAGNÓSTICO DEL SISTEMA ===
     echo
     info "═══════════════════════════════════════════════════════════════"
     info "              🔍 PRE-VERIFICACIÓN DEL SISTEMA                   "
     info "═══════════════════════════════════════════════════════════════"
-    
+
     # Ejecutar diagnóstico rápido
     local diagnostic_script="$SCRIPT_DIR/system_diagnostic.sh"
     if [[ -f "$diagnostic_script" ]]; then
@@ -670,25 +687,36 @@ main() {
     else
         warning "Script de diagnóstico no encontrado, continuando sin verificación previa"
     fi
-    
+
     # Verificaciones iniciales (ahora mejoradas)
     check_dependencies
     install_aur_helper
-    
+
     # Actualizar sistema ANTES de la instalación de paquetes
     info "🔄 Actualizando sistema antes de instalar paquetes..."
     sudo pacman -Syu --noconfirm
-    
+
+    # === OPCIÓN DE DEPURACIÓN ===
+    echo
+    info "═══════════════════════════════════════════════════════════════"
+    info "              🔍 OPCIÓN DE DEPURACIÓN                          "
+    info "═══════════════════════════════════════════════════════════════"
+
+    if ask_yes_no "¿Deseas generar y ver el diccionario de depuración desde el JSON?"; then
+        generate_debug_dictionary
+        exit 0
+    fi
+
     # === FASE 1: INSTALACIÓN DE PAQUETES ===
     echo
     info "═══════════════════════════════════════════════════════════════"
     info "                    📦 FASE 1: PAQUETES                        "
     info "═══════════════════════════════════════════════════════════════"
-    
+
     # Seleccionar modo de instalación
     local install_mode
     install_mode=$(select_installation_mode)
-    
+
     # Seleccionar categorías según el modo
     local categories=()
     case "$install_mode" in
@@ -722,7 +750,7 @@ main() {
             done < <(select_categories)
             ;;
     esac
-    
+
     if [[ ${#categories[@]} -eq 0 ]]; then
         warning "No se seleccionaron categorías para instalar"
         error "🔍 Debug: Modo seleccionado: $install_mode"
@@ -816,14 +844,6 @@ main() {
     show_final_summary
 }
 
-# Manejar señales para limpieza
-trap 'error "Instalación interrumpida"; exit 130' INT TERM
-
-# Ejecutar si es llamado directamente
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "$@"
-fi
-
 generate_debug_dictionary() {
     local debug_dict
     debug_dict=$(jq -c '[.categories[] | {category: .id, packages: [.packages[] | {name: .name, repo: .repo, optional: .optional, description: .description}]}]' "$PACKAGES_JSON")
@@ -837,3 +857,11 @@ generate_debug_dictionary() {
     echo "$debug_dict" | jq '.'
     return 0
 }
+
+# Manejar señales para limpieza
+trap 'error "Instalación interrumpida"; exit 130' INT TERM
+
+# Ejecutar si es llamado directamente
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
