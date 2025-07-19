@@ -1,1089 +1,1089 @@
 {
-  "categories": [
-    {
-      "id": "1. DOTFILES",
-      "emoji": "🗂️",
-      "description": "Gestión de dotfiles y control de versiones",
-      "packages": [
+    "categories": [
         {
-          "name": "stow",
-          "description": "Gestor de symlinks para dotfiles",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Stow"
+            "id": "1. DOTFILES",
+            "emoji": "🗂️",
+            "description": "Dotfiles management and version control",
+            "packages": [
+                {
+                    "name": "stow",
+                    "description": "Symlink manager for dotfiles",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Stow"
+                },
+                {
+                    "name": "git",
+                    "description": "Distributed version control system",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Git"
+                }
+            ]
         },
         {
-          "name": "git",
-          "description": "Sistema de control de versiones distribuido",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Git"
+            "id": "2. CORE_SYSTEM",
+            "emoji": "🔧",
+            "description": "Fundamental system tools",
+            "packages": [
+                {
+                    "name": "linux-headers",
+                    "description": "Kernel headers for DKMS modules",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Kernel/Headers"
+                },
+                {
+                    "name": "curl",
+                    "description": "Data transfer client via URL",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/CURL"
+                },
+                {
+                    "name": "unzip",
+                    "description": "ZIP file decompressor",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Unzip"
+                },
+                {
+                    "name": "tree",
+                    "description": "Displays directories as a tree",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Tree_(Unix)"
+                },
+                {
+                    "name": "man-db",
+                    "description": "Man pages database for documentation",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Man_(Linux)#man-db"
+                },
+                {
+                    "name": "os-prober",
+                    "description": "Detects other systems in dual-boot",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/os-prober"
+                },
+                {
+                    "name": "less",
+                    "description": "Interactive text pager",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Less"
+                },
+                {
+                    "name": "apple_cursor",
+                    "description": "macOS-style cursor theme for Linux",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/apple-cursor-theme"
+                }
+            ]
+        },
+        {
+            "id": "3. CLI_TOOLS",
+            "emoji": "⚡",
+            "description": "Modern CLI tools and productivity",
+            "packages": [
+                {
+                    "name": "eza",
+                    "description": "Modern replacement for ls with more information",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Eza"
+                },
+                {
+                    "name": "fzf",
+                    "description": "Fuzzy finder in the terminal",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://github.com/junegunn/fzf"
+                },
+                {
+                    "name": "zoxide",
+                    "description": "Directory navigation based on frequency",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/zoxide"
+                },
+                {
+                    "name": "ranger",
+                    "description": "Terminal file explorer with previews",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Ranger"
+                },
+                {
+                    "name": "bat",
+                    "description": "Cat clone with syntax highlighting",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://github.com/sharkdp/bat"
+                },
+                {
+                    "name": "glow",
+                    "description": "Markdown viewer in the terminal",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://github.com/charmbracelet/glow"
+                }
+            ]
+        },
+        {
+            "id": "4. SYSTEM_MONITORING",
+            "emoji": "📊",
+            "description": "System monitoring and information",
+            "packages": [
+                {
+                    "name": "btop",
+                    "description": "Terminal system monitor",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Bpytop#btop"
+                },
+                {
+                    "name": "fastfetch",
+                    "description": "Lightweight system info display",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://github.com/LinusDierheimer/fastfetch"
+                },
+                {
+                    "name": "onefetch",
+                    "description": "Git repository information",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://github.com/o2sh/onefetch"
+                },
+                {
+                    "name": "duf",
+                    "description": "Modern disk usage monitor",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/DUF"
+                },
+                {
+                    "name": "speedtest-cli",
+                    "description": "Measures Internet speed",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Speedtest.net#speedtest-cli"
+                }
+            ]
+        },
+        {
+            "id": "5. SECURITY_PRIVACY",
+            "emoji": "🔐",
+            "description": "Security, encryption, and VPN tools",
+            "packages": [
+                {
+                    "name": "veracrypt",
+                    "description": "Disk encryption",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/VeraCrypt"
+                },
+                {
+                    "name": "keepassxc",
+                    "description": "Password manager",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/KeePassXC"
+                },
+                {
+                    "name": "openvpn",
+                    "description": "OpenVPN client",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/OpenVPN"
+                },
+                {
+                    "name": "protonvpn-cli-ng",
+                    "description": "ProtonVPN CLI client",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Proton_VPN"
+                },
+                {
+                    "name": "tailscale",
+                    "description": "Mesh point-to-point private virtual network",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Tailscale"
+                },
+                {
+                    "name": "anydesk",
+                    "description": "Cross-platform remote desktop software",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/anydesk-bin"
+                },
+                {
+                    "name": "proton-vpn-gtk-app",
+                    "description": "Official ProtonVPN GUI client",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Proton_VPN"
+                }
+            ]
+        },
+        {
+            "id": "6. DESKTOP_TOOLS",
+            "emoji": "🖼️",
+            "description": "Desktop environment tools",
+            "packages": [
+                {
+                    "name": "wl-clipboard",
+                    "description": "Clipboard for Wayland",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Wl-clipboard"
+                },
+                {
+                    "name": "extension-manager",
+                    "description": "Extension management (AUR)",
+                    "optional": false,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/extension-manager"
+                },
+                {
+                    "name": "balena-etcher",
+                    "description": "USB image burner",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Electron#balenaEtcher"
+                },
+                {
+                    "name": "minecraft-launcher",
+                    "description": "Official Minecraft launcher for Linux",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Minecraft#Launcher"
+                }
+            ]
+        },
+        {
+            "id": "7. TERMINAL_SHELL",
+            "emoji": "🐚",
+            "description": "Advanced terminal emulators and shells",
+            "packages": [
+                {
+                    "name": "kitty",
+                    "description": "GPU-accelerated terminal emulator",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Kitty"
+                },
+                {
+                    "name": "zsh",
+                    "description": "Advanced Z shell",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Zsh"
+                },
+                {
+                    "name": "warp-terminal",
+                    "description": "Modern terminal with integrated AI",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Warp"
+                },
+                {
+                    "name": "termius",
+                    "description": "Cross-platform SSH/SFTP client with cloud sync",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/termius"
+                }
+            ]
+        },
+        {
+            "id": "8. FONTS_SYMBOLS",
+            "emoji": "🔤",
+            "description": "Fonts and symbols for terminal and GUI",
+            "packages": [
+                {
+                    "name": "noto-fonts",
+                    "description": "Basic Noto Unicode fonts",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Noto_Fonts"
+                },
+                {
+                    "name": "noto-fonts-extra",
+                    "description": "Additional Noto fonts",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Noto_Fonts"
+                },
+                {
+                    "name": "noto-fonts-emoji",
+                    "description": "Noto fonts with emoji",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Noto_Fonts"
+                },
+                {
+                    "name": "noto-fonts-cjk",
+                    "description": "Noto fonts for CJK",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Noto_Fonts"
+                },
+                {
+                    "name": "ttf-nerd-fonts-symbols",
+                    "description": "Nerd Fonts symbols",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Nerd_Fonts"
+                },
+                {
+                    "name": "ttf-nerd-fonts-symbols-mono",
+                    "description": "Nerd Fonts mono symbols",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Nerd_Fonts"
+                },
+                {
+                    "name": "ttf-ms-fonts",
+                    "description": "Microsoft TrueType fonts (AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/ttf-ms-win10"
+                },
+                {
+                    "name": "apple-fonts",
+                    "description": "Apple macOS fonts (AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/apple-fonts"
+                },
+                {
+                    "name": "ttf-jetbrains-mono",
+                    "description": "JetBrains Mono",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/JetBrains_Mono"
+                },
+                {
+                    "name": "ttf-jetbrains-mono-nerd",
+                    "description": "JetBrains Mono with Nerd icons",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/JetBrains_Mono"
+                },
+                {
+                    "name": "ttf-cascadia-code",
+                    "description": "Cascadia Code",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://github.com/microsoft/cascadia-code"
+                },
+                {
+                    "name": "ttf-cascadia-code-nerd",
+                    "description": "Cascadia Code with Nerd icons",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://github.com/microsoft/cascadia-code"
+                }
+            ]
+        },
+        {
+            "id": "9. EDITORS_IDES",
+            "emoji": "📝",
+            "description": "Editors and development environments",
+            "packages": [
+                {
+                    "name": "neovim",
+                    "description": "Extensible editor",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Neovim"
+                },
+                {
+                    "name": "pyright",
+                    "description": "LSP server for TypeScript and Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/LanguageServerProtocol#TypeScript"
+                },
+                {
+                    "name": "visual-studio-code-bin",
+                    "description": "VS Code editor (binary version AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/visual-studio-code-bin"
+                },
+                {
+                    "name": "zed",
+                    "description": "Modern, collaborative, high-performance code editor",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/zed"
+                }
+            ]
+        },
+        {
+            "id": "10. LANGUAGES_RUNTIMES",
+            "emoji": "🚀",
+            "description": "Programming languages and runtimes",
+            "packages": [
+                {
+                    "name": "python",
+                    "description": "Python 3 interpreter",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Python"
+                },
+                {
+                    "name": "go",
+                    "description": "Go language",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Go"
+                },
+                {
+                    "name": "gcc",
+                    "description": "C/C++ compiler",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/GCC"
+                },
+                {
+                    "name": "zig",
+                    "description": "Zig programming language",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://ziglang.org"
+                },
+                {
+                    "name": "jdk21-openjdk",
+                    "description": "Java Development Kit 21",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/OpenJDK"
+                },
+                {
+                    "name": "nodejs",
+                    "description": "JS runtime environment",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Node.js"
+                },
+                {
+                    "name": "npm",
+                    "description": "Node.js package manager",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/npm"
+                },
+                {
+                    "name": "base-devel",
+                    "description": "Basic compilation tools",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Developer_Bundle#base-devel"
+                }
+            ]
+        },
+        {
+            "id": "11. PYTHON_ECOSYSTEM",
+            "emoji": "🐍",
+            "description": "Herramientas y librerías de Python",
+            "packages": [
+                {
+                    "name": "python-pynvim",
+                    "description": "Soporte Python para Neovim",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Neovim#Remote_Plugins"
+                },
+                {
+                    "name": "python-pip",
+                    "description": "Instalador de paquetes Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Pip"
+                },
+                {
+                    "name": "python-mypy",
+                    "description": "Checker de tipos estático",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/MyPy"
+                },
+                {
+                    "name": "python-black",
+                    "description": "Formateador de código Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Black"
+                },
+                {
+                    "name": "python-debugpy",
+                    "description": "Depurador de Python para VSCode",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://pypi.org/project/debugpy/"
+                },
+                {
+                    "name": "python-pylatexenc",
+                    "description": "Procesamiento LaTeX en Python",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/LaTeX"
+                },
+                {
+                    "name": "python-virtualenv",
+                    "description": "Entornos virtuales Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Virtualenv"
+                },
+                {
+                    "name": "python-ijson",
+                    "description": "Parser incremental JSON",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://pypi.org/project/ijson/"
+                },
+                {
+                    "name": "python-numpy",
+                    "description": "Arrays científicos en Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/NumPy"
+                },
+                {
+                    "name": "python-pillow",
+                    "description": "Procesamiento de imágenes en Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Pillow"
+                },
+                {
+                    "name": "python-psutil",
+                    "description": "Estadísticas del sistema en Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://pypi.org/project/psutil/"
+                },
+                {
+                    "name": "python-requests",
+                    "description": "Cliente HTTP Python",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Requests"
+                },
+                {
+                    "name": "python-setproctitle",
+                    "description": "Cambia título de proceso en Python",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://pypi.org/project/setproctitle/"
+                },
+                {
+                    "name": "python-toml",
+                    "description": "Lectura/escritura TOML en Python",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://pypi.org/project/toml/"
+                },
+                {
+                    "name": "python-watchdog",
+                    "description": "Monitor de archivos en Python",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://pypi.org/project/watchdog/"
+                }
+            ]
+        },
+        {
+            "id": "12. DEV_TOOLS",
+            "emoji": "🛠️",
+            "description": "Herramientas auxiliares de desarrollo",
+            "packages": [
+                {
+                    "name": "lazygit",
+                    "description": "Interfaz TUI para Git",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://github.com/jesseduffield/lazygit"
+                },
+                {
+                    "name": "lazydocker",
+                    "description": "Interfaz TUI para Docker",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://github.com/jesseduffield/lazydocker"
+                }
+            ]
+        },
+        {
+            "id": "13. VIRTUALIZATION",
+            "emoji": "🖥️",
+            "description": "Soluciones de virtualización: KVM/QEMU y VirtualBox",
+            "packages": [
+                {
+                    "name": "qemu",
+                    "description": "Emulador y virtualizador",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/QEMU"
+                },
+                {
+                    "name": "libvirt",
+                    "description": "Administración de VM",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Libvirt"
+                },
+                {
+                    "name": "virt-manager",
+                    "description": "GUI para libvirt",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Virt-manager"
+                },
+                {
+                    "name": "ebtables",
+                    "description": "Filtrado de puentes Ethernet",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Ebtables"
+                },
+                {
+                    "name": "dnsmasq",
+                    "description": "Servidor DNS/DHCP ligero",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Dnsmasq"
+                },
+                {
+                    "name": "virtualbox",
+                    "description": "Hipervisor VirtualBox",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/VirtualBox"
+                },
+                {
+                    "name": "virtualbox-host-dkms",
+                    "description": "Módulo DKMS para VirtualBox",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/VirtualBox#Kernel_module"
+                },
+                {
+                    "name": "virtualbox-guest-iso",
+                    "description": "Guest Additions ISO para VirtualBox",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/VirtualBox#Guest_additions"
+                }
+            ]
+        },
+        {
+            "id": "14. OFFICE_DOCUMENTS",
+            "emoji": "📄",
+            "description": "Suites ofimáticas, lectores de PDF/EPUB y notas",
+            "packages": [
+                {
+                    "name": "libreoffice-fresh",
+                    "description": "Suite LibreOffice",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/LibreOffice"
+                },
+                {
+                    "name": "onlyoffice-bin",
+                    "description": "Suite OnlyOffice (AUR)",
+                    "optional": false,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/onlyoffice-bin"
+                },
+                {
+                    "name": "foliate",
+                    "description": "Lector de ebooks EPUB",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Foliate"
+                },
+                {
+                    "name": "zathura",
+                    "description": "Visor de documentos ligero",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Zathura"
+                },
+                {
+                    "name": "zathura-pdf-poppler",
+                    "description": "Backend PDF para Zathura",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Poppler"
+                },
+                {
+                    "name": "obsidian",
+                    "description": "Notas basadas en Markdown",
+                    "optional": false,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/obsidian"
+                }
+            ]
+        },
+        {
+            "id": "15. WEB_BROWSERS",
+            "emoji": "🌐",
+            "description": "Navegadores y herramientas de navegación segura",
+            "packages": [
+                {
+                    "name": "chromium",
+                    "description": "Navegador Chromium",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Chromium"
+                },
+                {
+                    "name": "zen-browser-bin",
+                    "description": "Navegador Zen (AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/zen-browser-bin"
+                },
+                {
+                    "name": "brave-bin",
+                    "description": "Navegador Brave (AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/brave-bin"
+                },
+                {
+                    "name": "librewolf-bin",
+                    "description": "Navegador LibreWolf (AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/librewolf-bin"
+                },
+                {
+                    "name": "mullvad-browser-bin",
+                    "description": "Navegador Mullvad (AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/mullvad-browser-bin"
+                },
+                {
+                    "name": "torbrowser-launcher",
+                    "description": "Instalador de Tor Browser",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Tor_Browser"
+                }
+            ]
+        },
+        {
+            "id": "16. MUSIC_CLIENTS",
+            "emoji": "🎵",
+            "description": "Clientes de música y herramientas de audio",
+            "packages": [
+                {
+                    "name": "mpd",
+                    "description": "Daemon de reproducción MPD",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Music_Player_Daemon"
+                },
+                {
+                    "name": "mpc",
+                    "description": "Cliente CLI para MPD",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Music_Player_Daemon#Clients"
+                },
+                {
+                    "name": "rmpc-bin",
+                    "description": "Cliente MPD precompilado (AUR)",
+                    "optional": false,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/rmpc-bin"
+                },
+                {
+                    "name": "spotify-launcher",
+                    "description": "Cliente de Spotify",
+                    "optional": false,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/spotify-launcher"
+                },
+                {
+                    "name": "youtube-music-bin",
+                    "description": "Cliente YouTube Music (AUR)",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/youtube-music-bin"
+                },
+                {
+                    "name": "picard",
+                    "description": "Etiquetador MusicBrainz",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/MusicBrainz_Picard"
+                },
+                {
+                    "name": "nicotine+",
+                    "description": "Cliente Soulseek",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Nicotine%2B"
+                },
+                {
+                    "name": "amberol",
+                    "description": "Radio TUI Amberol",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/amberol-git"
+                },
+                {
+                    "name": "cava",
+                    "description": "Visualizador de espectro de audio",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Cava"
+                },
+                {
+                    "name": "ncmpcpp",
+                    "description": "Cliente NCurses Music Player Cliente++ para MPD",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Ncmpcpp"
+                },
+                {
+                    "name": "lrcget-bin",
+                    "description": "Descargador de letras sincronizadas para canciones",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/lrcget-bin"
+                }
+            ]
+        },
+        {
+            "id": "17. FILE_SYNC",
+            "emoji": "🔄",
+            "description": "Sincronización y backup de archivos",
+            "packages": [
+                {
+                    "name": "syncthing",
+                    "description": "Sincronización de archivos",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Syncthing"
+                },
+                {
+                    "name": "nautilus-megasync",
+                    "description": "Extensión Nautilus para MEGA",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/nautilus-megasync"
+                }
+            ]
+        },
+        {
+            "id": "18. MULTIMEDIA_STREAMING",
+            "emoji": "📺",
+            "description": "Reproductores de audio/vídeo y streaming",
+            "packages": [
+                {
+                    "name": "vlc",
+                    "description": "Reproductor multimedia VLC",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/VLC"
+                },
+                {
+                    "name": "mpv",
+                    "description": "Reproductor multimedia en CLI",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/mpv"
+                },
+                {
+                    "name": "obs-studio",
+                    "description": "Grabación y streaming con OBS",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/OBS"
+                },
+                {
+                    "name": "stremio",
+                    "description": "Centro de entretenimiento moderno para video streaming",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/stremio"
+                },
+                {
+                    "name": "blender",
+                    "description": "Suite completa de creación 3D libre y open source",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Blender"
+                },
+                {
+                    "name": "qbittorrent",
+                    "description": "Cliente BitTorrent ligero multiplataforma",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/QBittorrent"
+                }
+            ]
+        },
+        {
+            "id": "19. COMMUNICATIONS",
+            "emoji": "📞",
+            "description": "Clientes de mensajería y correo",
+            "packages": [
+                {
+                    "name": "telegram-desktop",
+                    "description": "Cliente de Telegram para escritorio",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Telegram"
+                },
+                {
+                    "name": "discord",
+                    "description": "Cliente de Discord",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Discord"
+                },
+                {
+                    "name": "thunderbird",
+                    "description": "Cliente de correo Thunderbird",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Thunderbird"
+                },
+                {
+                    "name": "vesktop",
+                    "description": "Cliente de Discord ligero basado en Electron con Vencord y soporte mejorado en Linux",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/vesktop"
+                }
+            ]
+        },
+        {
+            "id": "20. TERMINAL_MULTIPLEXING",
+            "emoji": "📦",
+            "description": "Multiplexación de terminal",
+            "packages": [
+                {
+                    "name": "tmux",
+                    "description": "Multiplexador de terminal",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Tmux"
+                }
+            ]
+        },
+        {
+            "id": "21. CLI_UTILITIES",
+            "emoji": "🔧",
+            "description": "Utilidades de línea de comandos",
+            "packages": [
+                {
+                    "name": "bc",
+                    "description": "Calculadora de precisión arbitraria",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/BC"
+                },
+                {
+                    "name": "jq",
+                    "description": "Parser JSON en CLI",
+                    "optional": false,
+                    "repo": "pacman",
+                    "url": "https://stedolan.github.io/jq/"
+                },
+                {
+                    "name": "glab",
+                    "description": "CLI para GitLab",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://gitlab.com/gitlab-org/cli"
+                },
+                {
+                    "name": "playerctl",
+                    "description": "Control multimedia desde terminal",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Playerctl"
+                }
+            ]
+        },
+        {
+            "id": "22. FUN_TOOLS",
+            "emoji": "🎉",
+            "description": "Herramientas recreativas y ASCII art",
+            "packages": [
+                {
+                    "name": "cowsay",
+                    "description": "Texto hablado por vaca ASCII",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Cowsay"
+                },
+                {
+                    "name": "cmatrix",
+                    "description": "Efecto Matrix en terminal",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/CMatrix"
+                },
+                {
+                    "name": "asciiquarium",
+                    "description": "Acuario animado ASCII",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/asciiquarium"
+                },
+                {
+                    "name": "pipes.sh",
+                    "description": "Animación de tuberías ASCII",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://github.com/pipeseroni/pipes.sh"
+                },
+                {
+                    "name": "pokemon-colorscripts-git",
+                    "description": "Pokémon en color ASCII",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/pokemon-colorscripts-git"
+                },
+                {
+                    "name": "tty-clock",
+                    "description": "Reloj ASCII en terminal",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://wiki.archlinux.org/title/Tty-clock"
+                },
+                {
+                    "name": "cbonsai",
+                    "description": "Árbol bonsái ASCII",
+                    "optional": true,
+                    "repo": "pacman",
+                    "url": "https://aur.archlinux.org/packages/cbonsai"
+                },
+                {
+                    "name": "superfile",
+                    "description": "Gestor de archivos ASCII",
+                    "optional": true,
+                    "repo": "aur",
+                    "url": "https://aur.archlinux.org/packages/superfile"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "id": "2. CORE_SYSTEM",
-      "emoji": "🔧",
-      "description": "Herramientas fundamentales del sistema",
-      "packages": [
-        {
-          "name": "linux-headers",
-          "description": "Encabezados del kernel para módulos DKMS",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Kernel/Headers"
-        },
-        {
-          "name": "curl",
-          "description": "Cliente de transferencia de datos por URL",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/CURL"
-        },
-        {
-          "name": "unzip",
-          "description": "Descompresor de archivos ZIP",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Unzip"
-        },
-        {
-          "name": "tree",
-          "description": "Muestra directorios en forma de árbol",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Tree_(Unix)"
-        },
-        {
-          "name": "man-db",
-          "description": "Base de datos de páginas man para documentación",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Man_(Linux)#man-db"
-        },
-        {
-          "name": "os-prober",
-          "description": "Detecta otros sistemas en dual-boot",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/os-prober"
-        },
-        {
-          "name": "less",
-          "description": "Paginador de texto interactivo",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Less"
-        },
-        {
-          "name": "apple_cursor",
-          "description": "Tema de cursor estilo macOS para Linux",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/apple-cursor-theme"
-        }
-      ]
-    },
-    {
-      "id": "3. CLI_TOOLS",
-      "emoji": "⚡",
-      "description": "Herramientas CLI modernas y productividad",
-      "packages": [
-        {
-          "name": "eza",
-          "description": "Reemplazo moderno de ls con más información",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Eza"
-        },
-        {
-          "name": "fzf",
-          "description": "Buscador difuso en la terminal",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://github.com/junegunn/fzf"
-        },
-        {
-          "name": "zoxide",
-          "description": "Navegación de directorios basada en frecuencia",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/zoxide"
-        },
-        {
-          "name": "ranger",
-          "description": "Explorador de archivos en terminal con vistas previas",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Ranger"
-        },
-        {
-          "name": "bat",
-          "description": "Clon de cat con resaltado de sintaxis",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://github.com/sharkdp/bat"
-        },
-        {
-          "name": "glow",
-          "description": "Visualizador de Markdown en terminal",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://github.com/charmbracelet/glow"
-        }
-      ]
-    },
-    {
-      "id": "4. SYSTEM_MONITORING",
-      "emoji": "📊",
-      "description": "Monitoreo del sistema e información",
-      "packages": [
-        {
-          "name": "btop",
-          "description": "Monitor de sistema en terminal",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Bpytop#btop"
-        },
-        {
-          "name": "fastfetch",
-          "description": "Muestra info del sistema ligero",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://github.com/LinusDierheimer/fastfetch"
-        },
-        {
-          "name": "onefetch",
-          "description": "Información de repositorios Git",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://github.com/o2sh/onefetch"
-        },
-        {
-          "name": "duf",
-          "description": "Monitor de uso de discos moderno",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/DUF"
-        },
-        {
-          "name": "speedtest-cli",
-          "description": "Mide velocidad de Internet",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Speedtest.net#speedtest-cli"
-        }
-      ]
-    },
-    {
-      "id": "5. SECURITY_PRIVACY",
-      "emoji": "🔐",
-      "description": "Herramientas de seguridad, cifrado y VPN",
-      "packages": [
-        {
-          "name": "veracrypt",
-          "description": "Cifrado de discos",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/VeraCrypt"
-        },
-        {
-          "name": "keepassxc",
-          "description": "Gestor de contraseñas",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/KeePassXC"
-        },
-        {
-          "name": "openvpn",
-          "description": "Cliente OpenVPN",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/OpenVPN"
-        },
-        {
-          "name": "protonvpn-cli-ng",
-          "description": "Cliente CLI de ProtonVPN",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Proton_VPN"
-        },
-        {
-          "name": "tailscale",
-          "description": "Red privada virtual mesh point-to-point",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Tailscale"
-        },
-        {
-          "name": "anydesk",
-          "description": "Software de escritorio remoto multiplataforma",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/anydesk-bin"
-        },
-        {
-          "name": "proton-vpn-gtk-app",
-          "description": "Cliente GUI oficial de ProtonVPN",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Proton_VPN"
-        }
-      ]
-    },
-    {
-      "id": "6. DESKTOP_TOOLS",
-      "emoji": "🖼️",
-      "description": "Herramientas del entorno de escritorio",
-      "packages": [
-        {
-          "name": "wl-clipboard",
-          "description": "Portapapeles para Wayland",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Wl-clipboard"
-        },
-        {
-          "name": "extension-manager",
-          "description": "Gestión de extensiones (AUR)",
-          "optional": false,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/extension-manager"
-        },
-        {
-          "name": "balena-etcher",
-          "description": "Graba imágenes en USB",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Electron#balenaEtcher"
-        },
-        {
-          "name": "minecraft-launcher",
-          "description": "Launcher oficial de Minecraft para Linux",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Minecraft#Launcher"
-        }
-      ]
-    },
-    {
-      "id": "7. TERMINAL_SHELL",
-      "emoji": "🐚",
-      "description": "Emuladores y shells avanzadas",
-      "packages": [
-        {
-          "name": "kitty",
-          "description": "Emulador de terminal acelerado por GPU",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Kitty"
-        },
-        {
-          "name": "zsh",
-          "description": "Shell Z con características avanzadas",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Zsh"
-        },
-        {
-          "name": "warp-terminal",
-          "description": "Terminal moderno con inteligencia artificial integrada",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Warp"
-        },
-        {
-          "name": "termius",
-          "description": "Cliente SSH/SFTP multiplataforma con sincronización en la nube",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/termius"
-        }
-      ]
-    },
-    {
-      "id": "8. FONTS_SYMBOLS",
-      "emoji": "🔤",
-      "description": "Fuentes y símbolos para terminal y GUI",
-      "packages": [
-        {
-          "name": "noto-fonts",
-          "description": "Fuentes Noto Unicode básicas",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Noto_Fonts"
-        },
-        {
-          "name": "noto-fonts-extra",
-          "description": "Fuentes Noto adicionales",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Noto_Fonts"
-        },
-        {
-          "name": "noto-fonts-emoji",
-          "description": "Fuentes Noto con emoji",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Noto_Fonts"
-        },
-        {
-          "name": "noto-fonts-cjk",
-          "description": "Fuentes Noto para CJK",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Noto_Fonts"
-        },
-        {
-          "name": "ttf-nerd-fonts-symbols",
-          "description": "Símbolos Nerd Fonts",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Nerd_Fonts"
-        },
-        {
-          "name": "ttf-nerd-fonts-symbols-mono",
-          "description": "Símbolos Nerd Fonts mono",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Nerd_Fonts"
-        },
-        {
-          "name": "ttf-ms-fonts",
-          "description": "Fuentes Microsoft TrueType (AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/ttf-ms-win10"
-        },
-        {
-          "name": "apple-fonts",
-          "description": "Fuentes Apple macOS (AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/apple-fonts"
-        },
-        {
-          "name": "ttf-jetbrains-mono",
-          "description": "JetBrains Mono",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/JetBrains_Mono"
-        },
-        {
-          "name": "ttf-jetbrains-mono-nerd",
-          "description": "JetBrains Mono con íconos Nerd",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/JetBrains_Mono"
-        },
-        {
-          "name": "ttf-cascadia-code",
-          "description": "Cascadia Code",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://github.com/microsoft/cascadia-code"
-        },
-        {
-          "name": "ttf-cascadia-code-nerd",
-          "description": "Cascadia Code con íconos Nerd",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://github.com/microsoft/cascadia-code"
-        }
-      ]
-    },
-    {
-      "id": "9. EDITORS_IDES",
-      "emoji": "📝",
-      "description": "Editores y entornos de desarrollo",
-      "packages": [
-        {
-          "name": "neovim",
-          "description": "Editor extensible",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Neovim"
-        },
-        {
-          "name": "pyright",
-          "description": "Servidor LSP para TypeScript y Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/LanguageServerProtocol#TypeScript"
-        },
-        {
-          "name": "visual-studio-code-bin",
-          "description": "Editor VS Code (version binaria AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/visual-studio-code-bin"
-        },
-        {
-          "name": "zed",
-          "description": "Editor de código moderno y colaborativo de alta performance",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/zed"
-        }
-      ]
-    },
-    {
-      "id": "10. LANGUAGES_RUNTIMES",
-      "emoji": "🚀",
-      "description": "Lenguajes de programación y runtimes",
-      "packages": [
-        {
-          "name": "python",
-          "description": "Intérprete de Python 3",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Python"
-        },
-        {
-          "name": "go",
-          "description": "Lenguaje Go",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Go"
-        },
-        {
-          "name": "gcc",
-          "description": "Compilador C/C++",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/GCC"
-        },
-        {
-          "name": "zig",
-          "description": "Lenguaje de programación Zig",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://ziglang.org"
-        },
-        {
-          "name": "jdk21-openjdk",
-          "description": "Java Development Kit 21",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/OpenJDK"
-        },
-        {
-          "name": "nodejs",
-          "description": "Entorno de ejecución JS",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Node.js"
-        },
-        {
-          "name": "npm",
-          "description": "Gestor de paquetes Node.js",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/npm"
-        },
-        {
-          "name": "base-devel",
-          "description": "Herramientas de compilación básicas",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Developer_Bundle#base-devel"
-        }
-      ]
-    },
-    {
-      "id": "11. PYTHON_ECOSYSTEM",
-      "emoji": "🐍",
-      "description": "Herramientas y librerías de Python",
-      "packages": [
-        {
-          "name": "python-pynvim",
-          "description": "Soporte Python para Neovim",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Neovim#Remote_Plugins"
-        },
-        {
-          "name": "python-pip",
-          "description": "Instalador de paquetes Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Pip"
-        },
-        {
-          "name": "python-mypy",
-          "description": "Checker de tipos estático",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/MyPy"
-        },
-        {
-          "name": "python-black",
-          "description": "Formateador de código Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Black"
-        },
-        {
-          "name": "python-debugpy",
-          "description": "Depurador de Python para VSCode",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://pypi.org/project/debugpy/"
-        },
-        {
-          "name": "python-pylatexenc",
-          "description": "Procesamiento LaTeX en Python",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/LaTeX"
-        },
-        {
-          "name": "python-virtualenv",
-          "description": "Entornos virtuales Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Virtualenv"
-        },
-        {
-          "name": "python-ijson",
-          "description": "Parser incremental JSON",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://pypi.org/project/ijson/"
-        },
-        {
-          "name": "python-numpy",
-          "description": "Arrays científicos en Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/NumPy"
-        },
-        {
-          "name": "python-pillow",
-          "description": "Procesamiento de imágenes en Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Pillow"
-        },
-        {
-          "name": "python-psutil",
-          "description": "Estadísticas del sistema en Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://pypi.org/project/psutil/"
-        },
-        {
-          "name": "python-requests",
-          "description": "Cliente HTTP Python",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Requests"
-        },
-        {
-          "name": "python-setproctitle",
-          "description": "Cambia título de proceso en Python",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://pypi.org/project/setproctitle/"
-        },
-        {
-          "name": "python-toml",
-          "description": "Lectura/escritura TOML en Python",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://pypi.org/project/toml/"
-        },
-        {
-          "name": "python-watchdog",
-          "description": "Monitor de archivos en Python",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://pypi.org/project/watchdog/"
-        }
-      ]
-    },
-    {
-      "id": "12. DEV_TOOLS",
-      "emoji": "🛠️",
-      "description": "Herramientas auxiliares de desarrollo",
-      "packages": [
-        {
-          "name": "lazygit",
-          "description": "Interfaz TUI para Git",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://github.com/jesseduffield/lazygit"
-        },
-        {
-          "name": "lazydocker",
-          "description": "Interfaz TUI para Docker",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://github.com/jesseduffield/lazydocker"
-        }
-      ]
-    },
-    {
-      "id": "13. VIRTUALIZATION",
-      "emoji": "🖥️",
-      "description": "Soluciones de virtualización: KVM/QEMU y VirtualBox",
-      "packages": [
-        {
-          "name": "qemu",
-          "description": "Emulador y virtualizador",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/QEMU"
-        },
-        {
-          "name": "libvirt",
-          "description": "Administración de VM",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Libvirt"
-        },
-        {
-          "name": "virt-manager",
-          "description": "GUI para libvirt",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Virt-manager"
-        },
-        {
-          "name": "ebtables",
-          "description": "Filtrado de puentes Ethernet",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Ebtables"
-        },
-        {
-          "name": "dnsmasq",
-          "description": "Servidor DNS/DHCP ligero",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Dnsmasq"
-        },
-        {
-          "name": "virtualbox",
-          "description": "Hipervisor VirtualBox",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/VirtualBox"
-        },
-        {
-          "name": "virtualbox-host-dkms",
-          "description": "Módulo DKMS para VirtualBox",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/VirtualBox#Kernel_module"
-        },
-        {
-          "name": "virtualbox-guest-iso",
-          "description": "Guest Additions ISO para VirtualBox",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/VirtualBox#Guest_additions"
-        }
-      ]
-    },
-    {
-      "id": "14. OFFICE_DOCUMENTS",
-      "emoji": "📄",
-      "description": "Suites ofimáticas, lectores de PDF/EPUB y notas",
-      "packages": [
-        {
-          "name": "libreoffice-fresh",
-          "description": "Suite LibreOffice",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/LibreOffice"
-        },
-        {
-          "name": "onlyoffice-bin",
-          "description": "Suite OnlyOffice (AUR)",
-          "optional": false,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/onlyoffice-bin"
-        },
-        {
-          "name": "foliate",
-          "description": "Lector de ebooks EPUB",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Foliate"
-        },
-        {
-          "name": "zathura",
-          "description": "Visor de documentos ligero",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Zathura"
-        },
-        {
-          "name": "zathura-pdf-poppler",
-          "description": "Backend PDF para Zathura",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Poppler"
-        },
-        {
-          "name": "obsidian",
-          "description": "Notas basadas en Markdown",
-          "optional": false,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/obsidian"
-        }
-      ]
-    },
-    {
-      "id": "15. WEB_BROWSERS",
-      "emoji": "🌐",
-      "description": "Navegadores y herramientas de navegación segura",
-      "packages": [
-        {
-          "name": "chromium",
-          "description": "Navegador Chromium",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Chromium"
-        },
-        {
-          "name": "zen-browser-bin",
-          "description": "Navegador Zen (AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/zen-browser-bin"
-        },
-        {
-          "name": "brave-bin",
-          "description": "Navegador Brave (AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/brave-bin"
-        },
-        {
-          "name": "librewolf-bin",
-          "description": "Navegador LibreWolf (AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/librewolf-bin"
-        },
-        {
-          "name": "mullvad-browser-bin",
-          "description": "Navegador Mullvad (AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/mullvad-browser-bin"
-        },
-        {
-          "name": "torbrowser-launcher",
-          "description": "Instalador de Tor Browser",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Tor_Browser"
-        }
-      ]
-    },
-    {
-      "id": "16. MUSIC_CLIENTS",
-      "emoji": "🎵",
-      "description": "Clientes de música y herramientas de audio",
-      "packages": [
-        {
-          "name": "mpd",
-          "description": "Daemon de reproducción MPD",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Music_Player_Daemon"
-        },
-        {
-          "name": "mpc",
-          "description": "Cliente CLI para MPD",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Music_Player_Daemon#Clients"
-        },
-        {
-          "name": "rmpc-bin",
-          "description": "Cliente MPD precompilado (AUR)",
-          "optional": false,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/rmpc-bin"
-        },
-        {
-          "name": "spotify-launcher",
-          "description": "Cliente de Spotify",
-          "optional": false,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/spotify-launcher"
-        },
-        {
-          "name": "youtube-music-bin",
-          "description": "Cliente YouTube Music (AUR)",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/youtube-music-bin"
-        },
-        {
-          "name": "picard",
-          "description": "Etiquetador MusicBrainz",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/MusicBrainz_Picard"
-        },
-        {
-          "name": "nicotine+",
-          "description": "Cliente Soulseek",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Nicotine%2B"
-        },
-        {
-          "name": "amberol",
-          "description": "Radio TUI Amberol",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/amberol-git"
-        },
-        {
-          "name": "cava",
-          "description": "Visualizador de espectro de audio",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Cava"
-        },
-        {
-          "name": "ncmpcpp",
-          "description": "Cliente NCurses Music Player Cliente++ para MPD",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Ncmpcpp"
-        },
-        {
-          "name": "lrcget-bin",
-          "description": "Descargador de letras sincronizadas para canciones",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/lrcget-bin"
-        }
-      ]
-    },
-    {
-      "id": "17. FILE_SYNC",
-      "emoji": "🔄",
-      "description": "Sincronización y backup de archivos",
-      "packages": [
-        {
-          "name": "syncthing",
-          "description": "Sincronización de archivos",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Syncthing"
-        },
-        {
-          "name": "nautilus-megasync",
-          "description": "Extensión Nautilus para MEGA",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/nautilus-megasync"
-        }
-      ]
-    },
-    {
-      "id": "18. MULTIMEDIA_STREAMING",
-      "emoji": "📺",
-      "description": "Reproductores de audio/vídeo y streaming",
-      "packages": [
-        {
-          "name": "vlc",
-          "description": "Reproductor multimedia VLC",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/VLC"
-        },
-        {
-          "name": "mpv",
-          "description": "Reproductor multimedia en CLI",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/mpv"
-        },
-        {
-          "name": "obs-studio",
-          "description": "Grabación y streaming con OBS",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/OBS"
-        },
-        {
-          "name": "stremio",
-          "description": "Centro de entretenimiento moderno para video streaming",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/stremio"
-        },
-        {
-          "name": "blender",
-          "description": "Suite completa de creación 3D libre y open source",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Blender"
-        },
-        {
-          "name": "qbittorrent",
-          "description": "Cliente BitTorrent ligero multiplataforma",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/QBittorrent"
-        }
-      ]
-    },
-    {
-      "id": "19. COMMUNICATIONS",
-      "emoji": "📞",
-      "description": "Clientes de mensajería y correo",
-      "packages": [
-        {
-          "name": "telegram-desktop",
-          "description": "Cliente de Telegram para escritorio",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Telegram"
-        },
-        {
-          "name": "discord",
-          "description": "Cliente de Discord",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Discord"
-        },
-        {
-          "name": "thunderbird",
-          "description": "Cliente de correo Thunderbird",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Thunderbird"
-        },
-        {
-          "name": "vesktop",
-          "description": "Cliente de Discord ligero basado en Electron con Vencord y soporte mejorado en Linux",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/vesktop"
-        }
-      ]
-    },
-    {
-      "id": "20. TERMINAL_MULTIPLEXING",
-      "emoji": "📦",
-      "description": "Multiplexación de terminal",
-      "packages": [
-        {
-          "name": "tmux",
-          "description": "Multiplexador de terminal",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Tmux"
-        }
-      ]
-    },
-    {
-      "id": "21. CLI_UTILITIES",
-      "emoji": "🔧",
-      "description": "Utilidades de línea de comandos",
-      "packages": [
-        {
-          "name": "bc",
-          "description": "Calculadora de precisión arbitraria",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/BC"
-        },
-        {
-          "name": "jq",
-          "description": "Parser JSON en CLI",
-          "optional": false,
-          "repo": "pacman",
-          "url": "https://stedolan.github.io/jq/"
-        },
-        {
-          "name": "glab",
-          "description": "CLI para GitLab",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://gitlab.com/gitlab-org/cli"
-        },
-        {
-          "name": "playerctl",
-          "description": "Control multimedia desde terminal",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Playerctl"
-        }
-      ]
-    },
-    {
-      "id": "22. FUN_TOOLS",
-      "emoji": "🎉",
-      "description": "Herramientas recreativas y ASCII art",
-      "packages": [
-        {
-          "name": "cowsay",
-          "description": "Texto hablado por vaca ASCII",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Cowsay"
-        },
-        {
-          "name": "cmatrix",
-          "description": "Efecto Matrix en terminal",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/CMatrix"
-        },
-        {
-          "name": "asciiquarium",
-          "description": "Acuario animado ASCII",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/asciiquarium"
-        },
-        {
-          "name": "pipes.sh",
-          "description": "Animación de tuberías ASCII",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://github.com/pipeseroni/pipes.sh"
-        },
-        {
-          "name": "pokemon-colorscripts-git",
-          "description": "Pokémon en color ASCII",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/pokemon-colorscripts-git"
-        },
-        {
-          "name": "tty-clock",
-          "description": "Reloj ASCII en terminal",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://wiki.archlinux.org/title/Tty-clock"
-        },
-        {
-          "name": "cbonsai",
-          "description": "Árbol bonsái ASCII",
-          "optional": true,
-          "repo": "pacman",
-          "url": "https://aur.archlinux.org/packages/cbonsai"
-        },
-        {
-          "name": "superfile",
-          "description": "Gestor de archivos ASCII",
-          "optional": true,
-          "repo": "aur",
-          "url": "https://aur.archlinux.org/packages/superfile"
-        }
-      ]
-    }
-  ]
+    ]
 }

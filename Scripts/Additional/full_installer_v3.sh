@@ -83,16 +83,14 @@ ask_yes_no() {
     done
 }
 
-# Duplicamos /dev/tty en el FD 3 para todas las lecturas interactivas
-exec 3<>/dev/tty
-
 ask_select() {
-    local pkg="$1" ans
-    # Escribe el prompt en fd 3 (la tty), no en stdout
-    printf "   🤔 ¿Quieres instalar %s? [s/n]: " "$pkg" >&3
-    # Lee la respuesta también de fd 3
-    read -r ans <&3
-    case "${ans,,}" in
+    local pkg="$1"
+    local answer
+    # Escribe el prompt en /dev/tty
+    echo -n "   🤔 ¿Quieres instalar $pkg? [s/n]: " > /dev/tty
+    # Lee la respuesta directamente del terminal
+    read -r answer < /dev/tty
+    case "${answer,,}" in
         s|si|y|yes) return 0 ;;
         *)           return 1 ;;
     esac
@@ -104,29 +102,21 @@ ask_select() {
 
 check_dependencies() {
     info "🔍 Verificando dependencias del sistema..."
-
-    # Verificar que el sistema esté actualizado
-    info "🔄 Verificando actualizaciones del sistema..."
-    sudo pacman -Syu --noconfirm || {
-        error "❌ Error al actualizar el sistema."
-        exit 1
-    }
-    success "✅ Sistema actualizado correctamente."
-
+    
     local deps=("jq" "curl" "git" "stow")
     local missing=()
-
+    
     for dep in "${deps[@]}"; do
         if ! command -v "$dep" >/dev/null 2>&1; then
             missing+=("$dep")
         fi
     done
-
+    
     if [[ ${#missing[@]} -gt 0 ]]; then
         warning "Dependencias faltantes: ${missing[*]}"
         info "Instalando dependencias..."
         sudo pacman -S --needed --noconfirm "${missing[@]}"
-
+        
         # Verificar que se instalaron correctamente
         local still_missing=()
         for dep in "${missing[@]}"; do
@@ -134,28 +124,28 @@ check_dependencies() {
                 still_missing+=("$dep")
             fi
         done
-
+        
         if [[ ${#still_missing[@]} -gt 0 ]]; then
             error "❌ No se pudieron instalar: ${still_missing[*]}"
             exit 1
         fi
-
+        
         success "✅ Dependencias instaladas correctamente: ${missing[*]}"
     fi
-
+    
     # Verificar JSON (ahora que sabemos que jq está disponible)
     if [[ ! -f "$PACKAGES_JSON" ]]; then
         error "Archivo packages.json no encontrado en: $PACKAGES_JSON"
         exit 1
     fi
-
+    
     if ! jq empty "$PACKAGES_JSON" 2>/dev/null; then
         error "El archivo packages.json no es válido"
         info "Verificando sintaxis JSON..."
         jq . "$PACKAGES_JSON" 2>&1 | head -10 || true
         exit 1
     fi
-
+    
     success "✅ Todas las dependencias están disponibles"
 }
 
@@ -201,56 +191,56 @@ install_package() {
     local optional="$3"
     local category="$4"
     local install_mode="$5"
-
+    
     # Verificar si ya está instalado
-    if pacman -Qi "$(echo "$package" | tr '[:upper:]' '[:lower:]')" >/dev/null 2>&1; then
+    if pacman -Qi "$package" >/dev/null 2>&1; then
         success "   ✅ $package ya está instalado"
         ((TOTAL_SKIPPED++))
         return 0
     fi
-
+    
     # Verificar modo de instalación para paquetes opcionales
     if [[ "$optional" == "true" ]] && [[ "$install_mode" == "required_only" ]]; then
         info "   ⏭️  Omitiendo $package (paquete opcional)"
         ((TOTAL_SKIPPED++))
         return 2
     fi
-
+    
     # Preguntar al usuario en modo selectivo (SOLO EN MODO INTERACTIVO)
     if [[ "$install_mode" == "selective" ]]; then
-        echo -n "   🤔 ¿Quieres instalar $package? [s/n]: " > /dev/tty
-        local response
-        while true; do
-            read -r response < /dev/tty
-            case "${response,,}" in
-                s|si|y|yes)
-                    break
-                    ;;
-                n|no)
-                    info "   ⏭️  Usuario omitió $package"
-                    ((TOTAL_SKIPPED++))
-                    return 2
-                    ;;
-                *)
-                    echo -n "   ❓ Por favor, responde con s/n: " > /dev/tty
-                    ;;
-            esac
-        done
-    fi
-
-    info "   🔄 Instalando $package (hint: $repo_hint)..."
-
-    local success_flag=false
+        # Verificar si stdin es un terminal (modo interactivo)
+        if [[ -t 0 ]]; then
+            echo -n "   🤔 ¿Quieres instalar $package? [s/n]: "
+            local response
+            while true; do
+                read -r response
+                case "${response,,}" in
+                    s|si|y|yes) 
+                        break
+                        ;;
+                    n|no) 
+                        info "   ⏭️  Usuario omitió $package"
+                        ((TOTAL_SKIPPED++))
+                        return 2
+                        ;;
+                    *) 
+                        echo -n "   ❓ Por favor, responde con s/n: "
+                        ;;
+                esac
+            done
+        else
     local install_method=""
     local error_log=""
-
+    
+    # PASO 1: Intentar con pacman (repositorios oficiales)
     info "      🔍 Intentando con pacman..."
     if sudo pacman -S --needed --noconfirm "$package" >/dev/null 2>&1; then
         success_flag=true
         install_method="pacman (repositorios oficiales)"
     else
         error_log="pacman falló"
-
+        
+        # PASO 2: Si pacman falla, intentar con yay (AUR)
         if command -v yay >/dev/null 2>&1; then
             info "      🔍 Pacman falló, intentando con yay..."
             if yay -S --needed --noconfirm "$package" >/dev/null 2>&1; then
@@ -263,7 +253,7 @@ install_package() {
             error_log="$error_log; yay no disponible"
         fi
     fi
-
+    
     if [[ "$success_flag" == "true" ]]; then
         success "   ✅ $package instalado correctamente con $install_method"
         ((TOTAL_INSTALLED++))
@@ -278,53 +268,99 @@ install_package() {
 install_category() {
     local category_id="$1"
     local install_mode="$2"
-
+    
     # Obtener información de la categoría desde JSON
     local category_info
     category_info=$(jq --arg cat "$category_id" '.categories[] | select(.id == $cat)' "$PACKAGES_JSON")
-
+    
     if [[ -z "$category_info" ]] || [[ "$category_info" == "null" ]]; then
         error "Categoría '$category_id' no encontrada en packages.json"
         return 1
     fi
-
+    
     local emoji desc packages_count
     emoji=$(echo "$category_info" | jq -r '.emoji // "📦"')
     desc=$(echo "$category_info" | jq -r '.description // "Sin descripción"')
     packages_count=$(echo "$category_info" | jq '.packages | length')
-
+    
     echo
     info "🎯 Instalando: $emoji $category_id"
     echo "   📋 $desc"
     echo "   📊 $packages_count paquetes en esta categoría"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-    # Pre-cargar paquetes en un arreglo Bash
-    mapfile -t pkg_infos < <(
-        echo "$category_info" | jq -c '.packages[]'
-    )
-
-    for pkg_json in "${pkg_infos[@]}"; do
-        local name desc_pkg
-        name=$(jq -r '.name' <<<"$pkg_json")
-        desc_pkg=$(jq -r '.description // ""' <<<"$pkg_json")
-
-        echo
-        echo "📦 $name — $desc_pkg"
-
-        if [[ "$install_mode" == "selective" ]]; then
-            if ask_select "$name"; then
-                install_package "$name" "" "false" "$category_id" "$install_mode"
-            else
-                info "   ⏭️  Omitiendo $name"
-                ((TOTAL_SKIPPED++))
-            fi
-        else
-            install_package "$name" "" "false" "$category_id" "$install_mode"
-        fi
+    # Vista previa de paquetes en esta categoría
+    info "   🔍 Paquetes en $category_id:"
+    for pkg in $(echo "$category_info" | jq -r '.packages[].name'); do
+        echo "     - $pkg"
     done
-
-    info "   ✅ Procesamiento de paquetes completado."
+    echo
+    
+    # Instalar paquetes - PROCESO MEJORADO
+    local current=0
+    local category_installed=0
+    local category_failed=0
+    local category_skipped=0
+    
+    info "   🔄 Iniciando procesamiento de paquetes..."
+    
+    # Debug: verificar que tenemos paquetes
+    local package_count_check
+    package_count_check=$(echo "$category_info" | jq '.packages | length')
+    info "   📊 Verificación: $package_count_check paquetes detectados"
+    
+    # Usar un file descriptor diferente para evitar conflictos con stdin del pipe
+    while IFS= read -r package_info <&3; do
+        if [[ -n "$package_info" ]] && [[ "$package_info" != "null" ]]; then
+            ((current++))
+            info "   🔍 Procesando paquete $current de $packages_count..."
+            
+            local name repo optional desc_pkg
+            name=$(echo "$package_info" | jq -r '.name // ""')
+            repo=$(echo "$package_info" | jq -r '.repo // "pacman"')
+            optional=$(echo "$package_info" | jq -r '.optional // false')
+            desc_pkg=$(echo "$package_info" | jq -r '.description // ""')
+            
+            if [[ -z "$name" ]]; then
+                warning "Paquete sin nombre encontrado, omitiendo..."
+                continue
+            fi
+            
+            # Mostrar progreso mejorado
+            echo
+            printf "📦 [%d/%d] %s" "$current" "$packages_count" "$name"
+            if [[ -n "$desc_pkg" ]]; then
+                printf " - %s" "$desc_pkg"
+            fi
+            echo
+            
+            # Resultado de la instalación con contadores locales
+            # Usar || para capturar el código de retorno sin activar set -e
+            local install_result=0
+            install_package "$name" "$repo" "$optional" "$category_id" "$install_mode" || install_result=$?
+            
+            case $install_result in
+                0) ((category_installed++)) ;;
+                1) ((category_failed++)) ;;
+                2) ((category_skipped++)) ;;
+            esac
+        else
+            warning "   ⚠️  Paquete vacío o nulo encontrado, omitiendo..."
+        fi
+    done 3< <(echo "$category_info" | jq -c '.packages[]?')
+    
+    info "   ✅ Procesamiento de paquetes completado. Procesados: $current"
+    
+    # Resumen de la categoría
+    echo
+    echo "───────────────────────────────────────────────────────────────"
+    info "📊 Resumen de $category_id:"
+    info "   ✅ Instalados: $category_installed"
+    info "   ❌ Fallidos: $category_failed"
+    info "   ⏭️  Omitidos: $category_skipped"
+    echo "───────────────────────────────────────────────────────────────"
+    echo
+    info "🔄 Continuando con la siguiente categoría..."
+    echo
 }
 
 select_installation_mode() {
@@ -441,6 +477,10 @@ install_packages() {
     local categories=("$@")
     
     info "🚀 Iniciando instalación de paquetes en modo: $install_mode"
+    
+    # Actualizar sistema
+    info "🔄 Actualizando sistema..."
+    sudo pacman -Syu --noconfirm
     
     # Instalar categorías
     for category in "${categories[@]}"; do
