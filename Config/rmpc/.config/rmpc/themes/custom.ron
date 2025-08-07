@@ -1,0 +1,100 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+(
+    album_art_position: Left,
+    album_art_width_percent: 35,
+    default_album_art_path: None,
+    draw_borders: true,
+    show_song_table_header: true,
+    symbols: (song: "🎵", dir: "📁", marker: "\u{e0b0}"),
+    progress_bar: (
+        symbols: ["━", "⭘", " "],
+        track_style: (),
+        elapsed_style: (),
+        thumb_style: (),
+    ),
+    scrollbar: (
+        symbols: ["│", "█", "▲", "▼"],
+        track_style: (),
+        ends_style: (),
+        thumb_style: (),
+    ),
+    browser_column_widths: [20, 38, 42],
+    text_color: None,
+    background_color: None,
+    header_background_color: None,
+    modal_background_color: None,
+    tab_bar: (
+        enabled: true,
+        active_style: (),
+        inactive_style: (),
+    ),
+    borders_style: (),
+    highlighted_item_style: (),
+    current_item_style: (),
+    highlight_border_style: (),
+    song_table_format: [
+        (
+            prop: (kind: Property(Artist), style: (), default: (kind: Text("Unknown"))),
+            width_percent: 49,
+            alignment: Right,
+        ),
+        (
+            prop: (kind: Text("-"), style: (), default: (kind: Text("Unknown"))),
+            width_percent: 2,
+            alignment: Center,
+        ),
+        (
+            prop: (kind: Property(Title), style: (), default: (kind: Text("Unknown"))),
+            width_percent: 49,
+        ),
+    ],
+    header: (
+        rows: [
+            (
+                left: [
+                    (kind: Text("[")),
+                    (kind: Property(Status(State))),
+                    (kind: Text("]")),
+                ],
+                center: [
+                    (kind: Property(Song(Title)),
+                        default: (kind: Text("No Song"))
+                    ),
+                ],
+                right: [
+                    (kind: Text("Vol: ")),
+                    (kind: Property(Status(Volume))),
+                    (kind: Text("% ")),
+                ],
+            ),
+            (
+                left: [
+                    (kind: Property(Status(Elapsed))),
+                    (kind: Text(" / ")),
+                    (kind: Property(Status(Duration))),
+                    (kind: Text(" (")),
+                    (kind: Property(Status(Bitrate))),
+                    (kind: Text(" kbps)")),
+                ],
+                center: [
+                    (kind: Property(Song(Artist)),
+                        default: (kind: Text("Unknown"))
+                    ),
+                    (kind: Text(" - ")),
+                    (kind: Property(Song(Album)),
+                        default: (kind: Text("Unknown Album"))
+                    ),
+                ],
+                right: [
+                    (
+                        kind: Property(Widget(States())),
+                    ),
+                ],
+            )
+        ],
+    ),
+)
+

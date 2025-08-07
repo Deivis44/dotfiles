@@ -1,0 +1,18 @@
+{
+  "disabled_plugins": {
+    "__class__": "set",
+    "__value__": []
+  },
+  "enabled_plugins": {
+    "__class__": "set",
+    "__value__": []
+  },
+  "filetype_mapping": {},
+  "plugin_customization": {},
+  "plugins": {
+    "Amazon.com Multiple Countries": "/home/deivi/.config/calibre/plugins/Amazon.com Multiple Countries.zip",
+    "Goodreads": "/home/deivi/.config/calibre/plugins/Goodreads.zip",
+    "Goodreads Sync": "/home/deivi/.config/calibre/plugins/Goodreads Sync.zip",
+    "Kindle hi-res covers": "/home/deivi/.config/calibre/plugins/Kindle hi-res covers.zip"
+  }
+}

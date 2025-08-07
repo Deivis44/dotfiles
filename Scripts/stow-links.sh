@@ -118,18 +118,23 @@ add_dotfile() {
 #  Carpeta completa:   add_dotfile "mi_ranger" "ranger/.config/ranger" "$HOME/.config/ranger"
 
 # Archivos específicos
-add_dotfile "zsh"      "zsh/.zshrc"                                  "$HOME/.zshrc"
-add_dotfile "tmux"     "tmux/.config/tmux/tmux.conf"                "$HOME/.config/tmux/tmux.conf"    # Archivo específico
-add_dotfile "starship" "starship/.config/starship.toml"              "$HOME/.config/starship.toml"
-add_dotfile "nvim_init" "nvim/.config/nvim/init.lua"               "$HOME/.config/nvim/init.lua"     # Archivo específico
-add_dotfile "git"      "git/.gitconfig"                             "$HOME/.gitconfig"
-add_dotfile "kitty"    "kitty/.config/kitty/kitty.conf"             "$HOME/.config/kitty/kitty.conf"  # Archivo específico
-add_dotfile "mpd"      "mpd/.config/mpd/mpd.conf"                   "$HOME/.config/mpd/mpd.conf"      # Archivo específico
+add_dotfile "zsh"          "zsh/.zshrc"                            "$HOME/.zshrc"
+add_dotfile "tmux"         "tmux/.config/tmux/tmux.conf"           "$HOME/.config/tmux/tmux.conf"    # Archivo específico
+add_dotfile "starship"     "starship/.config/starship.toml"        "$HOME/.config/starship.toml"
+add_dotfile "nvim_init"    "nvim/.config/nvim/init.lua"            "$HOME/.config/nvim/init.lua"     # Archivo específico
+add_dotfile "git"          "git/.gitconfig"                        "$HOME/.gitconfig"                # Archivo específico
+add_dotfile "kitty"        "kitty/.config/kitty/kitty.conf"        "$HOME/.config/kitty/kitty.conf"  # Archivo específico
+add_dotfile "mpd"          "mpd/.config/mpd/mpd.conf"              "$HOME/.config/mpd/mpd.conf"      # Archivo específico
+add_dotfile "ncmpcpp"      "ncmpcpp/.config/ncmpcpp/config"        "$HOME/.config/ncmpcpp/config"    # Archivo específico
 
 # Carpetas completas
-add_dotfile "ranger"       "ranger/.config/ranger"                  "$HOME/.config/ranger"            # Carpeta completa
+add_dotfile "ranger"       "ranger/.config/ranger"                 "$HOME/.config/ranger"            # Carpeta completa
 add_dotfile "zathura"      "zathura/.config/zathura"               "$HOME/.config/zathura"           # Carpeta completa
 add_dotfile "nvim_custom"  "nvim/.config/nvim/lua/custom"          "$HOME/.config/nvim/lua/custom"   # Carpeta completa
+add_dotfile "rmpc"         "rmpc/.config/rmpc"                     "$HOME/.config/rmpc"              # Carpeta completa
+add_dotfile "superfile"    "superfile/.config/superfile"           "$HOME/.config/superfile"         # Carpeta completa
+add_dotfile "calibre"      "calibre/.config/calibre"               "$HOME/.config/calibre"           # Carpeta completa
+add_dotfile "zed"          "zed/.config/zed"                       "$HOME/.config/zed"               # Carpeta completa
 
 # Opciones de ejecución (menú interactivo)
 print_usage() {
@@ -158,26 +163,53 @@ esac
 # Estado general de enlaces
 status_dotfiles_links() {
     show_section "Estado general de los enlaces"
+
+    # Sección: archivos individuales
+    show_section "Archivos individuales"
     for key in "${!DOTFILES[@]}"; do
         IFS=':' read -r rel_src dest <<< "${DOTFILES[$key]}"
         src="$DOTFILES_DIR/$rel_src"
-        if [ -L "$dest" ]; then
-            tgt=$(readlink "$dest")
-            if [ "$tgt" = "$src" ]; then
-                printf "[32m[✓][0m %-12s %s -> %s\n" "$key" "$dest" "$src"
+        # Clasificar como archivo cuando no sea un directorio
+        if [ ! -d "$src" ]; then
+            if [ -L "$dest" ]; then
+                tgt=$(readlink "$dest")
+                if [ "$tgt" = "$src" ]; then
+                    printf "\e[32m[✓]\e[0m %-12s %s -> %s\n" "$key" "$dest" "$src"
+                else
+                    printf "\e[33m[!]\e[0m %-12s %s -> %s (esperado: %s)\n" "$key" "$dest" "$tgt" "$src"
+                fi
             else
-                printf "[33m[!][0m %-12s %s -> %s (esperado: %s)\n" "$key" "$dest" "$tgt" "$src"
+                printf "\e[31m[✗]\e[0m %-12s %s (origen: %s)\n" "$key" "$dest" "$src"
             fi
-        else
-            printf "[31m[✗][0m %-12s %s (origen: %s)\n" "$key" "$dest" "$src"
         fi
     done
+
+    echo
+    # Sección: carpetas completas
+    show_section "Carpetas completas"
+    for key in "${!DOTFILES[@]}"; do
+        IFS=':' read -r rel_src dest <<< "${DOTFILES[$key]}"
+        src="$DOTFILES_DIR/$rel_src"
+        if [ -d "$src" ]; then
+            if [ -L "$dest" ]; then
+                tgt=$(readlink "$dest")
+                if [ "$tgt" = "$src" ]; then
+                    printf "\e[32m[✓]\e[0m %-12s %s -> %s\n" "$key" "$dest" "$src"
+                else
+                    printf "\e[33m[!]\e[0m %-12s %s -> %s (esperado: %s)\n" "$key" "$dest" "$tgt" "$src"
+                fi
+            else
+                printf "\e[31m[✗]\e[0m %-12s %s (origen: %s)\n" "$key" "$dest" "$src"
+            fi
+        fi
+    done
+
     # Leyenda de símbolos
     echo
     show_section "Leyenda de símbolos"
-    echo -e "\e[32m[✓]\e[0m Enlace existente y correcto (destino apunta al origen esperado)"
-    echo -e "\e[33m[!]\e[0m Enlace existente pero desviado (apunta a otro lugar distinto al esperado)"
-    echo -e "\e[31m[✗]\e[0m Enlace faltante (no existe enlace en destino)"
+    echo -e "\e[32m[✓]\e[0m Enlace existente y correcto"
+    echo -e "\e[33m[!]\e[0m Enlace existente pero desviado"
+    echo -e "\e[31m[✗]\e[0m Enlace faltante"
 }
 
 # Dry-run: qué enlaces se crearían

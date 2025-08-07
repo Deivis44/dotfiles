@@ -1,0 +1,74 @@
+{
+  "Goodreads": {
+    "dateReadColumn": "",
+    "devkeySecret": "AwXtlLJJquCXa2O0L9W6g6MjCoHXEMPZ1eZT6K0Wo",
+    "devkeyToken": "UxvtOM3ogQWjfgiCnMleA",
+    "displayAddMenu": true,
+    "displayRemoveMenu": true,
+    "displaySyncMenu": true,
+    "displayUpdateProgressMenu": true,
+    "displayViewShelfMenu": true,
+    "progressIsPercent": true,
+    "ratingColumn": "",
+    "readingProgressColumn": "",
+    "reviewTextColumn": "",
+    "swapAuthor": false,
+    "tagMappingColumn": "tags",
+    "updateISBN": "NEVER"
+  },
+  "SchemaVersion": 1.68,
+  "Users": {
+    "Default": {
+      "shelves": [
+        {
+          "active": true,
+          "add_actions": [],
+          "book_count": "106",
+          "exclusive": true,
+          "name": "to-read",
+          "sync_actions": [],
+          "tagMappings": []
+        },
+        {
+          "active": true,
+          "add_actions": [],
+          "book_count": "7",
+          "exclusive": true,
+          "name": "currently-reading",
+          "sync_actions": [],
+          "tagMappings": []
+        },
+        {
+          "active": true,
+          "add_actions": [],
+          "book_count": "58",
+          "exclusive": true,
+          "name": "read",
+          "sync_actions": [],
+          "tagMappings": []
+        },
+        {
+          "active": false,
+          "add_actions": [],
+          "book_count": "30",
+          "exclusive": false,
+          "name": "digital",
+          "sync_actions": [],
+          "tagMappings": []
+        },
+        {
+          "active": false,
+          "add_actions": [],
+          "book_count": "3",
+          "exclusive": false,
+          "name": "físico",
+          "sync_actions": [],
+          "tagMappings": []
+        }
+      ],
+      "userId": "169594293",
+      "userSecret": "Qi6zHdmmjeRfACMaIOyMYmAfPcVbire8J7s4PsVlI",
+      "userToken": "tRfwUy6UsCMURh3BeTyXog"
+    }
+  }
+}
