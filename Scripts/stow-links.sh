@@ -98,6 +98,7 @@ show_banner
 declare -a NEW_LINKS
 declare -a BACKUP_FILES
 declare -a SKIPPED_LINKS
+declare -a CORRECT_LINKS
 
 # Declarar array asociativo para dotfiles
 declare -A DOTFILES
@@ -112,23 +113,126 @@ add_dotfile() {
 
 # Añadir configuraciones
 # Sintaxis: add_dotfile "nombre" "ruta_en_Config" "ruta_en_destino"
-add_dotfile "zsh" "zsh/.zshrc" "$HOME/.zshrc"
-add_dotfile "ranger" "ranger/.config/ranger" "$HOME/.config/ranger"       # Carpeta completa
-add_dotfile "tmux" "tmux/.config/tmux/tmux.conf" "$HOME/.config/tmux/tmux.conf" # Archivo específico
-add_dotfile "starship" "starship/.config/starship.toml" "$HOME/.config/starship.toml"
-add_dotfile "zathura" "zathura/.config/zathura" "$HOME/.config/zathura"   # Carpeta completa
-add_dotfile "nvim_custom" "nvim/.config/nvim/lua/custom" "$HOME/.config/nvim/lua/custom" # Carpeta específica
-add_dotfile "nvim_init" "nvim/.config/nvim/init.lua" "$HOME/.config/nvim/init.lua" # Archivo específico
-add_dotfile "git" "git/.gitconfig" "$HOME/.gitconfig"
-add_dotfile "kitty" "kitty/.config/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf" # Archivo específico
+# Ejemplos:
+#  Archivo específico: add_dotfile "mi_zsh" "zsh/.zshrc" "$HOME/.zshrc"
+#  Carpeta completa:   add_dotfile "mi_ranger" "ranger/.config/ranger" "$HOME/.config/ranger"
 
-# Crear enlaces simbólicos para cada configuración
+# Archivos específicos
+add_dotfile "zsh"      "zsh/.zshrc"                                  "$HOME/.zshrc"
+add_dotfile "tmux"     "tmux/.config/tmux/tmux.conf"                "$HOME/.config/tmux/tmux.conf"    # Archivo específico
+add_dotfile "starship" "starship/.config/starship.toml"              "$HOME/.config/starship.toml"
+add_dotfile "nvim_init" "nvim/.config/nvim/init.lua"               "$HOME/.config/nvim/init.lua"     # Archivo específico
+add_dotfile "git"      "git/.gitconfig"                             "$HOME/.gitconfig"
+add_dotfile "kitty"    "kitty/.config/kitty/kitty.conf"             "$HOME/.config/kitty/kitty.conf"  # Archivo específico
+add_dotfile "mpd"      "mpd/.config/mpd/mpd.conf"                   "$HOME/.config/mpd/mpd.conf"      # Archivo específico
+
+# Carpetas completas
+add_dotfile "ranger"       "ranger/.config/ranger"                  "$HOME/.config/ranger"            # Carpeta completa
+add_dotfile "zathura"      "zathura/.config/zathura"               "$HOME/.config/zathura"           # Carpeta completa
+add_dotfile "nvim_custom"  "nvim/.config/nvim/lua/custom"          "$HOME/.config/nvim/lua/custom"   # Carpeta completa
+
+# Opciones de ejecución (menú interactivo)
+print_usage() {
+    echo "Uso: $0"
+    echo "  1) Aplicar enlaces preguntando uno a uno (por defecto)"
+    echo "  2) Estado general de los enlaces (OK, faltantes o mal dirigidos)"
+    echo "  3) Dry-run: mostrar qué enlaces se crearían sin aplicar cambios"
+    echo "  4) Ayuda"
+}
+
+# Seleccionar modo al inicio
+show_section "Seleccione una opción:"
+echo "1) Aplicar enlaces preguntando uno a uno (por defecto)"
+echo "2) Estado general de los enlaces (OK, faltantes o mal dirigidos)"
+echo "3) Dry-run: mostrar qué enlaces se crearían sin aplicar cambios"
+echo "4) Ayuda"
+read -p "Opción [1]: " option
+case "$option" in
+    ""|1) mode="apply" ;;  
+    2) mode="status" ;;  
+    3) mode="dryrun" ;;  
+    4) print_usage; exit 0 ;;  
+    *) echo "Opción inválida"; exit 1 ;;  
+esac
+
+# Estado general de enlaces
+status_dotfiles_links() {
+    show_section "Estado general de los enlaces"
+    for key in "${!DOTFILES[@]}"; do
+        IFS=':' read -r rel_src dest <<< "${DOTFILES[$key]}"
+        src="$DOTFILES_DIR/$rel_src"
+        if [ -L "$dest" ]; then
+            tgt=$(readlink "$dest")
+            if [ "$tgt" = "$src" ]; then
+                printf "[32m[✓][0m %-12s %s -> %s\n" "$key" "$dest" "$src"
+            else
+                printf "[33m[!][0m %-12s %s -> %s (esperado: %s)\n" "$key" "$dest" "$tgt" "$src"
+            fi
+        else
+            printf "[31m[✗][0m %-12s %s (origen: %s)\n" "$key" "$dest" "$src"
+        fi
+    done
+    # Leyenda de símbolos
+    echo
+    show_section "Leyenda de símbolos"
+    echo -e "\e[32m[✓]\e[0m Enlace existente y correcto (destino apunta al origen esperado)"
+    echo -e "\e[33m[!]\e[0m Enlace existente pero desviado (apunta a otro lugar distinto al esperado)"
+    echo -e "\e[31m[✗]\e[0m Enlace faltante (no existe enlace en destino)"
+}
+
+# Dry-run: qué enlaces se crearían
+dryrun_dotfiles_links() {
+    show_section "Dry-run: enlaces a crear"
+    for key in "${!DOTFILES[@]}"; do
+        IFS=':' read -r src dest <<< "${DOTFILES[$key]}"
+        src="$DOTFILES_DIR/$src"
+        if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$src" ]; then
+            show_info "Ya existe: $dest -> $src"
+        else
+            show_info "Se crearía: $dest -> $src"
+        fi
+    done
+}
+
+# Función para verificar enlaces existentes sin crear nuevos
+verify_dotfiles_links() {
+    show_section "Verificando enlaces existentes"
+    for key in "${!DOTFILES[@]}"; do
+        IFS=':' read -r src dest <<< "${DOTFILES[$key]}"
+        src="$DOTFILES_DIR/$src"
+        if [ -L "$dest" ]; then
+            tgt=$(readlink "$dest")
+            if [ "$tgt" = "$src" ]; then
+                show_info "OK: $dest -> $tgt"
+            else
+                show_info "Desviado: $dest apunta a $tgt (esperado -> $src)"
+            fi
+        else
+            show_info "No es enlace: $dest"
+        fi
+    done
+}
+
+# Ejecutar según modo seleccionado
+case "$mode" in
+    status)  status_dotfiles_links; exit 0 ;;  
+    dryrun) dryrun_dotfiles_links; exit 0 ;;  
+    apply)  ;;  # continúa hacia create_symlink
+esac
+
+# Crear enlaces para cada configuración
 show_section "Verificando y creando enlaces simbólicos para archivos de configuración"
 for key in "${!DOTFILES[@]}"; do
-    IFS=':' read -r source_path target_path <<< "${DOTFILES[$key]}"
-    source_path="$DOTFILES_DIR/$source_path"
-    
-    # Confirmar la configuración antes de crear el enlace simbólico
+    IFS=':' read -r rel_src target_path <<< "${DOTFILES[$key]}"
+    source_path="$DOTFILES_DIR/$rel_src"
+    # Si el enlace ya existe y apunta correctamente, omitir sin prompt
+    if [ -L "$target_path" ] && [ "$(readlink "$target_path")" = "$source_path" ]; then
+        # Mostrar símbolo ✓ con nombre y rutas
+        printf "\e[32m[✓]\e[0m %-12s %s -> %s\n" "$key" "$target_path" "$source_path"
+        CORRECT_LINKS+=("$target_path")
+        continue
+    fi
+    # Confirmar y crear nuevo enlace para los que faltan o estén mal dirigidos
     confirm_dotfile "$key" "$source_path" "$target_path"
     if [ $? -eq 0 ]; then
         create_symlink "$source_path" "$target_path"
@@ -138,23 +242,45 @@ for key in "${!DOTFILES[@]}"; do
 done
 
 # Resumen
-show_section "Resumen de la instalación"
-echo "Enlaces nuevos creados y ubicaciones:"
-for link in "${NEW_LINKS[@]}"; do
-    echo " - $link"
-done
+show_section "Resumen de la ejecución"
+echo "1) Nuevos enlaces creados:"
+if [ ${#NEW_LINKS[@]} -gt 0 ]; then
+    for link in "${NEW_LINKS[@]}"; do
+        echo "   - $link"
+    done
+else
+    show_info "   Ninguno: todas las configuraciones ya estaban aplicadas o correctamente existentes"
+fi
 
 echo "---------------------------"
-echo "Archivos o carpetas ya existentes que fueron respaldados:"
-for backup in "${BACKUP_FILES[@]}"; do
-    echo " - $backup"
-done
+echo "2) Backups realizados:"
+if [ ${#BACKUP_FILES[@]} -gt 0 ]; then
+    for backup in "${BACKUP_FILES[@]}"; do
+        echo "   - $backup"
+    done
+else
+    show_info "   Ninguno: no se requirió backup"
+fi
 
 echo "---------------------------"
-echo "Enlaces ya existentes que fueron omitidos:"
-for skipped in "${SKIPPED_LINKS[@]}"; do
-    echo " - $skipped"
-done
+echo "3) Enlaces omitidos por usuario:"
+if [ ${#SKIPPED_LINKS[@]} -gt 0 ]; then
+    for skipped in "${SKIPPED_LINKS[@]}"; do
+        echo "   - $skipped"
+    done
+else
+    show_info "   Ninguno: no se omitió ninguna configuración manualmente"
+fi
+
+echo "---------------------------"
+echo "4) Enlaces ya existentes y correctos:"
+if [ ${#CORRECT_LINKS[@]} -gt 0 ]; then
+    for correct in "${CORRECT_LINKS[@]}"; do
+        echo "   - $correct"
+    done
+else
+    show_info "   Ninguno: no se detectaron enlaces preexistentes"
+fi
 
 # Mensajes de información adicionales
 show_section "Información adicional"
