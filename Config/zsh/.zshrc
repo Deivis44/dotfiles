@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # ==========================
 # Zinit Setup
 # ==========================
@@ -11,6 +18,13 @@ fi
 
 # Initialize Zinit
 source "$ZINIT_HOME/zinit.zsh"
+
+# ==========================
+# Prompt (Powerlevel10k)
+# ==========================
+zinit ice depth=1
+zinit light romkatv/powerlevel10k
+zinit light tolkonepiu/catppuccin-powerlevel10k-themes
 
 # ==========================
 # Zsh Basic Options
@@ -111,7 +125,7 @@ zstyle ':fzf—tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 # ==========================
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
-eval "$(starship init zsh)"
+#eval "$(starship init zsh)"
 
 # ==========================
 # FZF Configuration
@@ -272,8 +286,6 @@ function command_not_found_handler {
 # ==========================
 # Final Touches
 # ==========================
-# Display Pokemon
-pokemon-colorscripts --no-title -r 1,3,6
 
 export PATH=$HOME/.local/bin:$PATH
 #export PATH=$PATH:/home/deivi/.spicetify
@@ -286,8 +298,25 @@ if [ -z "$SSH_AUTH_SOCK" ] || ! ssh-add -l >/dev/null 2>&1; then
     ssh-add ~/.ssh/id_ed25519 2>/dev/null
 fi
 
-export GEMINI_API_KEY="AIzaSyBTP-C9MeMhCulDMuH3BfaEwpMGLDuix_U"
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# ==========================
+# Catppuccin Powerlevel10k
+# ==========================
+zstyle ':catppuccin:p10k' theme classic
+zstyle ':catppuccin:p10k' flavour latte
+
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# ==========================
+# Pokémon banner (P10k-safe)
+# ==========================
+function p10k-on-init() {
+  [[ -n "$POKEMON_SHOWN" ]] && return
+  export POKEMON_SHOWN=1
+
+  pokemon-colorscripts --no-title -r 1-8
+}
