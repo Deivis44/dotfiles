@@ -21,3 +21,5 @@
 # sin tokens ni contraseñas, gracias a la clave SSH + ssh-agent
 # ============================================
 
+[url "git@github.com:"]
+	insteadOf = https://github.com/
