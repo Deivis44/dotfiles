@@ -1,11 +1,24 @@
+# Dotfiles para Arch Linux y Hyprland
 
-# Dotfiles
+Configuraciones de mi entorno de trabajo en Linux. La configuración visual de Hyprland parte de [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland). Este repositorio añade mis configuraciones para herramientas como Kitty, tmux, Zsh y Neovim, junto con scripts para preparar el entorno.
 
-## Introduction
+## Probar una configuración
 
-This repository builds upon the outstanding work of [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), providing a solid foundation for my Hyprland configuration. On top of this base, I’ve incorporated a personalized layer of customizations to enhance both functionality and aesthetics, specifically tailored to fit my workflow.
+El ejemplo requiere Git, GNU Stow y Kitty. La configuración de Kitty usa JetBrainsMono Nerd Font.
 
-Once the base configuration is established, I apply an additional patch optimized for systems running Arch-based distributions. This setup ensures a seamless and consistent environment across multiple devices while maintaining the flexibility to adapt to unique hardware configurations and personal preferences.
+```bash
+git clone https://github.com/Deivis44/dotfiles.git
+cd dotfiles
+mkdir -p "$HOME/.config/kitty"
+stow --dir=Config --target="$HOME" --simulate --verbose kitty
+```
+
+Si la simulación muestra un conflicto, guarda una copia del archivo existente antes de moverlo. Para aplicar el cambio, repite el comando sin `--simulate`. Para quitar los enlaces creados por Stow, ejecuta `stow --dir=Config --target="$HOME" --delete kitty` desde el repositorio.
+
+## Scripts
+
+- [`Scripts/stow-links.sh`](Scripts/stow-links.sh) lee las configuraciones desde `~/dotfiles/Config`, pide confirmación por destino y crea enlaces con `ln -s`. Mueve los destinos existentes a una copia de respaldo cuando son archivos o directorios y reemplaza los enlaces simbólicos existentes.
+- [`Scripts/Full_Install.sh`](Scripts/Full_Install.sh) es el instalador interactivo. Puede ejecutar el instalador de end-4, instalar paquetes y lanzar scripts adicionales. Usa `~/dotfiles` para localizar los archivos y `~/Downloads` para el registro.
 
 ## Screenshots
 
@@ -29,4 +42,3 @@ Once the base configuration is established, I apply an additional patch optimize
 - **Stickers**: [.png & .ai files](https://github.com/Deivis44/dotfiles/tree/main/Resources/Stickers)
 
 ***
-
